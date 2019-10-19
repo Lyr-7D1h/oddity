@@ -3,9 +3,11 @@ const { NotFound, BadRequest, InternalServerError } = require('http-errors')
 const fp = require('fastify-plugin')
 
 module.exports = fp(async instance => {
-  instance.decorate('baseRoute', async (fastify, opts, { Model }) => {
+  instance.decorate('baseRoute', async (fastify, opts, { Model, columns }) => {
     const collectionName = Model.collection.collectionName
-    fastify.log.info(`Controller for ${collectionName} initialized`)
+    columns = columns || ''
+
+    fastify.log.info(`Controller for "${collectionName}" initialized`)
 
     const validateId = (request, reply, next) => {
       if (fastify.mongoose.ObjectId.isValid(request.params.id)) {
@@ -34,7 +36,7 @@ module.exports = fp(async instance => {
      * Read All
      */
     fastify.get(`/${collectionName}`, (request, reply) => {
-      Model.find({})
+      Model.find({}, columns)
         .then(items => {
           return reply.send(items)
         })
@@ -56,7 +58,7 @@ module.exports = fp(async instance => {
         }
       },
       (request, reply) => {
-        Model.findById(request.params.id)
+        Model.findById(request.params.id, columns)
           .then(items => {
             if (!items) return reply.send(new NotFound())
             return reply.send(items)
