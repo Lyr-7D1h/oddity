@@ -2,24 +2,29 @@
   "name": "oddity-db-api-v2",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "server.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "test": "tap test/**/*.test.js",
-    "start": "fastify start -l info app.js --options",
-    "dev": "fastify start -l info -P app.js --options --watch"
+    "start": "npm start",
+    "dev": "nodemon start"
   },
   "keywords": [],
-  "author": "",
+  "author": "ivelthoven",
   "license": "ISC",
   "dependencies": {
     "fastify": "^2.0.0",
     "fastify-autoload": "^1.0.0",
     "fastify-cli": "^1.3.0",
+    "fastify-env": "^1.0.1",
+    "fastify-mongodb": "^2.0.0",
     "fastify-plugin": "^1.5.0",
-    "global": "^4.4.0"
+    "fastify-sensible": "^2.1.1",
+    "make-promises-safe": "^5.1.0",
+    "mongoose": "^5.7.5",
+    "pino-pretty": "^3.2.2"
   },
   "devDependencies": {
     "tap": "^12.5.3"

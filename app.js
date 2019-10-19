@@ -3,33 +3,28 @@
 const path = require("path");
 const AutoLoad = require("fastify-autoload");
 
-module.exports.options = {
-  https: {
-    key: "./.cert/key.pem",
-    cert: "./.cert/cert.pem"
-  }
+const envSchema = {
+  type: "object",
+  required: ["CONNECTION_STRING", "PORT"],
+  properties: {
+    CONNECTION_STRING: { type: "string" },
+    PORT: { type: "integer" }
+  },
+  additionalProperties: false
 };
 
-module.exports = function(fastify, opts, next) {
-  // Place here your custom code!
+module.exports = async (fastify, opts) => {
+  fastify
+    .register(require("fastify-env"), { schema: envSchema, data: [opts] })
+    .register(require("fastify-sensible"))
 
-  // Do not touch the following lines
-
-  // This loads all plugins defined in plugins
-  // those should be support plugins that are reused
-  // through your application
-  fastify.register(AutoLoad, {
-    dir: path.join(__dirname, "plugins"),
-    options: Object.assign({}, opts)
-  });
-
-  // This loads all plugins defined in services
-  // define your routes in one of these
-  fastify.register(AutoLoad, {
-    dir: path.join(__dirname, "services"),
-    options: Object.assign({}, opts)
-  });
-
-  // Make sure to call next when done
-  next();
+    // Autoload Plugins & Routes
+    .register(AutoLoad, {
+      dir: path.join(__dirname, "plugins"),
+      options: Object.assign({}, opts)
+    })
+    .register(AutoLoad, {
+      dir: path.join(__dirname, "routes"),
+      options: Object.assign({}, opts)
+    });
 };
