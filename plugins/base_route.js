@@ -1,22 +1,34 @@
-"use strict";
-const { NotFound, ResourceNotFoundError, BadRequest } = require("http-errors");
-const fp = require("fastify-plugin");
+'use strict'
+const { NotFound, BadRequest, InternalServerError } = require('http-errors')
+const fp = require('fastify-plugin')
 
-module.exports = fp(async function(instance) {
-  instance.decorate("baseRoute", async (fastify, opts, { Model }) => {
-    const collectionName = Model.collection.collectionName;
-    fastify.log.info(`Controller for ${collectionName} initialized`);
+module.exports = fp(async instance => {
+  instance.decorate('baseRoute', async (fastify, opts, { Model }) => {
+    const collectionName = Model.collection.collectionName
+    fastify.log.info(`Controller for ${collectionName} initialized`)
 
     const validateId = (request, reply, next) => {
-      console.log(next);
-      try {
-        new fastify.mongoose.ObjectId(request.params.id);
-        return next();
-      } catch (err) {
-        console.log(err);
-        reply.send(new BadRequest());
+      if (fastify.mongoose.ObjectId.isValid(request.params.id)) {
+        return next()
+      } else {
+        return reply.send(new BadRequest())
       }
-    };
+    }
+
+    /**
+     * Create
+     */
+    fastify.post(`/${collectionName}`, (request, reply) => {
+      try {
+        new Model(request.body).save(err => {
+          if (err) return reply.send(new BadRequest(err.message))
+          return fastify.success(reply)
+        })
+      } catch (err) {
+        fastify.log.error(err)
+        return reply.send(new InternalServerError())
+      }
+    })
 
     /**
      * Read All
@@ -24,12 +36,13 @@ module.exports = fp(async function(instance) {
     fastify.get(`/${collectionName}`, (request, reply) => {
       Model.find({})
         .then(items => {
-          reply.send(items);
+          return reply.send(items)
         })
         .catch(err => {
-          fastify.log.error(err);
-        });
-    });
+          fastify.log.error(err)
+          return reply.send(new InternalServerError())
+        })
+    })
 
     /**
      * Read
@@ -37,23 +50,23 @@ module.exports = fp(async function(instance) {
     fastify.get(
       `/${collectionName}/:id`,
       {
+        preHandler: [validateId],
         schema: {
-          params: "id#"
+          params: 'id#'
         }
       },
-      validateId,
       (request, reply) => {
-        console.log("FIND");
         Model.findById(request.params.id)
           .then(items => {
-            reply.send(items);
+            if (!items) return reply.send(new NotFound())
+            return reply.send(items)
           })
           .catch(err => {
-            fastify.log.error(err);
-            reply.send(new NotFound());
-          });
+            fastify.log.error(err)
+            return reply.send(new InternalServerError('something went wrong'))
+          })
       }
-    );
+    )
 
     /**
      * Update
@@ -61,24 +74,50 @@ module.exports = fp(async function(instance) {
     fastify.put(
       `/${collectionName}/:id`,
       {
-        beforeHandler: [validateId],
+        preHandler: [validateId],
         schema: {
-          params: "id#"
+          params: 'id#'
         }
       },
       (request, reply) => {
         Model.updateOne({ _id: request.params.id }, request.body)
           .then(response => {
-            if (response.nModified == 0) {
-              return reply.send(new ResourceNotFoundError("nothing changed"));
+            if (response.nModified === 0) {
+              return reply.send(new NotFound())
             }
-            return res.send({ message: "success" });
+            return fastify.success(reply)
           })
           .catch(err => {
-            fastify.log.error(err);
-            return reply.send(new NotFound());
-          });
+            fastify.log.error(err)
+            return reply.send(new BadRequest())
+          })
       }
-    );
-  });
-});
+    )
+
+    /**
+     * Delete
+     */
+    fastify.delete(
+      `/${collectionName}/:id`,
+      {
+        preHandler: [validateId],
+        schema: {
+          params: 'id#'
+        }
+      },
+      (request, reply) => {
+        Model.deleteOne({ _id: request.params.id })
+          .then(response => {
+            if (response.deletedCount === 0) {
+              return reply.send(new NotFound())
+            }
+            return fastify.success(reply)
+          })
+          .catch(err => {
+            fastify.log.error(err)
+            return reply.send(new BadRequest())
+          })
+      }
+    )
+  })
+})

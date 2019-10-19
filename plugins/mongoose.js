@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
-const fp = require("fastify-plugin");
+const fp = require('fastify-plugin')
 
 module.exports = fp(async instance => {
-  instance.decorate("mongoose", {
+  instance.decorate('mongoose', {
     connection: mongoose.createConnection(process.env.CONNECTION_STRING, {
       useCreateIndex: true,
       useNewUrlParser: true,
@@ -11,5 +11,5 @@ module.exports = fp(async instance => {
     }),
     Schema: mongoose.Schema,
     ObjectId: mongoose.Types.ObjectId
-  });
-});
+  })
+})
