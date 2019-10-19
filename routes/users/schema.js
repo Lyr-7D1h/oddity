@@ -30,5 +30,5 @@ module.exports = Schema => {
       type: Number,
       required: true
     }
-  });
-};
+  })
+}
