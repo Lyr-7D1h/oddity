@@ -5,9 +5,10 @@ const AutoLoad = require('fastify-autoload')
 
 const envSchema = {
   type: 'object',
-  required: ['CONNECTION_STRING', 'PORT'],
+  required: ['CONNECTION_STRING', 'PORT', 'ADMIN_SECRET'],
   properties: {
     CONNECTION_STRING: { type: 'string' },
+    ADMIN_SECRET: { type: 'string' },
     PORT: { type: 'integer' }
   },
   additionalProperties: false

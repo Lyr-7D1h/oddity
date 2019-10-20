@@ -12,4 +12,3 @@ COPY . /app/
 COPY src/ /app/
 CMD npm start
 EXPOSE 3000
-

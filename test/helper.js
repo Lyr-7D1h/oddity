@@ -3,18 +3,24 @@
 // This file contains code that we reuse
 // between our tests.
 
-const Fastify = require('fastify')
 const fp = require('fastify-plugin')
+const Fastify = require('fastify')
 const App = require('../app')
 
 // Fill in this config with all the configurations
 // needed for testing the application
-function config () {
-  return {}
+function config() {
+  return {
+    CONNECTION_STRING:
+      'mongodb+srv://oddityStaging:40vOCy06sago47Pk@staging-ausly.gcp.mongodb.net/staging?retryWrites=true&w=majority',
+    PORT: 3000,
+    ADMIN_SECRET: 'secret',
+    dotenv: true
+  }
 }
 
 // automatically build and tear down our instance
-function build (t) {
+function build(t) {
   const app = Fastify()
 
   // fastify-plugin ensures that all decorators

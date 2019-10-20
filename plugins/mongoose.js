@@ -4,7 +4,7 @@ const fp = require('fastify-plugin')
 
 module.exports = fp(async instance => {
   instance.decorate('mongoose', {
-    connection: mongoose.createConnection(process.env.CONNECTION_STRING, {
+    connection: mongoose.createConnection(instance.config.CONNECTION_STRING, {
       useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true
