@@ -6,4 +6,7 @@ module.exports = async (fastify, opts) => {
     Model: fastify.mongoose.connection.model('User', userSchema),
     columns: '-password'
   })
+
+  // use Auth path
+  require("./auth")(fastify);
 }

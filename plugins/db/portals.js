@@ -37,8 +37,8 @@ module.exports = fp(async instance => {
       if (portals.length === 0) {
         new Portal({
           name: 'admin',
-          accessKey: instance.crypto.createAccessKey(),
-          secretKey: instance.crypto.createSecretKey()
+          accessKey: instance.crypto.createKey(10),
+          secretKey: instance.crypto.createKey(15)
         })
           .save()
           .then(() => {
@@ -78,7 +78,9 @@ module.exports = fp(async instance => {
     })
 
   Portal.find({ name: 'admin' }, 'accessKey').then(portals => {
-    instance.log.info(`Admin AccessKey: ${portals[0].accessKey}`)
+    if (portals[0]) {
+      instance.log.info(`Admin AccessKey: ${portals[0].accessKey}`)
+    }
   })
 
   instance.decorate('Portal', Portal)
