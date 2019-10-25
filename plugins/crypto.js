@@ -4,12 +4,8 @@ const fp = require('fastify-plugin')
 
 const saltRounds = 12
 
-const createAccessKey = () => {
-  return crypto.randomBytes(10).toString('hex')
-}
-
-const createSecretKey = () => {
-  return crypto.randomBytes(15).toString('hex')
+const createKey = (length) => {
+  return crypto.randomBytes(length).toString('hex')
 }
 
 const encryptKey = key => {
@@ -22,8 +18,7 @@ const validateKey = (key, hash) => {
 
 module.exports = fp(async instance => {
   instance.decorate('crypto', {
-    createAccessKey,
-    createSecretKey,
+    createKey,
     encryptKey,
     validateKey
   })
