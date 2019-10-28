@@ -19,6 +19,11 @@ module.exports = async (fastify, opts) => {
     .register(require('fastify-env'), { schema: envSchema, data: [opts] })
     .register(require('fastify-sensible'))
 
+    .register(require('fastify-cookie'))
+    .register(require('fastify-session'), { secret: 'a secret with minimum length of 32 characters' })
+
+    .register(require("fastify-auth"))
+
     // Autoload Plugins & Routes
     .register(AutoLoad, {
       dir: path.join(__dirname, 'plugins'),

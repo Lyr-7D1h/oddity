@@ -1,11 +1,13 @@
 const { Unauthorized } = require("http-errors")
 
 module.exports = (fastify) => {
-    fastify.post("/users/auth", (request, reply) => {
-        console.log(request)
-        if (request.body) {
-
-        }
-        reply.send(new Unauthorized())
+    console.log(fastify.auth)
+    fastify.post("/users/auth", {
+        preHandler: fastify.auth([
+            fastify.verify.basic.portal,
+            fastify.verify.basic.user
+        ])
+    }, (request, reply) => {
+        // request.session.user = {name: }
     })
 }
