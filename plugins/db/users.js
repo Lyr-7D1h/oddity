@@ -1,5 +1,7 @@
-module.exports = Schema => {
-  return new Schema({
+const fp = require('fastify-plugin')
+
+module.exports = fp(async instance => {
+  const userSchema = new instance.mongoose.Schema({
     username: {
       type: String,
       required: true,
@@ -31,4 +33,8 @@ module.exports = Schema => {
       required: true
     }
   })
-}
+
+  const User = instance.mongoose.connection.model('User', userSchema)
+
+  instance.decorate('User', User)
+})
