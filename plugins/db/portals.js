@@ -35,18 +35,21 @@ module.exports = fp(async instance => {
     .then(portals => {
       // create if does not exist
       if (portals.length === 0) {
-        new Portal({
-          name: 'admin',
-          accessKey: instance.crypto.createKey(10),
-          secretKey: instance.crypto.createKey(15)
+        instance.crypto.encryptKey(secret).then(hash => {
+          new Portal({
+            name: 'admin',
+            accessKey: instance.crypto.createKey(10),
+            secretKey: hash
+          })
+            .save()
+            .then(admin => {
+              instance.log.info('Created Admin Portal')
+              instance.log.info(`Admin AccessKey: ${admin.accessKey}`)
+            })
+            .catch(err => {
+              instance.log.error(err)
+            })
         })
-          .save()
-          .then(() => {
-            instance.log.info('Created Admin Portal')
-          })
-          .catch(err => {
-            instance.log.error(err)
-          })
       } else {
         // update if it does exist
         instance.crypto
@@ -76,6 +79,7 @@ module.exports = fp(async instance => {
       instance.log.error(err)
       process.exit(1)
     })
+
   // Print current Admin AccessKey
   Portal.find({ name: 'admin' }, 'accessKey').then(portals => {
     if (portals[0]) {

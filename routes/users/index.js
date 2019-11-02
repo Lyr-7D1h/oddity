@@ -7,5 +7,6 @@ module.exports = async (fastify, opts) => {
   })
 
   // use Auth path
-  require("./auth")(fastify);
+  require('./login')(fastify)
+  require('./logout')(fastify)
 }

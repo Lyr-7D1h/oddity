@@ -3,26 +3,22 @@
 const path = require('path')
 const AutoLoad = require('fastify-autoload')
 
-const envSchema = {
-  type: 'object',
-  required: ['CONNECTION_STRING', 'PORT', 'ADMIN_SECRET'],
-  properties: {
-    CONNECTION_STRING: { type: 'string' },
-    ADMIN_SECRET: { type: 'string' },
-    PORT: { type: 'integer' }
-  },
-  additionalProperties: false
-}
-
 module.exports = async (fastify, opts) => {
   fastify
-    .register(require('fastify-env'), { schema: envSchema, data: [opts] })
     .register(require('fastify-sensible'))
 
     .register(require('fastify-cookie'))
-    .register(require('fastify-session'), { secret: 'a secret with minimum length of 32 characters' })
+    .register(require('fastify-session'), {
+      secret:
+        fastify.config.SESSION_SECRET ||
+        '&K$RePnO0NF#Z5sYSAGXaM!ezxd^E^PORi38u',
+      cookie: {
+        httpOnly: !(fastify.config.ENV === 'development'), // set httpOnly and secure off when in dev
+        secure: !(fastify.config.ENV === 'development')
+      }
+    })
 
-    .register(require("fastify-auth"))
+    .register(require('fastify-auth'))
 
     // Autoload Plugins & Routes
     .register(AutoLoad, {
