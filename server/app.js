@@ -18,6 +18,10 @@ module.exports = async (fastify, opts) => {
       }
     })
 
+    .register(require('fastify-cors'), {
+      origin: 'http://localhost:3000'
+    })
+
     .register(require('fastify-auth'))
 
     // Autoload Plugins & Routes
