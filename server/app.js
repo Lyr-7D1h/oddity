@@ -27,6 +27,26 @@ module.exports = async (fastify, opts) => {
     })
     .register(AutoLoad, {
       dir: path.join(__dirname, 'routes'),
-      options: Object.assign({}, opts)
+      options: Object.assign(
+        {
+          prefix: '/api'
+        },
+        opts
+      )
     })
+
+  if (fastify.config.ENV === 'development') {
+    // if development proxy requests to dev react server
+    fastify.register(require('fastify-http-proxy'), {
+      upstream: 'http://localhost:3000',
+      prefix: '/', // optional
+      http2: false // optional
+    })
+  } else {
+    // use react build
+    fastify.register(require('fastify-static'), {
+      root: path.join(__dirname, '../client/build'),
+      prefix: '/'
+    })
+  }
 }
