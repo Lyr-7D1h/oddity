@@ -42,7 +42,7 @@ const login = values => {
       .then(res => {
         if (res.status === 200) {
           Cookies.set('loggedIn', true)
-          forceRefresh()
+          // forceRefresh()
           resolve(true)
         }
         resolve(false)
@@ -58,10 +58,10 @@ const logout = () => {
       .then(res => {
         if (res.status === 200) {
           Cookies.remove('loggedIn')
-          forceRefresh()
+          // forceRefresh()
           resolve()
         } else {
-          reject('no ok status')
+          reject('Request failed: code is ' + res.status)
         }
       })
       .catch(err => {

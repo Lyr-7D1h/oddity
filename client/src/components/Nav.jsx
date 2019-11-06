@@ -2,14 +2,32 @@ import React, { useState } from 'react'
 import { Menu } from 'antd'
 import { Link } from 'react-router-dom'
 import Cookies from 'js-cookie'
+import Logout from './Logout'
+import requester from '../helpers/requester'
+import notificationHandler from '../helpers/notificationHandler'
 
 export default ({ selected, config }) => {
-  const [loggedIn] = useState(Cookies.get('loggedIn') !== undefined)
+  const [loggedIn, setLoggedIn] = useState(
+    Cookies.get('loggedIn') !== undefined
+  )
 
+  // TODO: finish when configuration is done
   // get configuration
   const items = [{ name: 'ODDITY', title: true }]
   if (config.nav) {
     items.concat(config.nav)
+  }
+
+  const handleLogout = () => {
+    requester
+      .logout()
+      .then(() => {
+        notificationHandler.success('Logged out successfully')
+        setLoggedIn(false)
+      })
+      .catch(() => {
+        notificationHandler.error('Logout failed')
+      })
   }
 
   return (
@@ -18,7 +36,7 @@ export default ({ selected, config }) => {
       <Menu
         mode="horizontal"
         defaultSelectedKeys={[selected]}
-        style={{ lineHeight: '64px', float: 'left' }}
+        style={{ lineHeight: '64px' }}
         theme="light"
       >
         {items.map((item, i) => {
@@ -28,13 +46,18 @@ export default ({ selected, config }) => {
             </Menu.Item>
           )
         })}
-
         {loggedIn ? (
-          <Menu.Item key={items.length++}>
-            <Link to="/logout">Logout</Link>
+          <Menu.Item
+            style={{ float: 'right', marginRight: '20px' }}
+            key={items.length++}
+          >
+            <div onClick={handleLogout}>Logout</div>
           </Menu.Item>
         ) : (
-          <Menu.Item key={items.length++}>
+          <Menu.Item
+            style={{ float: 'right', marginRight: '20px' }}
+            key={items.length++}
+          >
             <Link to="/login">Login</Link>
           </Menu.Item>
         )}

@@ -1,26 +1,15 @@
 import React from 'react'
-import { Form, Icon, Input, Button, notification } from 'antd'
-import requester from '../helpers/requester'
+import { Form, Icon, Input, Button } from 'antd'
 import notificationHandler from '../helpers/notificationHandler'
 
-const AdminForm = props => {
+const LoginForm = props => {
   const handleSubmit = e => {
     e.preventDefault()
     props.form.validateFields((err, values) => {
       if (!err) {
-        requester
-          .login(values)
-          .then(isValid => {
-            if (isValid) {
-              notificationHandler.success('Login Succeeded')
-            } else {
-              notificationHandler.error('Wrong password or username')
-            }
-          })
-          .catch(err => {
-            notificationHandler.error('Wrong password or username')
-          })
+        props.onSubmit(values)
       } else {
+        console.error(err)
         notificationHandler.error('something went wrong')
       }
     })
@@ -35,6 +24,8 @@ const AdminForm = props => {
         })(
           <Input
             prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+            type="text"
+            name="username"
             placeholder="Username"
           />
         )}
@@ -46,6 +37,7 @@ const AdminForm = props => {
           <Input
             prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
             type="password"
+            name="password"
             placeholder="Password"
           />
         )}
@@ -64,4 +56,4 @@ const AdminForm = props => {
   )
 }
 
-export default Form.create({ name: 'normal_login' })(AdminForm)
+export default Form.create({ name: 'normal_login' })(LoginForm)

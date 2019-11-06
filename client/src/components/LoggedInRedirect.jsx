@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import Cookies from 'js-cookie'
+import React from 'react'
 import { Redirect } from 'react-router-dom'
 
-export default ({ children }) => {
-  const [loggedIn] = useState(Cookies.get('loggedIn') !== undefined)
-
+/**
+ * Used to check if someone is logged in otherwise will redirect to home page
+ */
+export default ({ children, loggedIn }) => {
   if (loggedIn) {
     return <Redirect to="/" />
   } else {
