@@ -1,5 +1,5 @@
 'use strict'
-const { BadRequest, InternalServerError } = require('http-errors')
+const { InternalServerError } = require('http-errors')
 
 module.exports = async (fastify, opts) => {
   fastify.baseRoute(fastify, opts, {
@@ -10,16 +10,39 @@ module.exports = async (fastify, opts) => {
 
   fastify.post(
     `/${fastify.User.collection.collectionName}`,
-    (request, reply) => {
-      try {
-        new fastify.User(request.body).save(err => {
-          if (err) return reply.send(new BadRequest(err.message))
-          return fastify.success(reply)
-        })
-      } catch (err) {
-        fastify.log.error(err)
-        return reply.send(new InternalServerError())
+    {
+      schema: {
+        body: {
+          type: 'object',
+          properties: {
+            username: { type: 'string' },
+            password: { type: 'string' },
+            email: { type: 'string' },
+            role: { type: 'string' }
+          },
+          required: ['username', 'password', 'email', 'role']
+        }
       }
+    },
+    (request, reply) => {
+      console.log(request.body)
+      request.body.ip = request.ip
+      fastify.crypto.encryptKey(request.body.password).then(hash => {
+        request.body.password = hash
+        try {
+          new fastify.User(request.body).save(err => {
+            if (err) {
+              fastify.log.error(err)
+              return reply.send(new InternalServerError())
+            } else {
+              return fastify.success(reply)
+            }
+          })
+        } catch (err) {
+          fastify.log.error(err)
+          return reply.send(new InternalServerError())
+        }
+      })
     }
   )
 

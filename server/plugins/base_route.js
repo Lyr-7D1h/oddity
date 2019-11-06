@@ -21,8 +21,6 @@ module.exports = fp(async instance => {
         ? excludeMethods
         : [excludeMethods]
 
-      console.log(excludeMethods)
-
       fastify.log.info(`Controller for "${collectionName}" initialized`)
 
       const validateId = (request, reply, next) => {
