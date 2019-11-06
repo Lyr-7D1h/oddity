@@ -1,34 +1,34 @@
-import axios from "axios";
+import axios from 'axios'
 
-const baseUrl = "/api/";
+const baseUrl = '/api/'
 
 const post = (route, data) => {
   return new Promise((resolve, reject) => {
     axios
       .post(baseUrl + route, data)
       .then(res => {
-        resolve(res.data);
+        resolve(res.data)
       })
       .catch(err => {
-        reject(err);
-      });
-  });
-};
+        reject(err)
+      })
+  })
+}
 
 const get = route => {
   return new Promise((resolve, reject) => {
     axios
       .get(baseUrl + route)
       .then(res => {
-        resolve(res.data);
+        resolve(res.data)
       })
       .catch(err => {
-        reject(err);
-      });
-  });
-};
+        reject(err)
+      })
+  })
+}
 
 export default {
   post,
   get
-};
+}
