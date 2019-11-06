@@ -1,15 +1,13 @@
-import React from "react";
-import { BrowserRouter, Route } from "react-router-dom";
-import "./styling/App.less";
+import React from 'react'
+import { BrowserRouter, Route } from 'react-router-dom'
+import './styling/App.less'
 
-import HomePage from "./pages/HomePage";
+import HomePage from './pages/HomePage'
 
 export default () => {
   return (
     <BrowserRouter>
-      <Route path="/">
-        <HomePage></HomePage>
-      </Route>
+      <Route path="/" component={HomePage}></Route>
     </BrowserRouter>
-  );
-};
+  )
+}
