@@ -85,7 +85,7 @@ module.exports = fp(async instance => {
 
   const cookieAuth = (request, reply, done) => {
     console.log('COOKIE AUTH')
-    console.log(request.session.user)
+    console.log(request.session)
 
     if (request.session && request.session.user) {
       if (request.session.user.id) {

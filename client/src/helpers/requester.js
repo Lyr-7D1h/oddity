@@ -1,6 +1,21 @@
 import axios from 'axios'
+import Cookies from 'js-cookie'
+import forceRefresh from './forceRefresh'
 
 const baseUrl = '/api/'
+
+const get = route => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(baseUrl + route)
+      .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
 
 const post = (route, data) => {
   return new Promise((resolve, reject) => {
@@ -26,6 +41,8 @@ const login = values => {
       })
       .then(res => {
         if (res.status === 200) {
+          Cookies.set('loggedIn', true)
+          forceRefresh()
           resolve(true)
         }
         resolve(false)
@@ -34,12 +51,18 @@ const login = values => {
   })
 }
 
-const get = route => {
+const logout = () => {
   return new Promise((resolve, reject) => {
     axios
-      .get(baseUrl + route)
+      .get(`${baseUrl}users/logout`)
       .then(res => {
-        resolve(res.data)
+        if (res.status === 200) {
+          Cookies.remove('loggedIn')
+          forceRefresh()
+          resolve()
+        } else {
+          reject('no ok status')
+        }
       })
       .catch(err => {
         reject(err)
@@ -50,5 +73,6 @@ const get = route => {
 export default {
   post,
   get,
-  login
+  login,
+  logout
 }

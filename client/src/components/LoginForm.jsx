@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Icon, Input, Button } from 'antd'
+import { Form, Icon, Input, Button, notification } from 'antd'
 import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
 
@@ -8,11 +8,11 @@ const AdminForm = props => {
     e.preventDefault()
     props.form.validateFields((err, values) => {
       if (!err) {
-        console.log(values)
         requester
           .login(values)
           .then(isValid => {
             if (isValid) {
+              notificationHandler.success('Login Succeeded')
             } else {
               notificationHandler.error('Wrong password or username')
             }
