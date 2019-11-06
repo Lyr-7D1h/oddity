@@ -1,18 +1,18 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-import * as serviceWorker from "./serviceWorker";
-import App from "./App.jsx";
+import * as serviceWorker from './serviceWorker'
+import App from './App.jsx'
 
 // import "antd/dist/antd.less";
 // import "antd/dist/antd.css";
 
-import "./styling/index.less";
-import "./styling/theme.less";
+// import "./styling/index.less";
+import './styling/theme.less'
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById('root'))
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+serviceWorker.unregister()

@@ -15,6 +15,25 @@ const post = (route, data) => {
   })
 }
 
+const login = values => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${baseUrl}users/login`, {
+        auth: {
+          username: values.username,
+          password: values.password
+        }
+      })
+      .then(res => {
+        if (res.status === 200) {
+          resolve(true)
+        }
+        resolve(false)
+      })
+      .catch(err => reject(err))
+  })
+}
+
 const get = route => {
   return new Promise((resolve, reject) => {
     axios
@@ -30,5 +49,6 @@ const get = route => {
 
 export default {
   post,
-  get
+  get,
+  login
 }

@@ -1,5 +1,5 @@
 module.exports = fastify => {
-  fastify.post(
+  fastify.get(
     '/users/login',
     {
       preHandler: fastify.auth([

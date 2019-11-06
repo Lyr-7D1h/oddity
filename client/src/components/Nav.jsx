@@ -38,7 +38,7 @@ export default ({ selected, config }) => {
         </Menu.Item> */}
 
         <Menu.Item key="5">
-          <Link to="/projects">Login</Link>
+          <Link to="/login">Login</Link>
         </Menu.Item>
       </Menu>
     </>
