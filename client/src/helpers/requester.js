@@ -3,14 +3,16 @@ import axios from "axios";
 const baseUrl = "/api/";
 
 const post = (route, data) => {
-  axios
-    .post(baseUrl + route, data)
-    .then(res => {
-      console.log(res);
-    })
-    .catch(err => {
-      console.error(err);
-    });
+  return new Promise((resolve, reject) => {
+    axios
+      .post(baseUrl + route, data)
+      .then(res => {
+        resolve(res.data);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
 };
 
 const get = route => {
