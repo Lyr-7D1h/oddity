@@ -1,6 +1,5 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import forceRefresh from './forceRefresh'
 
 const baseUrl = '/api/'
 
@@ -42,7 +41,6 @@ const login = values => {
       .then(res => {
         if (res.status === 200) {
           Cookies.set('loggedIn', true)
-          // forceRefresh()
           resolve(true)
         }
         resolve(false)
@@ -58,7 +56,6 @@ const logout = () => {
       .then(res => {
         if (res.status === 200) {
           Cookies.remove('loggedIn')
-          // forceRefresh()
           resolve()
         } else {
           reject('Request failed: code is ' + res.status)
