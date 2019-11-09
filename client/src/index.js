@@ -4,11 +4,12 @@ import ReactDOM from 'react-dom'
 import * as serviceWorker from './serviceWorker'
 import App from './App.jsx'
 
-// import "antd/dist/antd.less";
-// import "antd/dist/antd.css";
-
-// import "./styling/index.less";
 import './styling/theme.less'
+
+import requester from './helpers/requester'
+requester.get('config').then(config => {
+  console.log(config)
+})
 
 ReactDOM.render(<App />, document.getElementById('root'))
 

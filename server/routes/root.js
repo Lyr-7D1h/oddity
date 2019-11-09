@@ -1,8 +1,7 @@
 'use strict'
 
-module.exports = async function (fastify, opts) {
-  fastify.get('/', async function (request, reply) {
-    return "Welcome to Oddity API"
+module.exports = async function(fastify, opts) {
+  fastify.get('/', async function(request, reply) {
+    return 'Welcome to Oddity API'
   })
 }
-

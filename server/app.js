@@ -24,11 +24,12 @@ module.exports = async (fastify, opts) => {
 
     .register(require('fastify-auth'))
 
-    // Autoload Plugins & Routes
+    // Autoload Plugins
     .register(AutoLoad, {
       dir: path.join(__dirname, 'plugins'),
       options: Object.assign({}, opts)
     })
+    // Autoload Routes
     .register(AutoLoad, {
       dir: path.join(__dirname, 'routes'),
       options: Object.assign(
