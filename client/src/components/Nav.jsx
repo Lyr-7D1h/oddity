@@ -6,16 +6,14 @@ import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
 
 export default ({ selected, config }) => {
-  const [loggedIn, setLoggedIn] = useState(
-    Cookies.get('loggedIn') !== undefined
-  )
+  const [loggedIn, setLoggedIn] = useState(Cookies.get('user') !== undefined)
 
   // TODO: finish when configuration is done
   // get configuration
   const items = [{ name: 'Oddity', isTitle: true }]
-  if (config.nav) {
-    items.concat(config.nav)
-  }
+  // if (config.nav) {
+  //   items.concat(config.nav)
+  // }
 
   const handleLogout = () => {
     requester

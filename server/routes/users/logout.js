@@ -12,6 +12,7 @@ module.exports = fastify => {
           fastify.log.error(err)
           reply.send(new InternalServerError())
         }
+        reply.clearCookie('user', { path: '/' })
         reply.send()
       })
     }

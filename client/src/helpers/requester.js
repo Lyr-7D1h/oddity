@@ -40,7 +40,6 @@ const login = values => {
       })
       .then(res => {
         if (res.status === 200) {
-          Cookies.set('loggedIn', true)
           resolve(true)
         }
         resolve(false)
@@ -55,13 +54,16 @@ const logout = () => {
       .get(`${baseUrl}users/logout`)
       .then(res => {
         if (res.status === 200) {
-          Cookies.remove('loggedIn')
           resolve()
         } else {
           reject('Request failed: code is ' + res.status)
         }
       })
       .catch(err => {
+        // also remove when current session is invalid
+        if (err.response.status === 401) {
+          Cookies.remove('user')
+        }
         reject(err)
       })
   })

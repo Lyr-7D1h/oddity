@@ -29,12 +29,37 @@ module.exports = fp(async instance => {
       max: 30
     },
     role: {
-      type: Number,
+      type: instance.mongoose.ObjectId,
       required: true
     }
   })
 
   const User = instance.mongoose.connection.model('User', userSchema)
+  instance.Role.findOne({ name: 'admin' }, '_id').then(role => {
+    if (role === null) {
+      instance.log.error('Default Admin Role does not exist')
+    }
+    User.findOne({ username: 'admin' }).then(adminUser => {
+      if (adminUser === null) {
+        instance.crypto
+          .encryptKey('admin')
+          .then(hash => {
+            User.create({
+              username: 'admin',
+              password: hash,
+              email: 'admin@admin.com',
+              ip: '0:0:0:0',
+              role: role._id
+            })
+              .then(() => {
+                instance.log.info('Created Default Admin User')
+              })
+              .catch(err => instance.log.error(err))
+          })
+          .catch(err => instance.log.error(err))
+      }
+    })
+  })
 
   instance.decorate('User', User)
 })

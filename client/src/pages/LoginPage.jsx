@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Card, Row, Col } from 'antd'
-import configReader from '../helpers/configReader'
 import LoginForm from '../components/LoginForm'
 import Page from '../containers/Page'
 import LoggedInRedirect from '../components/LoggedInRedirect'
@@ -11,10 +10,7 @@ import notificationHandler from '../helpers/notificationHandler'
 import requester from '../helpers/requester'
 
 export default ({ location }) => {
-  const [loggedIn, setLoggedIn] = useState(
-    Cookies.get('loggedIn') !== undefined
-  )
-  const config = configReader(location)
+  const [loggedIn, setLoggedIn] = useState(Cookies.get('user') !== undefined)
 
   const handleLogin = values => {
     requester
@@ -34,7 +30,7 @@ export default ({ location }) => {
 
   return (
     <LoggedInRedirect loggedIn={loggedIn}>
-      <Page config={config} justify="center">
+      <Page justify="center">
         <Row type="flex">
           <Col span={12}>
             <Card>
