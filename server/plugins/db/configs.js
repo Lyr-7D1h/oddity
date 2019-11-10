@@ -29,7 +29,7 @@ module.exports = fp(async instance => {
       Config.create({
         name: 'default',
         isActive: true,
-        nav: [{ name: 'ODDITY', isTitle: true }]
+        nav: [{ name: 'Oddity', isTitle: true }]
       })
         .then(() => {
           instance.log.info('Created Default Config')

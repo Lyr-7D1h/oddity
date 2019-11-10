@@ -53,7 +53,6 @@ module.exports = fp(async instance => {
     if (basicCredentials && basicCredentials.name && basicCredentials.pass) {
       instance.User.find({ username: basicCredentials.name }, 'password _id')
         .then(users => {
-          console.log(users)
           if (users.length > 0) {
             instance.crypto
               .validateKey(basicCredentials.pass, users[0].password)

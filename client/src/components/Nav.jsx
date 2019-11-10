@@ -21,8 +21,9 @@ const Nav = ({ selected, config, user, updateUser }) => {
         notificationHandler.success('Logged out successfully')
       })
       .catch(() => {
+        setLoginError(true) // redirect to /login when something went wrong
+        updateUser({}) // remove user from state
         notificationHandler.error('Something went wrong')
-        setLoginError(true)
       })
   }
 

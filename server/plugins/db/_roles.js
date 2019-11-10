@@ -17,7 +17,7 @@ module.exports = fp(async instance => {
       type: String,
       validator: [colorValidator, 'Invalid color']
     },
-    permission: {
+    permissions: {
       type: Number,
       required: true
     }
@@ -28,7 +28,7 @@ module.exports = fp(async instance => {
   // create default role admin
   Role.findOne({ name: 'admin' }).then(role => {
     if (role === null) {
-      Role.create({ name: 'admin', nameRaw: 'Admin', permission: 1 })
+      Role.create({ name: 'admin', nameRaw: 'Admin', permissions: 1 })
         .then(() => {
           instance.log.info('Created Default Admin Role')
         })

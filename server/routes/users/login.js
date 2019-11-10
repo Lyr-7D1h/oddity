@@ -25,10 +25,9 @@ module.exports = fastify => {
                 username: user.username,
                 email: user.email,
                 roleId: role._id.toString(),
-                permission: role.permission
+                permissions: role.permissions
               }
 
-              console.log(typeof role, role)
               reply.setCookie('user', JSON.stringify(userCookie), {
                 httpOnly: !(fastify.config.ENV === 'development'), // set httpOnly and secure off when in dev
                 secure: !(fastify.config.ENV === 'development'),
