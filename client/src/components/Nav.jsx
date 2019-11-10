@@ -39,22 +39,25 @@ const Nav = ({ selected, config, user, updateUser }) => {
       >
         {items.map((item, i) => {
           return (
-            <Menu.Item key={i} className={item.isTitle ? 'title' : ''}>
+            <Menu.Item
+              key={item.name.toLowerCase()}
+              className={item.isTitle ? 'title' : ''}
+            >
               <Link to="/">{item.name}</Link>
             </Menu.Item>
           )
         })}
         {user.username !== undefined ? (
-          <Menu.Item style={{ float: 'right' }} key={items.length++}>
+          <Menu.Item style={{ float: 'right' }} key="logout">
             <div onClick={handleLogout}>Logout</div>
           </Menu.Item>
         ) : (
-          <Menu.Item style={{ float: 'right' }} key={items.length++}>
+          <Menu.Item style={{ float: 'right' }} key="login">
             <Link to="/login">Login</Link>
           </Menu.Item>
         )}
         {user.permissions === 1 ? (
-          <Menu.Item style={{ float: 'right' }}>
+          <Menu.Item style={{ float: 'right' }} key="admin">
             <Link to="/admin">Admin</Link>
           </Menu.Item>
         ) : (

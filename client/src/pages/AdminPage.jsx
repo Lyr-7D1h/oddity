@@ -1,5 +1,6 @@
 import React from 'react'
+import Page from '../containers/Page'
 
 export default () => {
-  return <div>Admin Page</div>
+  return <Page selected="admin">Admin</Page>
 }
