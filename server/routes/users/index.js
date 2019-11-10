@@ -4,7 +4,7 @@ const { InternalServerError } = require('http-errors')
 module.exports = async (fastify, opts) => {
   fastify.baseRoute(fastify, opts, {
     Model: fastify.User,
-    columns: '-password',
+    columns: '-password -ip -eamil',
     excludeMethods: 'create'
   })
 

@@ -83,7 +83,7 @@ module.exports = fp(async instance => {
   // Print current Admin AccessKey
   Portal.find({ name: 'admin' }, 'accessKey').then(portals => {
     if (portals[0]) {
-      instance.log.info(`Admin AccessKey: ${portals[0].accessKey}`)
+      instance.log.info(`Admin Portal AccessKey: ${portals[0].accessKey}`)
     }
   })
 

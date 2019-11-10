@@ -28,13 +28,14 @@ module.exports = fp(async instance => {
       lowercase: true,
       max: 30
     },
-    role: {
+    roleId: {
       type: instance.mongoose.ObjectId,
       required: true
     }
   })
 
   const User = instance.mongoose.connection.model('User', userSchema)
+
   instance.Role.findOne({ name: 'admin' }, '_id').then(role => {
     if (role === null) {
       instance.log.error('Default Admin Role does not exist')
@@ -49,7 +50,7 @@ module.exports = fp(async instance => {
               password: hash,
               email: 'admin@admin.com',
               ip: '0:0:0:0',
-              role: role._id
+              roleId: role._id
             })
               .then(() => {
                 instance.log.info('Created Default Admin User')

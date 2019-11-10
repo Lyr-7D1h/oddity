@@ -2,11 +2,17 @@ import React, { useState } from 'react'
 import { Menu } from 'antd'
 import { Link } from 'react-router-dom'
 import Cookies from 'js-cookie'
+import { Redirect } from 'react-router-dom'
 import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
+import getUser from '../helpers/getUser'
 
 export default ({ selected, config }) => {
   const [loggedIn, setLoggedIn] = useState(Cookies.get('user') !== undefined)
+  const [loginError, setLoginError] = useState(false)
+
+  const user = getUser()
+  console.log(typeof user, user)
 
   // TODO: finish when configuration is done
   // get configuration
@@ -23,12 +29,14 @@ export default ({ selected, config }) => {
         setLoggedIn(false)
       })
       .catch(() => {
-        notificationHandler.error('Logout failed')
+        notificationHandler.error('Something went wrong')
+        setLoginError(true)
       })
   }
 
   return (
     <>
+      {loginError ? <Redirect to="/login" /> : ''}
       <div className="logo" />
       <Menu
         mode="horizontal"
