@@ -1,31 +1,24 @@
 import React, { useState } from 'react'
 import { Menu } from 'antd'
 import { Link } from 'react-router-dom'
-import Cookies from 'js-cookie'
 import { Redirect } from 'react-router-dom'
 import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
-import getUser from '../helpers/getUser'
 
-export default ({ selected, config }) => {
-  const [loggedIn, setLoggedIn] = useState(Cookies.get('user') !== undefined)
+import { connect } from 'react-redux'
+import { updateUser } from '../redux/actions/userActions'
+
+const Nav = ({ selected, config, user, updateUser }) => {
   const [loginError, setLoginError] = useState(false)
 
-  const { permission } = getUser()
-
-  // TODO: finish when configuration is done
-  // get configuration
-  const items = [{ name: 'Oddity', isTitle: true }]
-  // if (config.nav) {
-  //   items.concat(config.nav)
-  // }
+  const items = config.nav || []
 
   const handleLogout = () => {
     requester
       .logout()
       .then(() => {
+        updateUser({})
         notificationHandler.success('Logged out successfully')
-        setLoggedIn(false)
       })
       .catch(() => {
         notificationHandler.error('Something went wrong')
@@ -50,7 +43,7 @@ export default ({ selected, config }) => {
             </Menu.Item>
           )
         })}
-        {loggedIn ? (
+        {user.username !== undefined ? (
           <Menu.Item style={{ float: 'right' }} key={items.length++}>
             <div onClick={handleLogout}>Logout</div>
           </Menu.Item>
@@ -59,7 +52,7 @@ export default ({ selected, config }) => {
             <Link to="/login">Login</Link>
           </Menu.Item>
         )}
-        {permission === 1 ? (
+        {user.permissions === 1 ? (
           <Menu.Item style={{ float: 'right' }}>
             <Link to="/admin">Admin</Link>
           </Menu.Item>
@@ -70,3 +63,8 @@ export default ({ selected, config }) => {
     </>
   )
 }
+
+export default connect(
+  state => ({ user: state.user, config: state.config }),
+  { updateUser }
+)(Nav)

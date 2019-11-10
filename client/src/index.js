@@ -6,12 +6,14 @@ import App from './App.jsx'
 
 import './styling/theme.less'
 
-import requester from './helpers/requester'
-requester.get('config').then(config => {
-  console.log(config)
-})
+import { Initializer } from './redux/Initializer'
 
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(
+  <Initializer>
+    <App />
+  </Initializer>,
+  document.getElementById('root')
+)
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

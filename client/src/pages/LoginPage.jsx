@@ -4,20 +4,24 @@ import LoginForm from '../components/LoginForm'
 import Page from '../containers/Page'
 import LoggedInRedirect from '../components/LoggedInRedirect'
 import Title from 'antd/lib/typography/Title'
-import Cookies from 'js-cookie'
 
 import notificationHandler from '../helpers/notificationHandler'
 import requester from '../helpers/requester'
 
-export default ({ location }) => {
-  const [loggedIn, setLoggedIn] = useState(Cookies.get('user') !== undefined)
+import { connect } from 'react-redux'
+import { updateUser } from '../redux/actions/userActions'
+import getUser from '../helpers/getUser'
+
+const LoginPage = ({ location, user, updateUser }) => {
+  // if no username not logged in
+  const [loggedIn] = useState(user.username !== undefined)
 
   const handleLogin = values => {
     requester
       .login(values)
       .then(isValid => {
         if (isValid) {
-          setLoggedIn(true)
+          updateUser(getUser())
           notificationHandler.success('Login Succeeded')
         } else {
           notificationHandler.error('Wrong password or username')
@@ -50,3 +54,17 @@ export default ({ location }) => {
     </LoggedInRedirect>
   )
 }
+
+const mapStateToProps = state => {
+  return {
+    user: state.user
+  }
+}
+const mapActionsToProps = {
+  updateUser
+}
+
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(LoginPage)
