@@ -5,6 +5,6 @@ export default () => {
   if (user === undefined) {
     return {}
   } else {
-    return user
+    return JSON.parse(user)
   }
 }

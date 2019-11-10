@@ -11,8 +11,7 @@ export default ({ selected, config }) => {
   const [loggedIn, setLoggedIn] = useState(Cookies.get('user') !== undefined)
   const [loginError, setLoginError] = useState(false)
 
-  const user = getUser()
-  console.log(typeof user, user)
+  const { permission } = getUser()
 
   // TODO: finish when configuration is done
   // get configuration
@@ -41,7 +40,7 @@ export default ({ selected, config }) => {
       <Menu
         mode="horizontal"
         defaultSelectedKeys={[selected]}
-        style={{ lineHeight: '64px' }}
+        style={{ lineHeight: '64px', marginRight: '20px' }}
         theme="light"
       >
         {items.map((item, i) => {
@@ -52,19 +51,20 @@ export default ({ selected, config }) => {
           )
         })}
         {loggedIn ? (
-          <Menu.Item
-            style={{ float: 'right', marginRight: '20px' }}
-            key={items.length++}
-          >
+          <Menu.Item style={{ float: 'right' }} key={items.length++}>
             <div onClick={handleLogout}>Logout</div>
           </Menu.Item>
         ) : (
-          <Menu.Item
-            style={{ float: 'right', marginRight: '20px' }}
-            key={items.length++}
-          >
+          <Menu.Item style={{ float: 'right' }} key={items.length++}>
             <Link to="/login">Login</Link>
           </Menu.Item>
+        )}
+        {permission === 1 ? (
+          <Menu.Item style={{ float: 'right' }}>
+            <Link to="/admin">Admin</Link>
+          </Menu.Item>
+        ) : (
+          ''
         )}
       </Menu>
     </>
