@@ -3,7 +3,7 @@
 SERVER="$(pwd)/server"
 CLIENT="$(pwd)/client"
 
-start_server() {
+start_server_prod() {
 	echo "[PROD] Starting server"
 	cd $SERVER
 	ENV="production"
@@ -30,9 +30,18 @@ start_client() {
 if [[ $1 = "dev" ]]; then
 	start_client
 	start_server_dev
-else  
+elif [[ $1 = "prod" ]]; then 
 	build_client
-	start_server
+	start_server_prod
+else 
+	cd $CLIENT
+	npm ci 
+
+	cd $SERVER
+	npm ci
+
+	build_client
+	start_server_prod
 fi
 
-echo "your argument is $1"
+
