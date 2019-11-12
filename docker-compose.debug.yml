@@ -1,0 +1,15 @@
+version: "2.1"
+
+services:
+  oddity-v2:
+    image: oddity-v2
+    build: .
+    environment:
+      NODE_ENV: development
+      ADMIN_SECRET: 2CQjOFf46lma5*#5m9sZCBSHESjTFgEIdy!C
+      CONNECTION_STRING: mongodb+srv://oddityStaging:40vOCy06sago47Pk@staging-ausly.gcp.mongodb.net/staging?retryWrites=true&w=majority
+    ports:
+      - 5000:5000
+      - 9229:9229
+    ## set your startup file here
+    command: node --inspect=0.0.0.0:9229 index.js

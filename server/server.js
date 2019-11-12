@@ -19,13 +19,13 @@ const server = Fastify({
 
 const envSchema = {
   type: 'object',
-  required: ['CONNECTION_STRING', 'PORT', 'ADMIN_SECRET'],
+  required: ['CONNECTION_STRING', 'ADMIN_SECRET'],
   properties: {
     CONNECTION_STRING: { type: 'string' },
     ADMIN_SECRET: { type: 'string' },
     SESSION_SECRET: { type: 'string' },
     PORT: { type: 'integer' },
-    ENV: { type: 'string' }
+    NODE_ENV: { type: 'string' }
   },
   additionalProperties: false
 }
@@ -34,8 +34,8 @@ server.register(require('fastify-env'), { schema: envSchema })
 
 server.register(require('./app.js'))
 
-server.listen(process.env.PORT || 3000, err => {
-  if (server.config.ENV === 'development') {
+server.listen(process.env.PORT || 5000, err => {
+  if (server.config.NODE_ENV === 'development') {
     server.log.warn('RUNNING IN DEVELOPMENT MODE')
   }
   server.log.info('Routes:')

@@ -6,7 +6,7 @@ CLIENT="$(pwd)/client"
 start_server_prod() {
 	echo "[PROD] Starting server"
 	cd $SERVER
-	ENV="production"
+	NODE_ENV="production"
 	npm start
 }
 start_server_dev() {

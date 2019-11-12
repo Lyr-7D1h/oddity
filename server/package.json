@@ -9,7 +9,7 @@
   "scripts": {
     "test": "tap test/**/*.test.js",
     "start": "node server.js",
-    "dev": "ENV=development nodemon start"
+    "dev": "NODE_ENV=development nodemon start"
   },
   "keywords": [],
   "author": "ivelthoven",
