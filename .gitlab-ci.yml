@@ -1,0 +1,18 @@
+stages:
+  - test
+  - build
+  - staging
+  - production
+
+test:
+  image: node:latest
+  stage: test
+  before_script:
+    - cd ./client && npm ci
+    - cd ../server && npm ci
+  script:
+    - cd ./client && npm test
+    - cd ../server && npm test
+
+build:
+  stage: build

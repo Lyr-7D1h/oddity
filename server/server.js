@@ -34,7 +34,7 @@ server.register(require('fastify-env'), { schema: envSchema })
 
 server.register(require('./app.js'))
 
-server.listen(process.env.PORT || 5000, err => {
+server.listen(process.env.PORT || 5000, '0.0.0.0', err => {
   if (server.config.NODE_ENV === 'development') {
     server.log.warn('RUNNING IN DEVELOPMENT MODE')
   }
