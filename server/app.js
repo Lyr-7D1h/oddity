@@ -13,8 +13,8 @@ module.exports = async (fastify, opts) => {
         fastify.config.SESSION_SECRET ||
         '&K$RePnO0NF#Z5sYSAGXaM!ezxd^E^PORi38u',
       cookie: {
-        httpOnly: !(fastify.config.ENV === 'development'), // set httpOnly and secure off when in dev
-        secure: !(fastify.config.ENV === 'development')
+        httpOnly: !(fastify.config.NODE_ENV === 'development'), // set httpOnly and secure off when in dev
+        secure: !(fastify.config.NODE_ENV === 'development')
       }
     })
 

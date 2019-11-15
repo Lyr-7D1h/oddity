@@ -29,8 +29,8 @@ module.exports = fastify => {
               }
 
               reply.setCookie('user', JSON.stringify(userCookie), {
-                httpOnly: !(fastify.config.ENV === 'development'), // set httpOnly and secure off when in dev
-                secure: !(fastify.config.ENV === 'development'),
+                httpOnly: !(fastify.config.NODE_ENV === 'development'), // set httpOnly and secure off when in dev
+                secure: !(fastify.config.NODE_ENV === 'development'),
                 path: '/'
               })
               reply.send()

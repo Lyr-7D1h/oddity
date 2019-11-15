@@ -29,7 +29,7 @@ module.exports = fp(async instance => {
   /**
    * Create Admin Portal or adjust if password from env variable changes
    */
-  const secret = process.env.ADMIN_SECRET || 'exsiteisverycool'
+  const secret = instance.config.ADMIN_SECRET || 'exsiteisverycool'
 
   Portal.find({ name: 'admin' }, 'secretKey _id')
     .then(portals => {
