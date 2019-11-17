@@ -9,7 +9,7 @@ import configReducer from './reducers/configReducer'
 import userReducer from './reducers/userReducer'
 
 import { updateUser } from './actions/userActions'
-import { updateConfig } from './actions/configActions'
+import { updateConfig, loadConfig, fetchConfig } from './actions/configActions'
 
 const store = createStore(
   combineReducers({
@@ -28,6 +28,8 @@ const user = getUser()
 if (user.username !== undefined) {
   store.dispatch(updateUser(user))
 }
+
+store.dispatch(fetchConfig())
 
 // Load config from /api/config
 requester.get('config').then(config => {

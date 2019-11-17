@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Menu } from 'antd'
+import { Menu, Row, Col } from 'antd'
+
 import { Link } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
 import requester from '../helpers/requester'
@@ -12,6 +13,7 @@ const Nav = ({ selected, config, user, updateUser }) => {
   const [loginError, setLoginError] = useState(false)
 
   const items = config.nav || []
+  const title = config.title
 
   const handleLogout = () => {
     requester
@@ -30,45 +32,47 @@ const Nav = ({ selected, config, user, updateUser }) => {
   return (
     <>
       {loginError ? <Redirect to="/login" /> : ''}
-      <div className="logo" />
-      <Menu
-        mode="horizontal"
-        defaultSelectedKeys={[selected]}
-        style={{ lineHeight: '64px', marginRight: '20px' }}
-        theme="light"
-      >
-        {items.map((item, i) => {
-          return (
-            <Menu.Item
-              key={item.name.toLowerCase()}
-              className={item.isTitle ? 'title' : ''}
-            >
-              <Link to="/">{item.name}</Link>
-            </Menu.Item>
-          )
-        })}
-        {user.username !== undefined ? (
-          <Menu.Item style={{ float: 'right' }} key="logout">
-            <div onClick={handleLogout}>Logout</div>
-          </Menu.Item>
-        ) : (
-          <Menu.Item style={{ float: 'right' }} key="login">
-            <Link to="/login">Login</Link>
-          </Menu.Item>
-        )}
-        {user.permissions === 1 ? (
-          <Menu.Item style={{ float: 'right' }} key="admin">
-            <Link to="/admin">Admin</Link>
-          </Menu.Item>
-        ) : (
-          ''
-        )}
-      </Menu>
+      <Row>
+        <Col span={4}>
+          <div className="title">
+            <Link to="/">{title.title}</Link>
+          </div>
+        </Col>
+        <Col span={20}>
+          <Menu
+            mode="horizontal"
+            defaultSelectedKeys={[selected]}
+            style={{ lineHeight: '64px', marginRight: '20px' }}
+            theme="light"
+          >
+            {items.map((item, i) => (
+              <Menu.Item key={item.name.toLowerCase()}>
+                <Link to={`/${item.name.toLowerCase()}`} />
+              </Menu.Item>
+            ))}
+            {user.username !== undefined ? (
+              <Menu.Item style={{ float: 'right' }} key="logout">
+                <div onClick={handleLogout}>Logout</div>
+              </Menu.Item>
+            ) : (
+              <Menu.Item style={{ float: 'right' }} key="login">
+                <Link to="/login">Login</Link>
+              </Menu.Item>
+            )}
+            {user.permissions === 1 ? (
+              <Menu.Item style={{ float: 'right' }} key="admin">
+                <Link to="/admin">Admin</Link>
+              </Menu.Item>
+            ) : (
+              ''
+            )}
+          </Menu>
+        </Col>
+      </Row>
     </>
   )
 }
 
-export default connect(
-  state => ({ user: state.user, config: state.config }),
-  { updateUser }
-)(Nav)
+export default connect(state => ({ user: state.user, config: state.config }), {
+  updateUser
+})(Nav)
