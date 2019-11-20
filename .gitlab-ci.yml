@@ -1,24 +1,29 @@
 stages:
-  - test
   - build
-  - staging
-  - production
+  - test
+  - deploy
 
-test:
+build:
   image: node:latest
-  stage: test
+  stage: build
   before_script:
     - cd ./client && npm ci
     - cd ../server && npm ci
   script:
+    - cd ./client && npm run build
+
+test:
+  image: node:latest
+  stage: test
+  script:
     - cd ./client && npm test
     - cd ../server && npm test
-    
-build:
-    image: docker:latest
-    stage: build
-    before_script:
-     - curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-     - sudo chmod +x /usr/local/bin/docker-compose
-    script: 
-     - docker-compose up
+
+deploy:
+  image: docker:latest
+  stage: deploy
+  before_script:
+    - curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    - sudo chmod +x /usr/local/bin/docker-compose
+  script:
+    - docker-compose up
