@@ -6,9 +6,9 @@ const { build } = require('../helper')
 test('API: default root route', t => {
   t.plan(3)
 
-  const app = build(t)
+  const fastify = build(t)
 
-  app.inject(
+  fastify.inject(
     {
       url: '/api/'
     },
@@ -16,7 +16,6 @@ test('API: default root route', t => {
       t.error(err)
       t.deepEqual(res.statusCode, 200)
       t.deepEqual(res.body, 'Welcome to Oddity API')
-      t.end()
     }
   )
 })
@@ -24,9 +23,9 @@ test('API: default root route', t => {
 test('REACT: default root route', t => {
   t.plan(3)
 
-  const app = build(t)
+  const fastify = build(t)
 
-  app.inject(
+  fastify.inject(
     {
       url: '/'
     },
@@ -34,7 +33,6 @@ test('REACT: default root route', t => {
       t.error(err)
       t.deepEqual(res.statusCode, 200)
       t.deepEqual(res.headers['content-type'], 'text/html; charset=UTF-8')
-      t.end()
     }
   )
 })
