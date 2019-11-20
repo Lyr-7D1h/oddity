@@ -1,5 +1,4 @@
 'use strict'
-const { NotFound, BadRequest, InternalServerError } = require('http-errors')
 const fp = require('fastify-plugin')
 
 /**
@@ -27,7 +26,7 @@ module.exports = fp(async instance => {
         if (fastify.mongoose.ObjectId.isValid(request.params.id)) {
           return next()
         } else {
-          return reply.send(new BadRequest())
+          return reply.send(instance.httpErrors.badRequest())
         }
       }
 
@@ -38,12 +37,12 @@ module.exports = fp(async instance => {
         fastify.post(`/${collectionName}`, (request, reply) => {
           try {
             new Model(request.body).save(err => {
-              if (err) return reply.send(new BadRequest(err.message))
+              if (err) return reply.send(instance.httpErrors.badRequest())
               return fastify.success(reply)
             })
           } catch (err) {
             fastify.log.error(err)
-            return reply.send(new InternalServerError())
+            return reply.send(instance.httpErrors.internalServerError())
           }
         })
       }
@@ -59,7 +58,7 @@ module.exports = fp(async instance => {
             })
             .catch(err => {
               fastify.log.error(err)
-              return reply.send(new InternalServerError())
+              return reply.send(instance.httpErrors.internalServerError())
             })
         })
       }
@@ -79,14 +78,12 @@ module.exports = fp(async instance => {
           (request, reply) => {
             Model.findById(request.params.id, columns)
               .then(items => {
-                if (!items) return reply.send(new NotFound())
+                if (!items) return reply.send(instance.httpErrors.notFound())
                 return reply.send(items)
               })
               .catch(err => {
                 fastify.log.error(err)
-                return reply.send(
-                  new InternalServerError('something went wrong')
-                )
+                return reply.send(instance.httpErrors.internalServerError())
               })
           }
         )
@@ -108,13 +105,13 @@ module.exports = fp(async instance => {
             Model.updateOne({ _id: request.params.id }, request.body)
               .then(response => {
                 if (response.nModified === 0) {
-                  return reply.send(new NotFound())
+                  return reply.send(instance.httpErrors.notFound())
                 }
                 return fastify.success(reply)
               })
               .catch(err => {
                 fastify.log.error(err)
-                return reply.send(new BadRequest())
+                return reply.send(instance.httpErrors.badRequest)
               })
           }
         )
@@ -136,13 +133,13 @@ module.exports = fp(async instance => {
             Model.deleteOne({ _id: request.params.id })
               .then(response => {
                 if (response.deletedCount === 0) {
-                  return reply.send(new NotFound())
+                  return reply.send(instance.httpErrors.notFound())
                 }
                 return fastify.success(reply)
               })
               .catch(err => {
                 fastify.log.error(err)
-                return reply.send(new BadRequest())
+                return reply.send(instance.httpErrors.badRequest())
               })
           }
         )

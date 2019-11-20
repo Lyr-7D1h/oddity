@@ -3,6 +3,9 @@ logs
 *.log
 npm-debug.log*
 
+# Testing output
+.nyc_output
+
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build
 

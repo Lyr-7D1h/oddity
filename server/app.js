@@ -1,7 +1,7 @@
 'use strict'
 
 const path = require('path')
-const AutoLoad = require('fastify-autoload')
+const fastifyAutoload = require('fastify-autoload')
 
 module.exports = async (fastify, opts) => {
   fastify
@@ -25,12 +25,12 @@ module.exports = async (fastify, opts) => {
     .register(require('fastify-auth'))
 
     // Autoload Plugins
-    .register(AutoLoad, {
+    .register(fastifyAutoload, {
       dir: path.join(__dirname, 'plugins'),
       options: Object.assign({}, opts)
     })
     // Autoload Routes
-    .register(AutoLoad, {
+    .register(fastifyAutoload, {
       dir: path.join(__dirname, 'routes'),
       options: Object.assign(
         {

@@ -3,8 +3,27 @@
 const { test } = require('tap')
 const { build } = require('../helper')
 
-test('default root route', t => {
-  t.plan(2)
+test('API: default root route', t => {
+  t.plan(3)
+
+  const app = build(t)
+
+  app.inject(
+    {
+      url: '/api/'
+    },
+    (err, res) => {
+      t.error(err)
+      t.deepEqual(res.statusCode, 200)
+      t.deepEqual(res.body, 'Welcome to Oddity API')
+      t.end()
+    }
+  )
+})
+
+test('REACT: default root route', t => {
+  t.plan(3)
+
   const app = build(t)
 
   app.inject(
@@ -12,21 +31,10 @@ test('default root route', t => {
       url: '/'
     },
     (err, res) => {
-      // console.log(res.statusCode)
       t.error(err)
       t.deepEqual(res.statusCode, 200)
-      t.deepEqual(JSON.parse(res.body), 'Welcome to Oddity API')
+      t.deepEqual(res.headers['content-type'], 'text/html; charset=UTF-8')
+      t.end()
     }
   )
 })
-
-// If you prefer async/await, use the following
-//
-// test('default root route', async (t) => {
-//   const app = build(t)
-//
-//   const res = await app.inject({
-//     url: '/'
-//   })
-//   t.deepEqual(JSON.parse(res.payload), { root: true })
-// })

@@ -1,5 +1,3 @@
-const { InternalServerError } = require('http-errors')
-
 module.exports = fastify => {
   fastify.get(
     '/users/login',
@@ -17,6 +15,7 @@ module.exports = fastify => {
           fastify.Role.findById(user.roleId)
             .then(role => {
               if (role === null) {
+                // every user should have a role
                 throw Error('User does not have a role')
               }
 
@@ -37,12 +36,12 @@ module.exports = fastify => {
             })
             .catch(err => {
               fastify.log.error(err)
-              reply.send(new InternalServerError())
+              reply.send(fastify.httpErrors.internalServerError())
             })
         })
         .catch(err => {
           fastify.log.error(err)
-          reply.send(new InternalServerError())
+          reply.send(fastify.httpErrors.internalServerError())
         })
     }
   )

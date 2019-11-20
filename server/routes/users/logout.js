@@ -1,5 +1,3 @@
-const { InternalServerError } = require('http-errors')
-
 module.exports = fastify => {
   fastify.get(
     '/users/logout',
@@ -10,7 +8,7 @@ module.exports = fastify => {
       request.destroySession(err => {
         if (err) {
           fastify.log.error(err)
-          reply.send(new InternalServerError())
+          reply.send(fastify.httpErrors.internalServerError())
         }
         reply.clearCookie('user', { path: '/' })
         reply.send()

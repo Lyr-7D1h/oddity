@@ -1,5 +1,3 @@
-const { InternalServerError } = require('http-errors')
-
 module.exports = async fastify => {
   fastify.get('/config', (request, reply) => {
     fastify.Config.findOne({})
@@ -8,7 +6,7 @@ module.exports = async fastify => {
       })
       .catch(err => {
         fastify.log.error(err)
-        reply.send(new InternalServerError())
+        reply.send(fastify.httpErrors.internalServerError())
       })
   })
 

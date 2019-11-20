@@ -1,5 +1,4 @@
 'use strict'
-const { InternalServerError } = require('http-errors')
 
 module.exports = async (fastify, opts) => {
   fastify.baseRoute(fastify, opts, {
@@ -25,7 +24,6 @@ module.exports = async (fastify, opts) => {
       }
     },
     (request, reply) => {
-      console.log(request.body)
       request.body.ip = request.ip
       fastify.crypto.encryptKey(request.body.password).then(hash => {
         request.body.password = hash
@@ -33,14 +31,14 @@ module.exports = async (fastify, opts) => {
           new fastify.User(request.body).save(err => {
             if (err) {
               fastify.log.error(err)
-              return reply.send(new InternalServerError())
+              return reply.send(fastify.httpErrors.internalServerError())
             } else {
               return fastify.success(reply)
             }
           })
         } catch (err) {
           fastify.log.error(err)
-          return reply.send(new InternalServerError())
+          return reply.send(fastify.httpErrors.internalServerError())
         }
       })
     }
