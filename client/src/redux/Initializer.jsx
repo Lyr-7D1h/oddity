@@ -9,7 +9,7 @@ import configReducer from './reducers/configReducer'
 import userReducer from './reducers/userReducer'
 
 import { updateUser } from './actions/userActions'
-import { updateConfig, loadConfig, fetchConfig } from './actions/configActions'
+import { updateConfig, fetchConfig } from './actions/configActions'
 
 const store = createStore(
   combineReducers({
