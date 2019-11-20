@@ -6,6 +6,8 @@ stages:
 build:
   image: node:latest
   stage: build
+  artifacts:
+    untracked: true
   before_script:
     - cd ./client && npm ci
     - cd ../server && npm ci
@@ -15,6 +17,8 @@ build:
 test:
   image: node:latest
   stage: test
+  dependencies:
+    - build
   script:
     - cd ./client && npm test
     - cd ../server && npm test
