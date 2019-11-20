@@ -10,7 +10,7 @@ build:
     - cd ./client && npm ci
     - cd ../server && npm ci
   script:
-    - cd ./client && npm run build
+    - cd ../client && npm run build
 
 test:
   image: node:latest
