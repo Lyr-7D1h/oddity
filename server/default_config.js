@@ -24,11 +24,13 @@ const createAdminUser = instance => {
                   roleId: role._id
                 })
                   .then(() => {
-                    resolve()
+                    resolve(true)
                   })
                   .catch(err => reject(err))
               })
               .catch(err => reject(err))
+          } else {
+            resolve()
           }
         })
       }
@@ -46,11 +48,13 @@ const createAdminRole = instance => {
           permissions: 1
         })
           .then(() => {
-            resolve()
+            resolve(true)
           })
           .catch(err => {
             reject(err)
           })
+      } else {
+        resolve()
       }
     })
   })
@@ -66,8 +70,10 @@ const createUserRole = instance => {
           isDefault: true,
           permissions: 0
         })
-          .then(() => resolve())
+          .then(() => resolve(true))
           .catch(err => reject(err))
+      } else {
+        resolve()
       }
     })
   })
@@ -83,10 +89,12 @@ const createDefaultConfig = instance => {
           title: { title: 'Oddity' },
           nav: [{ name: 'forum' }, { name: 'servers' }]
         })
-          .then(() => resolve())
+          .then(() => resolve(true))
           .catch(err => {
             reject(err)
           })
+      } else {
+        resolve()
       }
     })
   })
@@ -107,7 +115,7 @@ const createAdminPortal = instance => {
               secretKey: hash
             })
               .then(() => {
-                resolve()
+                resolve(true)
               })
               .catch(err => {
                 reject(err)
@@ -124,13 +132,15 @@ const createAdminPortal = instance => {
                   Portal.updateOne({ _id: portals[0]._id }, { secretKey: hash })
                     .then(response => {
                       if (response.nModified !== 0) {
-                        resolve()
+                        resolve(true)
                       }
                     })
                     .catch(err => {
                       reject(err)
                     })
                 })
+              } else {
+                resolve()
               }
             })
             .catch(err => {
@@ -151,29 +161,30 @@ module.exports = fp(async instance => {
   }
 
   createAdminPortal(instance)
-    .then(() => {
-      instance.log.info('Admin Portal Updated/Created')
+    .then(created => {
+      if (created) instance.log.info('Admin Portal Updated/Created')
     })
     .catch(errHandler)
 
   createDefaultConfig(instance)
-    .then(() => {
-      instance.log.info('Created Default Config')
+    .then(created => {
+      if (created) instance.log.info('Created Default Config')
     })
     .catch(errHandler)
 
   createUserRole(instance)
-    .then(() => {
-      instance.log.info('Created Default User Role')
+    .then(created => {
+      if (created) instance.log.info('Created Default User Role')
     })
     .catch(errHandler)
 
   createAdminRole(instance)
-    .then(() => {
-      instance.log.info('Created Default Admin Role')
+    .then(created => {
+      if (created) instance.log.info('Created Default Admin Role')
+
       createAdminUser(instance)
-        .then(() => {
-          instance.log.info('Created Default Admin User')
+        .then(created => {
+          if (created) instance.log.info('Created Default Admin User')
         })
         .catch(errHandler)
     })

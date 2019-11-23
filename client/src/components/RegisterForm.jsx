@@ -9,7 +9,6 @@ import requester from '../helpers/requester'
 class RegistrationForm extends React.Component {
   state = {
     confirmDirty: false,
-    autoCompleteResult: [],
     identifier: ''
   }
 
@@ -74,7 +73,6 @@ class RegistrationForm extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form
-    const { autoCompleteResult } = this.state
 
     const formItemLayout = {
       labelCol: {

@@ -50,8 +50,6 @@ module.exports = fp(async instance => {
     // get credentials from request
     const basicCredentials = auth(request)
 
-    console.log(basicCredentials)
-
     if (basicCredentials && basicCredentials.name && basicCredentials.pass) {
       instance.User.find({ identifier: basicCredentials.name }, 'password _id')
         .then(users => {
