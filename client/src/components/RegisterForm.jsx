@@ -1,19 +1,7 @@
 import React from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { Link } from 'react-router-dom'
-import {
-  Form,
-  Input,
-  Tooltip,
-  Icon,
-  Cascader,
-  Select,
-  Row,
-  Col,
-  Checkbox,
-  Button,
-  AutoComplete
-} from 'antd'
+import { Form, Input, Tooltip, Icon, Checkbox, Button } from 'antd'
 
 import notificationHandler from '../helpers/notificationHandler'
 import requester from '../helpers/requester'
