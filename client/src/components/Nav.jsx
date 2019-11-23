@@ -50,15 +50,24 @@ const Nav = ({ selected, config, user, updateUser }) => {
                 <Link to={`/${item.name.toLowerCase()}`} />
               </Menu.Item>
             ))}
-            {user.username !== undefined ? (
-              <Menu.Item style={{ float: 'right' }} key="logout">
-                <div onClick={handleLogout}>Logout</div>
-              </Menu.Item>
-            ) : (
+
+            {user.username !== undefined || (
               <Menu.Item style={{ float: 'right' }} key="login">
                 <Link to="/login">Login</Link>
               </Menu.Item>
             )}
+            {user.username !== undefined || (
+              <Menu.Item style={{ float: 'right' }} key="register">
+                <Link to="/register">Register</Link>
+              </Menu.Item>
+            )}
+
+            {user.username === undefined || (
+              <Menu.Item style={{ float: 'right' }} key="logout">
+                <div onClick={handleLogout}>Logout</div>
+              </Menu.Item>
+            )}
+
             {user.permissions === 1 ? (
               <Menu.Item style={{ float: 'right' }} key="admin">
                 <Link to="/admin">Admin</Link>
