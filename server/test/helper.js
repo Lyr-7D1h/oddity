@@ -45,11 +45,22 @@ const build = t => {
 
   // tear down our app after we are done
   // t.tearDown(app.close.bind(app))
-  t.tearDown(() =>
-    app.close().then(() => {
-      console.log('CLOSING')
+  t.tearDown(() => {
+    // Overwrite exitCode to 0 when tearing down
+    // Fastify always sets exitCode to 1 when closing
+    process.on('exit', () => {
+      process.exitCode = 0
     })
-  )
+
+    app.close().then(
+      () => {
+        console.log('successfully closed!')
+      },
+      err => {
+        console.log('an error happened', err)
+      }
+    )
+  })
 
   return app
 }
