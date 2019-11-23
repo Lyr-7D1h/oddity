@@ -35,23 +35,5 @@ module.exports = fp(async instance => {
 
   const Config = instance.mongoose.connection.model('Config', configSchema)
 
-  // If there are no configs create a default one
-  Config.find({}).then(configs => {
-    if (configs.length === 0) {
-      Config.create({
-        name: 'default',
-        isActive: true,
-        title: { title: 'Oddity' },
-        nav: [{ name: 'forum' }, { name: 'servers' }]
-      })
-        .then(() => {
-          instance.log.info('Created Default Config')
-        })
-        .catch(err => {
-          instance.log.error(err)
-        })
-    }
-  })
-
   instance.decorate('Config', Config)
 })

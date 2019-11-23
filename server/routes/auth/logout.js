@@ -1,6 +1,6 @@
 module.exports = fastify => {
   fastify.get(
-    '/users/logout',
+    '/auth/logout',
     {
       preHandler: fastify.auth([fastify.verify.cookie])
     },

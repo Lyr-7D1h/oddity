@@ -44,8 +44,8 @@ module.exports = async (fastify, opts) => {
     // if development proxy requests to dev react server
     fastify.register(require('fastify-http-proxy'), {
       upstream: 'http://localhost:3000',
-      prefix: '/', // optional
-      http2: false // optional
+      prefix: '/',
+      http2: false
     })
   } else {
     // use react build
@@ -54,4 +54,9 @@ module.exports = async (fastify, opts) => {
       prefix: '/'
     })
   }
+
+  fastify.after(() => {
+    fastify.log.info('Loading Default Config..')
+    fastify.register(require('./default_config'))
+  })
 }

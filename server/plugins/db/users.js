@@ -41,34 +41,5 @@ module.exports = fp(async instance => {
 
   const User = instance.mongoose.connection.model('User', userSchema)
 
-  instance.Role.findOne({ name: 'admin' }, '_id').then(role => {
-    if (role === null) {
-      instance.log.error(
-        'Default Admin Role does not exist \nNot creating Admin User'
-      )
-    } else {
-      User.findOne({ username: 'admin' }).then(adminUser => {
-        if (adminUser === null) {
-          instance.crypto
-            .encryptKey('admin')
-            .then(hash => {
-              User.create({
-                username: 'admin',
-                password: hash,
-                email: 'admin@admin.com',
-                ip: '0:0:0:0',
-                roleId: role._id
-              })
-                .then(() => {
-                  instance.log.info('Created Default Admin User')
-                })
-                .catch(err => instance.log.error(err))
-            })
-            .catch(err => instance.log.error(err))
-        }
-      })
-    }
-  })
-
   instance.decorate('User', User)
 })

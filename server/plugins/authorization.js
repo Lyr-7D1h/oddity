@@ -50,8 +50,10 @@ module.exports = fp(async instance => {
     // get credentials from request
     const basicCredentials = auth(request)
 
+    console.log(basicCredentials)
+
     if (basicCredentials && basicCredentials.name && basicCredentials.pass) {
-      instance.User.find({ username: basicCredentials.name }, 'password _id')
+      instance.User.find({ identifier: basicCredentials.name }, 'password _id')
         .then(users => {
           if (users.length > 0) {
             instance.crypto

@@ -32,7 +32,7 @@ const post = (route, data) => {
 const login = values => {
   return new Promise((resolve, reject) => {
     axios
-      .get(`${baseUrl}users/login`, {
+      .get(`${baseUrl}auth/login`, {
         auth: {
           username: values.username,
           password: values.password
@@ -51,7 +51,7 @@ const login = values => {
 const logout = () => {
   return new Promise((resolve, reject) => {
     axios
-      .get(`${baseUrl}users/logout`)
+      .get(`${baseUrl}auth/logout`)
       .then(res => {
         if (res.status === 200) {
           resolve()

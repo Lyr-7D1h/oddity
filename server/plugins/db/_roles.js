@@ -5,13 +5,15 @@ module.exports = fp(async instance => {
   const roleSchema = new instance.mongoose.Schema({
     name: {
       required: true,
-      unique: true,
-      lowercase: true,
       type: String
     },
-    nameRaw: {
+    identifier: {
       required: true,
-      type: String
+      type: String,
+      unique: true
+    },
+    isDefault: {
+      type: Boolean
     },
     color: {
       type: String,
@@ -24,19 +26,6 @@ module.exports = fp(async instance => {
   })
 
   const Role = instance.mongoose.connection.model('Role', roleSchema)
-
-  // create default role admin
-  Role.findOne({ name: 'admin' }).then(role => {
-    if (role === null) {
-      Role.create({ name: 'admin', nameRaw: 'Admin', permissions: 1 })
-        .then(() => {
-          instance.log.info('Created Default Admin Role')
-        })
-        .catch(err => {
-          instance.log.error(err)
-        })
-    }
-  })
 
   instance.decorate('Role', Role)
 })

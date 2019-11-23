@@ -1,6 +1,6 @@
-module.exports = fastify => {
+module.exports = async fastify => {
   fastify.get(
-    '/users/login',
+    '/auth/login',
     {
       preHandler: fastify.auth([
         fastify.verify.basic.portal,
