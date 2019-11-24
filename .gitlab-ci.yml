@@ -24,11 +24,11 @@ stages:
 #     - cd ../server && npm test
 
 deploy:
-  image: docker:latest
+  # image: docker:latest
   stage: deploy
-  before_script:
-    # - apk --no-cache add curl
-    # - curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
-    # - chmod +x docker-compose
+  # before_script:
+  # - apk --no-cache add curl
+  # - curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
+  # - chmod +x docker-compose
   script:
     - docker build -t oddity .
