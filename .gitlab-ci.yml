@@ -24,7 +24,6 @@ test:
     - cd ../server && npm test
 
 deploy:
-  image: docker:latest
   stage: deploy
   before_script:
     - apt update && apt install curl
