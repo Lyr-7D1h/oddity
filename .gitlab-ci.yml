@@ -24,7 +24,7 @@ stages:
 #     - cd ../server && npm test
 
 deploy:
-  image: docker:stable
+  image: docker:19.03.0
   stage: deploy
   # before_script:
   # - apk --no-cache add curl
