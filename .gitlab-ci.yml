@@ -24,10 +24,9 @@ stages:
 #     - cd ../server && npm test
 
 deploy:
-  image: ubuntu:latest
   stage: deploy
   before_script:
-    - apt update && apt install -y curl
+    - apk --no-cache add curl
     - curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     - chmod +x /usr/local/bin/docker-compose
   script:
