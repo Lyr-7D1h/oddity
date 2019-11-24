@@ -13,16 +13,18 @@ module.exports = fp(async instance => {
   )
 
   connection.on('error', err => {
-    instance.log.error(err)
+    instance.log.fatal(err)
   })
 
-  instance
-    .decorate('mongoose', {
-      connection: connection,
-      Schema: mongoose.Schema,
-      ObjectId: mongoose.Types.ObjectId
-    })
-    .addHook('onClose', (fastify, done) => {
-      fastify.mongoose.connection.close(done)
-    })
+  await connection.on('connected', () => {
+    instance
+      .decorate('mongoose', {
+        connection: connection,
+        Schema: mongoose.Schema,
+        ObjectId: mongoose.Types.ObjectId
+      })
+      .addHook('onClose', (fastify, done) => {
+        fastify.mongoose.connection.close(done)
+      })
+  })
 })

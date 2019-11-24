@@ -29,6 +29,13 @@ module.exports = async (fastify, opts) => {
       dir: path.join(__dirname, 'plugins'),
       options: Object.assign({}, opts)
     })
+    .after(() => {
+      if (fastify.config.NODE_ENV !== 'testing') {
+        fastify.log.info('Loading Default Config..')
+        fastify.register(require('./default_config'))
+      }
+    })
+
     // Autoload Routes
     .register(fastifyAutoload, {
       dir: path.join(__dirname, 'routes'),
@@ -54,9 +61,4 @@ module.exports = async (fastify, opts) => {
       prefix: '/'
     })
   }
-
-  fastify.after(() => {
-    fastify.log.info('Loading Default Config..')
-    fastify.register(require('./default_config'))
-  })
 }

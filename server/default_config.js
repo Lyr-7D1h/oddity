@@ -129,7 +129,10 @@ const createAdminPortal = instance => {
               // if pass is not secret make it secret
               if (!isValid) {
                 instance.crypto.encryptKey(secret).then(hash => {
-                  Portal.updateOne({ _id: portals[0]._id }, { secretKey: hash })
+                  instance.Portal.updateOne(
+                    { _id: portals[0]._id },
+                    { secretKey: hash }
+                  )
                     .then(response => {
                       if (response.nModified !== 0) {
                         resolve(true)
@@ -156,7 +159,7 @@ const createAdminPortal = instance => {
 
 module.exports = fp(async instance => {
   const errHandler = err => {
-    instancefastify.log.fatal(err)
+    instance.fastify.log.fatal(err)
     process.exit(1)
   }
 

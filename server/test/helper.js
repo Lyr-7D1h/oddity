@@ -10,8 +10,9 @@ const Fastify = require('fastify')
 // needed for testing the application
 const config = () => {
   return {
+    NODE_ENV: 'testing',
     CONNECTION_STRING:
-      'mongodb+srv://oddityStaging:40vOCy06sago47Pk@staging-ausly.gcp.mongodb.net/staging?retryWrites=true&w=majority',
+      'mongodb+srv://oddityStaging:40vOCy06sago47Pk@staging-ausly.gcp.mongodb.net/testing?retryWrites=true&w=majority',
     SESSION_SECRET: 'this_is_a_very_big_string_which_is_longer_than_32',
     ADMIN_SECRET: 'secret',
     dotenv: true
@@ -41,10 +42,11 @@ const build = t => {
   // fastify-plugin ensures that all decorators
   // are exposed for testing purposes, this is
   // different from the production setup
-  app.register(fp(require('../app.js')))
+  app.register(fp(require('../app.js')), { disableConfig: true })
+
+  process.on('uncaughtException', err => t.error(err))
 
   // tear down our app after we are done
-  // t.tearDown(app.close.bind(app))
   t.tearDown(() => {
     // Overwrite exitCode to 0 when tearing down
     // Fastify always sets exitCode to 1 when closing
@@ -52,14 +54,7 @@ const build = t => {
       process.exitCode = 0
     })
 
-    app.close().then(
-      () => {
-        console.log('successfully closed!')
-      },
-      err => {
-        console.log('an error happened', err)
-      }
-    )
+    app.close()
   })
 
   return app
