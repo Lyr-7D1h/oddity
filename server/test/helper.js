@@ -42,7 +42,7 @@ const build = t => {
   // fastify-plugin ensures that all decorators
   // are exposed for testing purposes, this is
   // different from the production setup
-  app.register(fp(require('../app.js')), { disableConfig: true })
+  app.register(fp(require('../app')), { disableConfig: true })
 
   process.on('uncaughtException', err => t.error(err))
 

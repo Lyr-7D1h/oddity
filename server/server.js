@@ -32,7 +32,7 @@ const envSchema = {
 
 server.register(require('fastify-env'), { schema: envSchema })
 
-server.register(require('./app.js'))
+server.register(require('./app'))
 
 server.listen(process.env.PORT || 5000, '0.0.0.0', err => {
   if (server.config.NODE_ENV === 'development') {

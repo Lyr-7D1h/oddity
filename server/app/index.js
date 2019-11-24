@@ -26,19 +26,18 @@ module.exports = async (fastify, opts) => {
 
     // Autoload Plugins
     .register(fastifyAutoload, {
-      dir: path.join(__dirname, 'plugins'),
+      dir: path.join(__dirname, '../plugins'),
       options: Object.assign({}, opts)
     })
-    .after(() => {
-      if (fastify.config.NODE_ENV !== 'testing') {
-        fastify.log.info('Loading Default Config..')
-        fastify.register(require('./default_config'))
-      }
+
+    .register(fastifyAutoload, {
+      dir: path.join(__dirname, './db'),
+      options: Object.assign({}, opts)
     })
 
     // Autoload Routes
     .register(fastifyAutoload, {
-      dir: path.join(__dirname, 'routes'),
+      dir: path.join(__dirname, '../routes'),
       options: Object.assign(
         {
           prefix: '/api'
@@ -47,6 +46,10 @@ module.exports = async (fastify, opts) => {
       )
     })
 
+  if (fastify.config.NODE_ENV !== 'testing') {
+    fastify.log.info('Loading Default Config..')
+    fastify.register(require('./default_config'))
+  }
   if (fastify.config.NODE_ENV === 'development') {
     // if development proxy requests to dev react server
     fastify.register(require('fastify-http-proxy'), {
@@ -57,7 +60,7 @@ module.exports = async (fastify, opts) => {
   } else {
     // use react build
     fastify.register(require('fastify-static'), {
-      root: path.join(__dirname, '../client/build'),
+      root: path.join(__dirname, '../../client/build'),
       prefix: '/'
     })
   }
