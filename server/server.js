@@ -19,7 +19,7 @@ const server = Fastify({
 
 const envSchema = {
   type: 'object',
-  required: ['CONNECTION_STRING', 'ADMIN_SECRET'],
+  required: ['CONNECTION_STRING', 'ADMIN_SECRET', 'SESSION_SECRET'],
   properties: {
     CONNECTION_STRING: { type: 'string' },
     ADMIN_SECRET: { type: 'string' },

@@ -9,9 +9,7 @@ module.exports = async (fastify, opts) => {
 
     .register(require('fastify-cookie'))
     .register(require('fastify-session'), {
-      secret:
-        fastify.config.SESSION_SECRET ||
-        '&K$RePnO0NF#Z5sYSAGXaM!ezxd^E^PORi38u',
+      secret: fastify.config.SESSION_SECRET,
       cookie: {
         httpOnly: !(fastify.config.NODE_ENV === 'development'), // set httpOnly and secure off when in dev
         secure: !(fastify.config.NODE_ENV === 'development')
