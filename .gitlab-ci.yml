@@ -24,12 +24,18 @@ stages:
 #     - cd ../server && npm test
 
 deploy:
-  image: docker:18.09.7-dind
+  image: docker:latest
   stage: deploy
+  services:
+    - docker:dind
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p "$CI_REGISTRY_PASSWORD"
   # before_script:
   # - apk --no-cache add curl
   # - curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
   # - chmod +x docker-compose
   script:
     - docker info
-    - docker build -t oddity .
+    - docker build -t ivelthoven/oddity:latest .
+    - docker push ivelthoven/oddity:latest
