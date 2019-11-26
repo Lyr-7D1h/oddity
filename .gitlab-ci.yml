@@ -1,28 +1,28 @@
 stages:
-  # - build
-  # - test
+  - build
+  - test
   - staging
   - production
 
-# build:
-#   image: node:latest
-#   stage: build
-#   artifacts:
-#     untracked: true
-#   before_script:
-#     - cd ./client && npm ci
-#     - cd ../server && npm ci
-#   script:
-#     - cd ../client && npm run build
+build:
+  image: node:latest
+  stage: build
+  artifacts:
+    untracked: true
+  before_script:
+    - cd ./client && npm ci
+    - cd ../server && npm ci
+  script:
+    - cd ../client && npm run build
 
-# test:
-#   image: node:latest
-#   stage: test
-#   dependencies:
-#     - build
-#   script:
-#     - cd ./client && npm test
-#     - cd ../server && npm test
+test:
+  image: node:latest
+  stage: test
+  dependencies:
+    - build
+  script:
+    - cd ./client && npm test
+    - cd ../server && npm test
 
 staging:
   image: docker:latest
@@ -32,10 +32,6 @@ staging:
   before_script:
     - docker info
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
-  # before_script:
-  # - apk --no-cache add curl
-  # - curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
-  # - chmod +x docker-compose
   script:
     - docker build -t $CI_DOCKER_USERNAME/oddity:staging .
     - docker push $CI_DOCKER_USERNAME/oddity:staging
