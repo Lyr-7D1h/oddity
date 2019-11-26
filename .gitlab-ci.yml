@@ -1,7 +1,8 @@
 stages:
   # - build
   # - test
-  - deploy
+  - staging
+  - production
 
 # build:
 #   image: node:latest
@@ -23,19 +24,31 @@ stages:
 #     - cd ./client && npm test
 #     - cd ../server && npm test
 
-deploy:
+staging:
   image: docker:latest
-  stage: deploy
+  stage: staging
   services:
     - docker:dind
   before_script:
     - docker info
-    - docker login -u $CI_REGISTRY_USER -p "$CI_REGISTRY_PASSWORD"
+    - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
   # before_script:
   # - apk --no-cache add curl
   # - curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
   # - chmod +x docker-compose
   script:
-    - docker info
     - docker build -t ivelthoven/oddity:latest .
-    - docker push ivelthoven/oddity:latest
+    - docker push oddityservers/oddity:staging
+
+production:
+  image: docker:latest
+  stage: production
+  services:
+    - docker:dind
+  when: manual
+  before_script:
+    - docker info
+    - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
+  script:
+    - docker build -t ivelthoven/oddity:latest .
+    - docker push oddityservers/oddity:production
