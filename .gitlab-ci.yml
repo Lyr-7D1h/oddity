@@ -37,8 +37,8 @@ staging:
   # - curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
   # - chmod +x docker-compose
   script:
-    - docker build -t oddityservers/oddity:staging .
-    - docker push oddityservers/oddity:staging
+    - docker build -t $CI_DOCKER_USERNAME/oddity:staging .
+    - docker push $CI_DOCKER_USERNAME/oddity:staging
 
 production:
   image: docker:latest
@@ -50,5 +50,5 @@ production:
     - docker info
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
   script:
-    - docker build -t oddityservers/oddity:production .
-    - docker push oddityservers/oddity:production
+    - docker build -t $CI_DOCKER_USERNAME/oddity:production .
+    - docker push $CI_DOCKER_USERNAME/oddity:production
