@@ -86,8 +86,11 @@ const createDefaultConfig = instance => {
         instance.Config.create({
           name: 'default',
           isActive: true,
-          title: { title: 'Oddity' },
-          nav: [{ name: 'forum' }, { name: 'servers' }]
+          title: 'Oddity',
+          modules: [
+            { name: 'Forum', route: 'forum', config: 'forum' },
+            { name: 'Servers', route: 'servers', config: 'servers' }
+          ]
         })
           .then(() => resolve(true))
           .catch(err => {

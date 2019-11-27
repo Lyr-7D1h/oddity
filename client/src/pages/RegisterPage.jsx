@@ -6,6 +6,7 @@ import LoggedInRedirect from '../components/LoggedInRedirect'
 import Title from 'antd/lib/typography/Title'
 
 import { Redirect } from 'react-router-dom'
+import Centered from '../containers/Centered'
 
 export default () => {
   const [accountCreated, setAccountCreate] = useState(false)
@@ -18,16 +19,12 @@ export default () => {
     <LoggedInRedirect>
       {!accountCreated || <Redirect to="/login" />}
       <Page>
-        <Row type="flex" ustify="center" align="middle">
-          <Col span={6} />
-          <Col span={12}>
-            <Card>
-              <Title style={{ textAlign: 'center' }}>Register</Title>
-              <RegisterForm onSubmit={handleSubmit} />
-            </Card>
-          </Col>
-          <Col span={6} />
-        </Row>
+        <Centered>
+          <Card>
+            <Title>Register</Title>
+            <RegisterForm onSubmit={handleSubmit} />
+          </Card>
+        </Centered>
       </Page>
     </LoggedInRedirect>
   )

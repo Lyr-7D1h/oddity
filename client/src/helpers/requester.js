@@ -29,6 +29,19 @@ const post = (route, data) => {
   })
 }
 
+const put = (route, data) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .put(baseUrl + route, data)
+      .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
 const login = values => {
   return new Promise((resolve, reject) => {
     axios
@@ -71,6 +84,7 @@ const logout = () => {
 
 export default {
   post,
+  put,
   get,
   login,
   logout

@@ -9,11 +9,8 @@ import notificationHandler from '../helpers/notificationHandler'
 import { connect } from 'react-redux'
 import { updateUser } from '../redux/actions/userActions'
 
-const Nav = ({ selected, config, user, updateUser }) => {
+const Nav = ({ selected, modules, title, user, updateUser }) => {
   const [loginError, setLoginError] = useState(false)
-
-  const items = config.nav || []
-  const title = config.title
 
   const handleLogout = () => {
     requester
@@ -35,7 +32,7 @@ const Nav = ({ selected, config, user, updateUser }) => {
       <Row>
         <Col span={4}>
           <div className="title">
-            <Link to="/">{title.title}</Link>
+            <Link to="/">{title}</Link>
           </div>
         </Col>
         <Col span={20}>
@@ -45,9 +42,9 @@ const Nav = ({ selected, config, user, updateUser }) => {
             style={{ lineHeight: '64px', marginRight: '20px' }}
             theme="light"
           >
-            {items.map((item, i) => (
-              <Menu.Item key={item.name.toLowerCase()}>
-                <Link to={`/${item.name.toLowerCase()}`} />
+            {modules.map((mod, i) => (
+              <Menu.Item key={mod.route}>
+                <Link to={`/${mod.route}`}>{mod.name}</Link>
               </Menu.Item>
             ))}
 
@@ -82,6 +79,13 @@ const Nav = ({ selected, config, user, updateUser }) => {
   )
 }
 
-export default connect(state => ({ user: state.user, config: state.config }), {
-  updateUser
-})(Nav)
+export default connect(
+  state => ({
+    user: state.user,
+    title: state.config.title,
+    modules: state.config.modules
+  }),
+  {
+    updateUser
+  }
+)(Nav)

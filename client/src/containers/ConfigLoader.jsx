@@ -6,7 +6,7 @@ const ConfigLoader = ({ config, children }) => {
   if (config.isLoading) {
     return <Icon type="loading" />
   } else {
-    document.title = config.title.title
+    document.title = config.title
     return children
   }
 }
