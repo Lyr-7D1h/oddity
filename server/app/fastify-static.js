@@ -37,13 +37,10 @@ function fastifyStatic(fastify, opts, next) {
 
   // User for DecorateReply and Serve
   function pumpSendToReply(request, reply, pathname) {
-    console.log(pathname)
-    // pathname = '/'
     const stream = send(request.raw, pathname, sendOptions)
     var resolvedFilename
 
     stream.on('file', function(file) {
-      console.log(file)
       resolvedFilename = file
     })
 
