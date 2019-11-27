@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Card, Row, Col } from 'antd'
+import { Card } from 'antd'
 import RegisterForm from '../components/RegisterForm'
 import Page from '../containers/Page'
 import LoggedInRedirect from '../components/LoggedInRedirect'

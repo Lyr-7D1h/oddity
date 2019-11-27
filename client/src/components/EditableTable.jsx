@@ -1,14 +1,5 @@
 import React, { useState } from 'react'
-import {
-  Table,
-  Input,
-  InputNumber,
-  Popconfirm,
-  Form,
-  Button,
-  Select
-} from 'antd'
-import { connect } from 'react-redux'
+import { Table, Input, InputNumber, Form, Button, Select } from 'antd'
 
 const EditableContext = React.createContext()
 

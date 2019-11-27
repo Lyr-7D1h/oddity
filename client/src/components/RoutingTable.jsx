@@ -1,5 +1,4 @@
 import React from 'react'
-import { Button, Table, notification } from 'antd'
 import { connect } from 'react-redux'
 import EditableTable from './EditableTable'
 import requester from '../helpers/requester'
@@ -31,7 +30,6 @@ const columns = [
 
 const RoutingTable = ({ config, updateConfig }) => {
   const handleSave = (key, rowItem) => {
-    console.log(rowItem)
     const data = config
     data.modules = config.modules.map(mod => {
       if (mod._id === key) {

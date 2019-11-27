@@ -13,29 +13,8 @@ import TermsOfServicePage from './pages/TermsOfServicePage'
 import NotFoundPage from './pages/NotFoundPage'
 import ForumPage from './pages/ForumPage'
 import ServersPage from './pages/ServersPage'
-import mapAgeCleaner from 'map-age-cleaner'
 
 const App = ({ modules }) => {
-  let serversRoute = ''
-  let forumRoute = ''
-
-  if (modules) {
-    for (let i in modules) {
-      const mod = modules[i]
-      switch (mod.config) {
-        case 'servers':
-          serversRoute = mod.route
-          break
-        case 'forum':
-          forumRoute = mod.route
-          break
-        default:
-          console.log(mod)
-          notificationHandler.error('Modules misconfigured')
-      }
-    }
-  }
-
   return (
     <BrowserRouter>
       <ConfigLoader>
