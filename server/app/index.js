@@ -48,6 +48,7 @@ module.exports = async (fastify, opts) => {
     fastify.log.info('Loading Default Config..')
     fastify.register(require('./default_config'))
   }
+
   if (fastify.config.NODE_ENV === 'development') {
     // if development proxy requests to dev react server
     fastify.register(require('fastify-http-proxy'), {
@@ -57,9 +58,8 @@ module.exports = async (fastify, opts) => {
     })
   } else {
     // use react build
-    fastify.register(require('fastify-static'), {
-      root: path.join(__dirname, '../../client/build'),
-      prefix: '/'
+    fastify.register(require('./fastify-static'), {
+      root: path.join(__dirname, '../../client/build')
     })
   }
 }
