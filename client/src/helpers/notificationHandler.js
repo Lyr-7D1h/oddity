@@ -1,5 +1,10 @@
 import { notification } from 'antd'
 
+notification.config({
+  placement: 'topRight',
+  top: 70
+})
+
 const error = (message, description) => {
   notification['error']({
     message: message,

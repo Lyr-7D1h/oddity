@@ -5,6 +5,7 @@ import * as serviceWorker from './serviceWorker'
 import App from './App.jsx'
 
 import './styling/theme.less'
+import './styling/app.less'
 
 import { Initializer } from './redux/Initializer'
 
