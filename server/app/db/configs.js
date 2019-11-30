@@ -8,6 +8,7 @@ module.exports = fp(async instance => {
     },
     route: {
       required: true,
+      unique: true,
       type: String,
       lowercase: true
     },
