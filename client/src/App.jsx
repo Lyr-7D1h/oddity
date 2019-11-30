@@ -13,6 +13,7 @@ import TermsOfServicePage from './pages/TermsOfServicePage'
 import NotFoundPage from './pages/NotFoundPage'
 import ForumPage from './pages/ForumPage'
 import ServersPage from './pages/ServersPage'
+import MembersPage from './pages/MembersPage'
 
 const App = ({ modules }) => {
   return (
@@ -28,6 +29,9 @@ const App = ({ modules }) => {
                   break
                 case 'forum':
                   component = ForumPage
+                  break
+                case 'members':
+                  component = MembersPage
                   break
                 default:
                   notificationHandler.error('Modules misconfigured')

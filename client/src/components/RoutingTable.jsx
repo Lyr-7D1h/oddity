@@ -23,7 +23,7 @@ const columns = [
   {
     title: 'Module',
     dataIndex: 'config',
-    dataType: ['forum', 'servers'],
+    dataType: ['forum', 'servers', 'members'],
     editable: true
   }
 ]
