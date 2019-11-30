@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Card } from 'antd'
 import RegisterForm from '../components/RegisterForm'
 import Page from '../containers/Page'
-import LoggedInRedirect from '../components/LoggedInRedirect'
+import LoggedInRedirect from '../containers/LoggedInRedirect'
 import Title from 'antd/lib/typography/Title'
 
 import { Redirect } from 'react-router-dom'

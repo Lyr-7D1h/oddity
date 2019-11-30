@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Row, Col } from 'antd'
 import LoginForm from '../components/LoginForm'
 import Page from '../containers/Page'
-import LoggedInRedirect from '../components/LoggedInRedirect'
+import LoggedInRedirect from '../containers/LoggedInRedirect'
 import Title from 'antd/lib/typography/Title'
 
 export default () => {

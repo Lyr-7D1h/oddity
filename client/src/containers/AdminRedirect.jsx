@@ -6,12 +6,14 @@ import { connect } from 'react-redux'
 /**
  * Used to check if someone is logged in otherwise will redirect to home page
  */
-const LoggedInRedirect = ({ children, loggedIn, user }) => {
-  if (user.username !== undefined) {
-    return <Redirect to="/" />
-  } else {
+const AdminRedirect = ({ children, permissions }) => {
+  if (permissions === 1) {
     return children
+  } else {
+    return <Redirect to="/" />
   }
 }
 
-export default connect(state => ({ user: state.user }))(LoggedInRedirect)
+export default connect(state => ({ permissions: state.user.permissions }))(
+  AdminRedirect
+)
