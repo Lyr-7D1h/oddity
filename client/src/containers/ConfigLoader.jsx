@@ -1,10 +1,19 @@
 import React from 'react'
-import { Icon } from 'antd'
+import { Spin, Icon, Row, Col, Card } from 'antd'
 import { connect } from 'react-redux'
+import Centered from './Centered'
 
 const ConfigLoader = ({ config, children }) => {
   if (config.isLoading) {
-    return <Icon type="loading" />
+    const loadIcon = <Icon type="loading" style={{ fontSize: '3em' }} spin />
+
+    return (
+      <div style={{ marginTop: '45vh' }}>
+        <Centered>
+          <Spin delay={100} size="large" indicator={loadIcon} />
+        </Centered>
+      </div>
+    )
   } else {
     document.title = config.title
     return children
