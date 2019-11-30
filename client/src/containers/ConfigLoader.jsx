@@ -1,5 +1,5 @@
 import React from 'react'
-import { Spin, Icon, Row, Col, Card } from 'antd'
+import { Spin, Icon } from 'antd'
 import { connect } from 'react-redux'
 import Centered from './Centered'
 
