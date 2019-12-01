@@ -15,24 +15,15 @@ module.exports = async fastify => {
         columns: columns
       },
       {
-        method: 'post',
-        columns: columns
+        method: 'post'
       },
       {
-        method: 'delete',
-        columns: columns
+        method: 'delete'
       },
       {
-        method: 'put',
-        columns: columns
+        method: 'put'
       }
     ]
   }
   fastify.routeGen(userRoute)
-
-  // fastify.baseRoute(fastify, opts, {
-  //   Model: fastify.User,
-  //   columns: '-password -ip -email',
-  //   excludeMethods: 'create'
-  // })
 }

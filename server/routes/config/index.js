@@ -1,6 +1,29 @@
 module.exports = async fastify => {
+  fastify.routeGen({
+    model: fastify.Config,
+    routes: [
+      {
+        method: 'get',
+        multiple: true
+      },
+      {
+        method: 'get'
+      },
+      {
+        method: 'post'
+      },
+      {
+        method: 'delete'
+      },
+      {
+        method: 'put'
+      }
+    ]
+  })
+
+  // Get Default Config
   fastify.get('/config', (request, reply) => {
-    fastify.Config.findOne({})
+    fastify.Config.findOne({ isActive: true })
       .then(config => {
         reply.send(config)
       })
@@ -9,43 +32,4 @@ module.exports = async fastify => {
         reply.send(fastify.httpErrors.internalServerError())
       })
   })
-
-  fastify.post('/config', (request, reply) => {
-    try {
-      new fastify.Config(request.body).save(err => {
-        if (err) {
-          fastify.log.error(err)
-          return reply.send(fastify.httpErrors.badRequest())
-        }
-        return fastify.success(reply)
-      })
-    } catch (err) {
-      fastify.log.error(err)
-      return reply.send(fastify.httpErrors.internalServerError())
-    }
-  })
-
-  fastify.put(
-    '/config/:id',
-    // {
-    //   // preHandler: [validateId], TODO: Make ValidateId Global
-    //   schema: {
-    //     params: 'id#'
-    //   }
-    // },
-    (request, reply) => {
-      fastify.Config.updateOne({ _id: request.params.id }, request.body)
-        .then(response => {
-          if (response.nModified === 0) {
-            reply.code(204)
-            return reply.send('No Changes')
-          }
-          return fastify.success(reply)
-        })
-        .catch(err => {
-          fastify.log.error(err)
-          return reply.send(fastify.httpErrors.badRequest)
-        })
-    }
-  )
 }

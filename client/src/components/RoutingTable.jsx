@@ -39,7 +39,7 @@ const RoutingTable = ({ config, updateConfig }) => {
     })
 
     requester
-      .put(`config/${config._id}`, data)
+      .put(`configs/${config._id}`, data)
       .then(() => {
         updateConfig(data)
         notificationHandler.success(`Updated Route ${item.name}`)
@@ -54,7 +54,7 @@ const RoutingTable = ({ config, updateConfig }) => {
     data.modules = data.modules.filter(mod => mod._id !== id)
 
     requester
-      .put(`config/${config._id}`, data)
+      .put(`configs/${config._id}`, data)
       .then(() => {
         updateConfig(data)
         notificationHandler.success(`Removed Route ${item.name}`)
@@ -67,7 +67,7 @@ const RoutingTable = ({ config, updateConfig }) => {
     data.modules.push(item)
 
     requester
-      .put(`config/${config._id}`, data)
+      .put(`configs/${config._id}`, data)
       .then(res => {
         item._id = res._id
         const data = config
