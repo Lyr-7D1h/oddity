@@ -10,6 +10,7 @@ module.exports = fp(async instance => {
     identifier: {
       required: true,
       type: String,
+      lowercase: true,
       unique: true
     },
     isDefault: {

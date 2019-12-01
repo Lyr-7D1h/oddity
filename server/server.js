@@ -11,7 +11,7 @@ const Fastify = require('fastify')
 
 // Instantiate Fastify with some config
 const server = Fastify({
-  ignoreTrailingSlash: true,
+  // ignoreTrailingSlash: true,
   logger: {
     prettyPrint: true
   },
