@@ -10,13 +10,16 @@ module.exports = async fastify => {
         method: 'get'
       },
       {
-        method: 'post'
+        method: 'post',
+        auth: fastify.verify.cookie
       },
       {
-        method: 'delete'
+        method: 'delete',
+        auth: fastify.verify.cookie
       },
       {
-        method: 'put'
+        method: 'put',
+        auth: fastify.verify.cookie
       }
     ]
   })

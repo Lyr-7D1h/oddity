@@ -82,42 +82,56 @@ module.exports = fp(async instance => {
     }
   }
 
+  // USER ONLY
   const cookieAuth = (request, reply, done) => {
     console.log('COOKIE AUTH')
 
     if (request.session && request.session.user) {
       if (request.session.user.id) {
         // check if still in DB
-        if (request.session.user.isPortal) {
-          instance.Portal.findById(request.session.user.id)
-            .then(portal => {
-              if (portal) {
+        instance.User.findById(
+          request.session.user.id,
+          '_id permissions roleId'
+        )
+          .then(user => {
+            if (user) {
+              const hasPermsUser = instance.permissions.validateRouteAuth(
+                request.raw.url,
+                user.permissions
+              )
+              if (hasPermsUser) {
                 request.credentials.id = request.session.user.id
-                request.credentials.isPortal = true
                 done()
+              } else if (user.roleId) {
+                instance.Role.findById(user.roleId, 'permissions').then(
+                  role => {
+                    if (role) {
+                      const hasPermsRole = instance.permissions.validateRouteAuth(
+                        request.raw.url,
+                        role.permissions
+                      )
+                      if (hasPermsRole) {
+                        request.credentials.id = request.session.user.id
+                        done()
+                      } else {
+                        done(new Unauthorized())
+                      }
+                    } else {
+                      done(new Unauthorized())
+                    }
+                  }
+                )
               } else {
                 done(new Unauthorized())
               }
-            })
-            .catch(err => {
-              instance.log.error(err)
-              done(new InternalServerError())
-            })
-        } else {
-          instance.User.findById(request.session.user.id)
-            .then(user => {
-              if (user) {
-                request.credentials.id = request.session.user.id
-                done()
-              } else {
-                done(new Unauthorized())
-              }
-            })
-            .catch(err => {
-              instance.log.error(err)
-              done(new InternalServerError())
-            })
-        }
+            } else {
+              done(new Unauthorized())
+            }
+          })
+          .catch(err => {
+            instance.log.error(err)
+            done(new InternalServerError())
+          })
       } else {
         done(new Unauthorized())
       }
