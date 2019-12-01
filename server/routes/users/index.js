@@ -15,13 +15,16 @@ module.exports = async fastify => {
         columns: columns
       },
       {
-        method: 'post'
+        method: 'post',
+        auth: [fastify.verify.cookie, fastify.verify.basic.portal]
       },
       {
-        method: 'delete'
+        method: 'delete',
+        auth: fastify.verify.cookie
       },
       {
-        method: 'put'
+        method: 'put',
+        auth: fastify.verify.cookie
       }
     ]
   }

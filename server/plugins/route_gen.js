@@ -24,6 +24,7 @@ module.exports = fp(async instance => {
     if (!model || !routes || routes.length < 0) {
       throw Error('Invalid Route Options')
     }
+    const globalAuthorization = options.auth
     const collectionName = model.collection.collectionName
 
     const getHandler = (route, method) => {
@@ -144,6 +145,26 @@ module.exports = fp(async instance => {
         schema = {
           params: 'id#'
         }
+      }
+
+      // Add Authentication when auth is present
+      let authHandlers = []
+      if (globalAuthorization) {
+        if (Array.isArray(globalAuthorization)) {
+          authHandlers = authHandlers.concat(globalAuthorization)
+        } else {
+          authHandlers.push(globalAuthorization)
+        }
+      }
+      if (route.auth) {
+        if (Array.isArray(route.auth)) {
+          authHandlers = authHandlers.concat(route.auth)
+        } else {
+          authHandlers.push(route.auth)
+        }
+      }
+      if (globalAuthorization || route.auth) {
+        preHandler.push(instance.auth(authHandlers))
       }
 
       return {
