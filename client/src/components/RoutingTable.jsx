@@ -5,6 +5,7 @@ import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
 
 import { updateConfig } from '../redux/actions/configActions'
+import { Switch } from 'antd'
 
 const columns = [
   {
@@ -22,16 +23,23 @@ const columns = [
   },
   {
     title: 'Module',
-    dataIndex: 'config',
-    dataType: ['forum', 'servers', 'members'],
+    dataIndex: 'module',
+    dataType: ['forum', 'servers', 'members', 'home'],
     editable: true
+  },
+  {
+    title: 'Is Home',
+    dataIndex: 'default',
+    dataType: 'bool',
+    editable: true,
+    render: isDefault => <Switch checked={isDefault} disabled></Switch>
   }
 ]
 
 const RoutingTable = ({ config, updateConfig }) => {
   const handleSave = item => {
     const data = config
-    data.modules = config.modules.map(mod => {
+    data.routes = config.routes.map(mod => {
       if (mod._id === item._id) {
         return item
       }
@@ -39,50 +47,54 @@ const RoutingTable = ({ config, updateConfig }) => {
     })
 
     requester
-      .put(`configs/${config._id}`, data)
+      .put(`configs/${config._id}/routes`, item)
       .then(() => {
         updateConfig(data)
         notificationHandler.success(`Updated Route ${item.name}`)
       })
-      .catch(err => notificationHandler.error('Updating failed', err.message))
+      .catch(err => notificationHandler.error('Updating failed', err))
   }
 
   const handleDelete = id => {
     const data = config
     // Remove item from data
-    const item = data.modules.find(mod => mod._id === id)
-    data.modules = data.modules.filter(mod => mod._id !== id)
+    const item = data.routes.find(mod => mod._id === id)
+    data.routes = data.routes.filter(mod => mod._id !== id)
 
     requester
-      .put(`configs/${config._id}`, data)
+      .put(`configs/${config._id}/routes`, item)
       .then(() => {
         updateConfig(data)
         notificationHandler.success(`Removed Route ${item.name}`)
       })
-      .catch(err => notificationHandler.error('Deleting failed', err.message))
+      .catch(err => notificationHandler.error('Deleting failed', err))
   }
 
   const handleCreate = item => {
     const data = config
-    data.modules.push(item)
+    data.routes.push(item)
+
+    console.log(item)
 
     requester
-      .put(`configs/${config._id}`, data)
+      .put(`configs/${config._id}/routes`, item)
       .then(res => {
         item._id = res._id
         const data = config
-        data.modules.push(item)
+        data.routes.push(item)
 
         updateConfig(data)
         notificationHandler.success(`Created Route ${item.name}`)
       })
-      .catch(err => notificationHandler.error('Creating failed', err.message))
+      .catch(err => {
+        notificationHandler.error('Creating failed', err)
+      })
   }
 
   return (
     <EditableTable
       columns={columns}
-      dataSource={config.modules}
+      dataSource={config.routes}
       onSave={handleSave}
       onDelete={handleDelete}
       onCreate={handleCreate}

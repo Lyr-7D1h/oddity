@@ -9,8 +9,11 @@ import notificationHandler from '../helpers/notificationHandler'
 import { connect } from 'react-redux'
 import { updateUser } from '../redux/actions/userActions'
 
-const Nav = ({ selected, modules, title, user, updateUser }) => {
+const Nav = ({ selected, routes, title, user, updateUser }) => {
   const [loginError, setLoginError] = useState(false)
+
+  // make sure default route / home route is not included
+  routes = routes.filter(route => !route.default)
 
   const handleLogout = () => {
     requester
@@ -42,7 +45,7 @@ const Nav = ({ selected, modules, title, user, updateUser }) => {
             style={{ lineHeight: '64px', marginRight: '20px' }}
             theme="light"
           >
-            {modules.map((mod, i) => (
+            {routes.map((mod, i) => (
               <Menu.Item key={mod.route}>
                 <Link to={`/${mod.route}`}>{mod.name}</Link>
               </Menu.Item>
@@ -83,7 +86,7 @@ export default connect(
   state => ({
     user: state.user,
     title: state.config.title,
-    modules: state.config.modules
+    routes: state.config.routes
   }),
   {
     updateUser

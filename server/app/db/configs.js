@@ -1,28 +1,35 @@
 const fp = require('fastify-plugin')
 
 module.exports = fp(async instance => {
-  const moduleSchema = new instance.mongoose.Schema({
+  let routeSchema = new instance.mongoose.Schema({
     name: {
       required: true,
       type: String
     },
+    // Should be unique within document
     route: {
       required: true,
-      unique: true,
-      type: String,
+      type: instance.mongoose.Types.EmptyString,
       lowercase: true
     },
-    config: {
+    // should only be one default
+    default: {
+      type: Boolean
+    },
+    module: {
       type: String,
-      lowercase: true
+      lowercase: true,
+      enum: ['servers', 'members', 'forum', 'home']
     }
   })
+
   const configSchema = new instance.mongoose.Schema({
     name: {
       required: true,
       type: String,
       unique: true
     },
+    // should only be one active
     isActive: {
       required: true,
       type: Boolean
@@ -34,7 +41,7 @@ module.exports = fp(async instance => {
     logoUrl: {
       type: String
     },
-    modules: [moduleSchema]
+    routes: [routeSchema]
   })
 
   const Config = instance.mongoose.connection.model('Config', configSchema)

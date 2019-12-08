@@ -87,9 +87,11 @@ const createDefaultConfig = instance => {
           name: 'default',
           isActive: true,
           title: 'Oddity',
-          modules: [
-            { name: 'Forum', route: 'forum', config: 'forum' },
-            { name: 'Servers', route: 'servers', config: 'servers' }
+          routes: [
+            { name: 'Home', route: '', module: 'home', default: true },
+            { name: 'Forum', route: 'forum', module: 'forum' },
+            { name: 'Members', route: 'members', module: 'members' },
+            { name: 'Servers', route: 'servers', module: 'servers' }
           ]
         })
           .then(() => resolve(true))
@@ -162,7 +164,7 @@ const createAdminPortal = instance => {
 
 module.exports = fp(async instance => {
   const errHandler = err => {
-    instance.fastify.log.fatal(err)
+    instance.log.fatal(err)
     process.exit(1)
   }
 

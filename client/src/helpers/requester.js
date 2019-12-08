@@ -11,6 +11,9 @@ const get = route => {
         resolve(res.data)
       })
       .catch(err => {
+        if (err.response && err.response.data && err.response.data.message) {
+          reject(err.response.data.message)
+        }
         reject(err)
       })
   })
@@ -24,6 +27,9 @@ const post = (route, data) => {
         resolve(res.data)
       })
       .catch(err => {
+        if (err.response && err.response.data && err.response.data.message) {
+          reject(err.response.data.message)
+        }
         reject(err)
       })
   })
@@ -37,6 +43,9 @@ const put = (route, data) => {
         resolve(res.data)
       })
       .catch(err => {
+        if (err.response && err.response.data && err.response.data.message) {
+          reject(err.response.data.message)
+        }
         reject(err)
       })
   })

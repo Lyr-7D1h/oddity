@@ -1,5 +1,15 @@
 import React, { useState } from 'react'
-import { Table, Input, InputNumber, Form, Button, Select, Row, Col } from 'antd'
+import {
+  Table,
+  Input,
+  InputNumber,
+  Form,
+  Button,
+  Select,
+  Row,
+  Col,
+  Switch
+} from 'antd'
 
 const EditableContext = React.createContext()
 
@@ -9,6 +19,8 @@ const getInput = (dataType, placeHolder) => {
     return <Input placeholder={placeHolder} />
   } else if (dataType === 'number') {
     return <InputNumber />
+  } else if (dataType === 'bool') {
+    return <Switch />
   } else if (Array.isArray(dataType)) {
     return (
       <Select>
@@ -30,6 +42,7 @@ class EditableCell extends React.Component {
       dataIndex,
       title,
       dataType,
+      required,
       record,
       index,
       children,
@@ -43,10 +56,11 @@ class EditableCell extends React.Component {
             {getFieldDecorator(dataIndex, {
               rules: [
                 {
-                  required: true,
+                  required: required,
                   message: `Please Input ${title}`
                 }
               ],
+              valuePropName: dataType === 'bool' ? 'checked' : 'value',
               initialValue: record[dataIndex]
             })(getInput(dataType))}
           </Form.Item>
@@ -210,6 +224,7 @@ const EditableTable = ({
           record,
           dataType: col.dataType,
           dataIndex: col.dataIndex,
+          required: col.required,
           title: col.title,
           editing: isEditing(record)
         }
@@ -228,17 +243,21 @@ const EditableTable = ({
       <Row gutter={16}>
         <Form>
           {editableColumns.map((col, i) => {
+            const colSize = Math.floor(24 / editableColumns.length)
             if (col.title === 'operation') {
               return (
-                <Col key={i} span={24 / editableColumns.length}>
+                <Col key={i} span={colSize}>
                   <Button onClick={() => create(form)} block>
                     Create
                   </Button>
                 </Col>
               )
             } else {
+              if (!col.creatable && !col.editable) {
+                return
+              }
               return (
-                <Col key={i} span={24 / editableColumns.length}>
+                <Col key={i} span={colSize}>
                   <Form.Item style={{ margin: 0 }}>
                     {form.getFieldDecorator(col.dataIndex, {
                       rules: [
@@ -247,7 +266,9 @@ const EditableTable = ({
                           message: `Please Input ${col.title}`
                         }
                       ],
-                      initialValue: ''
+                      valuePropName:
+                        col.dataType === 'bool' ? 'checked' : 'value',
+                      initialValue: col.dataType === 'bool' ? false : ''
                     })(getInput(col.dataType, col.title))}
                   </Form.Item>
                 </Col>
