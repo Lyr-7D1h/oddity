@@ -41,15 +41,17 @@ const RoutingTable = ({ config, updateConfig }) => {
     requester
       .delete(`configs/${config._id}/routes/${routeId}`)
       .then(() => {
+        const newConfig = { ...config }
+
         let item
-        for (const i in config.routes) {
-          const { _id } = config.routes[i]
-          if (_id == routeId) {
-            item = config.routes[i]
-            config.routes.splice(i, 1)
+        for (const i in newConfig.routes) {
+          const { _id } = newConfig.routes[i]
+          if (_id === routeId) {
+            item = newConfig.routes[i]
+            newConfig.routes.splice(i, 1)
           }
         }
-        updateConfig(config)
+        updateConfig(newConfig)
         notificationHandler.success(`Removed Route ${item.name}`)
       })
       .catch(err => notificationHandler.error('Deleting failed', err.message))
@@ -66,9 +68,16 @@ const RoutingTable = ({ config, updateConfig }) => {
     requester
       .patch(`configs/${config._id}/routes/${item._id}`, item)
       .then(() => {
-        config.routes.push(item)
+        const newConfig = { ...config }
 
-        updateConfig(config)
+        for (const i in newConfig.routes) {
+          const { _id } = newConfig.routes[i]
+          if (_id === item._id) {
+            newConfig.routes.splice(i, 1, item)
+          }
+        }
+
+        updateConfig(newConfig)
         notificationHandler.success(`Updated Route ${item.name}`)
       })
       .catch(err => notificationHandler.error('Updating failed', err.message))
@@ -78,10 +87,11 @@ const RoutingTable = ({ config, updateConfig }) => {
     requester
       .post(`configs/${config._id}/routes`, item)
       .then(res => {
+        const newConfig = { ...config }
         item._id = res._id
-        config.routes.push(item)
+        newConfig.routes.push(item)
 
-        updateConfig(config)
+        updateConfig(newConfig)
         notificationHandler.success(`Created Route ${item.name}`)
       })
       .catch(err => {
@@ -89,8 +99,7 @@ const RoutingTable = ({ config, updateConfig }) => {
       })
   }
 
-  console.log('rendering routing table')
-
+  console.log(config.routes)
   return (
     <EditableTable
       columns={columns}
@@ -101,12 +110,7 @@ const RoutingTable = ({ config, updateConfig }) => {
     ></EditableTable>
   )
 }
-export default connect(
-  state => {
-    console.log(state)
-    return { config: state.config }
-  },
-  {
-    updateConfig
-  }
-)(RoutingTable)
+
+export default connect(state => ({ config: state.config }), {
+  updateConfig
+})(RoutingTable)

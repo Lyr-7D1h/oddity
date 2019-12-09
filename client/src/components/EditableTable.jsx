@@ -95,7 +95,7 @@ const EditableTable = ({
 }) => {
   rowKey = rowKey || '_id' // sets _id by default if nothing else specified
   const [editingKey, setEditingKey] = useState('')
-  const [data, setData] = useState(dataSource)
+  const data = dataSource
 
   // #region Functions
   const isEditing = record => record[rowKey] === editingKey
@@ -129,7 +129,6 @@ const EditableTable = ({
       if (error) {
         return
       }
-      const newData = [...data]
 
       const item = row
       item[rowKey] = key
@@ -243,7 +242,7 @@ const EditableTable = ({
               )
             } else {
               if (!col.creatable && !col.editable) {
-                return
+                return ''
               }
               return (
                 <Col key={i} span={colSize}>

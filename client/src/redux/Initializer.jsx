@@ -29,9 +29,8 @@ if (user.username !== undefined) {
   store.dispatch(updateUser(user))
 }
 
-store.dispatch(fetchConfig())
-
 // Load config from /api/config
+store.dispatch(fetchConfig())
 requester.get('config').then(config => {
   store.dispatch(updateConfig(config))
 })

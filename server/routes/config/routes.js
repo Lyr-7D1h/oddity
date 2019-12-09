@@ -12,6 +12,7 @@ module.exports = async fastify => {
       reply.badRequest('Invalid Id')
     }
   }
+
   const bodySchema = {
     type: 'object',
     properties: {
@@ -75,17 +76,6 @@ module.exports = async fastify => {
         const route = new fastify.Route(request.body)
         routes.push(route)
 
-        // only 1 default
-        // let defaultCount = 0
-        // for (const i in routes) {
-        //   if (routes[i].default) {
-        //     defaultCount++
-        //   }
-        // }
-        // if (defaultCount === 0) {
-        //   return response.badRequest('There should always be one default')
-        // }
-
         config
           .save()
           .then(() => {
@@ -143,8 +133,11 @@ module.exports = async fastify => {
         // path should be unique unless it is default
         for (const i in routes) {
           if (!routes[i].default) {
-            if (routes[i].path === request.body.path) {
-              return reply.badRequest('Path must be unqiue')
+            if (routes[i]._id != request.params.routeId) {
+              // dont check current item
+              if (routes[i].path === request.body.path) {
+                return reply.badRequest('Path must be unqiue')
+              }
             }
           }
         }
