@@ -27,10 +27,9 @@ module.exports = fastify => {
                 password: hash,
                 ip: request.ip
               }
-              console.log(user)
 
               fastify.User.create(user)
-                .then(() => fastify.success(reply))
+                .then(() => reply.success())
                 .catch(err => {
                   fastify.log.error(err)
                   return reply.send(fastify.httpErrors.internalServerError())

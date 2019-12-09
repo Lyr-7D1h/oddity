@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch, Link } from 'react-router-dom'
 
 import { connect } from 'react-redux'
 import notificationHandler from './helpers/notificationHandler'
@@ -14,8 +14,10 @@ import NotFoundPage from './pages/NotFoundPage'
 import ForumPage from './pages/ForumPage'
 import ServersPage from './pages/ServersPage'
 import MembersPage from './pages/MembersPage'
+import NoHomePage from './pages/NoHomePage'
 
 const App = ({ routes }) => {
+  let noHomeSet = true
   return (
     <BrowserRouter>
       <ConfigLoader>
@@ -44,12 +46,14 @@ const App = ({ routes }) => {
                   notificationHandler.error('Modules misconfigured')
               }
 
-              const path = route.default ? '/' : '/' + route.route
-
+              const path = route.default ? '/' : '/' + route.path
+              if (route.default) noHomeSet = false
               return (
                 <Route key={i} exact path={path} component={component}></Route>
               )
             })}
+
+            {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
 
             <Route exact path="/login" component={LoginPage}></Route>
             <Route exact path="/register" component={RegisterPage}></Route>

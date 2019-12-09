@@ -15,8 +15,8 @@ const columns = [
     editable: true
   },
   {
-    title: 'Route',
-    dataIndex: 'route',
+    title: 'Path',
+    dataIndex: 'path',
     dataType: 'text',
     editable: true,
     render: route => '/' + route
@@ -37,59 +37,59 @@ const columns = [
 ]
 
 const RoutingTable = ({ config, updateConfig }) => {
-  const handleSave = item => {
-    const data = config
-    data.routes = config.routes.map(mod => {
-      if (mod._id === item._id) {
-        return item
-      }
-      return mod
-    })
-
+  const handleDelete = routeId => {
     requester
-      .put(`configs/${config._id}/routes`, item)
+      .delete(`configs/${config._id}/routes/${routeId}`)
       .then(() => {
-        updateConfig(data)
-        notificationHandler.success(`Updated Route ${item.name}`)
-      })
-      .catch(err => notificationHandler.error('Updating failed', err))
-  }
-
-  const handleDelete = id => {
-    const data = config
-    // Remove item from data
-    const item = data.routes.find(mod => mod._id === id)
-    data.routes = data.routes.filter(mod => mod._id !== id)
-
-    requester
-      .put(`configs/${config._id}/routes`, item)
-      .then(() => {
-        updateConfig(data)
+        let item
+        for (const i in config.routes) {
+          const { _id } = config.routes[i]
+          if (_id == routeId) {
+            item = config.routes[i]
+            config.routes.splice(i, 1)
+          }
+        }
+        updateConfig(config)
         notificationHandler.success(`Removed Route ${item.name}`)
       })
-      .catch(err => notificationHandler.error('Deleting failed', err))
+      .catch(err => notificationHandler.error('Deleting failed', err.message))
+  }
+
+  const handleSave = item => {
+    if (!item._id) {
+      return notificationHandler.error(
+        'Creating failed',
+        'Item does not have an Id'
+      )
+    }
+
+    requester
+      .patch(`configs/${config._id}/routes/${item._id}`, item)
+      .then(() => {
+        config.routes.push(item)
+
+        updateConfig(config)
+        notificationHandler.success(`Updated Route ${item.name}`)
+      })
+      .catch(err => notificationHandler.error('Updating failed', err.message))
   }
 
   const handleCreate = item => {
-    const data = config
-    data.routes.push(item)
-
-    console.log(item)
-
     requester
-      .put(`configs/${config._id}/routes`, item)
+      .post(`configs/${config._id}/routes`, item)
       .then(res => {
         item._id = res._id
-        const data = config
-        data.routes.push(item)
+        config.routes.push(item)
 
-        updateConfig(data)
+        updateConfig(config)
         notificationHandler.success(`Created Route ${item.name}`)
       })
       .catch(err => {
-        notificationHandler.error('Creating failed', err)
+        notificationHandler.error('Creating failed', err.message)
       })
   }
+
+  console.log('rendering routing table')
 
   return (
     <EditableTable
@@ -101,6 +101,12 @@ const RoutingTable = ({ config, updateConfig }) => {
     ></EditableTable>
   )
 }
-export default connect(state => ({ config: state.config }), { updateConfig })(
-  RoutingTable
-)
+export default connect(
+  state => {
+    console.log(state)
+    return { config: state.config }
+  },
+  {
+    updateConfig
+  }
+)(RoutingTable)

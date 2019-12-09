@@ -110,10 +110,7 @@ const EditableTable = ({
         return
       }
 
-      const newData = data.filter(item => item[rowKey] !== key)
-
       onDelete(key)
-      setData(newData)
     })
   }
 
@@ -137,15 +134,7 @@ const EditableTable = ({
       const item = row
       item[rowKey] = key
 
-      const index = newData.findIndex(item => item[rowKey] === key)
-
-      newData.splice(index, 1, {
-        ...item,
-        ...row
-      })
-
       onSave(item)
-      setData(newData)
       setEditingKey('')
     })
   }

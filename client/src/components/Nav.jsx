@@ -46,8 +46,8 @@ const Nav = ({ selected, routes, title, user, updateUser }) => {
             theme="light"
           >
             {routes.map((mod, i) => (
-              <Menu.Item key={mod.route}>
-                <Link to={`/${mod.route}`}>{mod.name}</Link>
+              <Menu.Item key={mod.path}>
+                <Link to={`/${mod.path}`}>{mod.name}</Link>
               </Menu.Item>
             ))}
 

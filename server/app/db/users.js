@@ -29,7 +29,6 @@ module.exports = fp(async instance => {
     ip: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
       max: 30
     },

@@ -7,7 +7,7 @@ module.exports = fp(async instance => {
       type: String
     },
     // Should be unique within document
-    route: {
+    path: {
       required: true,
       type: instance.mongoose.Types.EmptyString,
       lowercase: true
@@ -22,6 +22,10 @@ module.exports = fp(async instance => {
       enum: ['servers', 'members', 'forum', 'home']
     }
   })
+
+  const Route = instance.mongoose.connection.model('Route', routeSchema)
+
+  instance.decorate('Route', Route)
 
   const configSchema = new instance.mongoose.Schema({
     name: {

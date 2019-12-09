@@ -14,17 +14,17 @@ module.exports = async fastify => {
 
           fastify.Role.findById(user.roleId)
             .then(role => {
-              if (role === null) {
-                // every user should have a role
-                throw Error('User does not have a role')
-              }
-
               const userCookie = {
                 _id: user._id.toString(),
                 username: user.username,
-                email: user.email,
-                roleId: role._id.toString(),
-                permissions: role.permissions
+                email: user.email
+              }
+
+              if (role === null) {
+                fastify.log.warn('User does not have a role')
+              } else {
+                userCookie.roleId = role._id.toString()
+                userCookie.permissions = role.permissions
               }
 
               reply.setCookie('user', JSON.stringify(userCookie), {
