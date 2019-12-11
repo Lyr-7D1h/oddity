@@ -1,28 +1,5 @@
 module.exports = async fastify => {
-  fastify.routeGen({
-    model: fastify.Config,
-    routes: [
-      {
-        method: 'get',
-        multiple: true
-      },
-      {
-        method: 'get'
-      },
-      {
-        method: 'post',
-        auth: fastify.verify.cookie
-      },
-      {
-        method: 'delete',
-        auth: fastify.verify.cookie
-      },
-      {
-        method: 'put',
-        auth: fastify.verify.cookie
-      }
-    ]
-  })
+  require('./routes')(fastify)
 
   // Get Default Config
   fastify.get('/config', (request, reply) => {

@@ -11,14 +11,6 @@ const fp = require('fastify-plugin')
  * "-COLUMN1" to return everything exept COLUMN1
  */
 module.exports = fp(async instance => {
-  const validateId = (request, reply, next) => {
-    if (instance.mongoose.ObjectId.isValid(request.params.id)) {
-      return next()
-    } else {
-      return reply.send(instance.httpErrors.badRequest())
-    }
-  }
-
   instance.decorate('routeGen', async options => {
     const { model, routes } = options
     if (!model || !routes || routes.length < 0) {
@@ -41,7 +33,7 @@ module.exports = fp(async instance => {
                 })
                 .catch(err => {
                   instance.log.error(err)
-                  reply.send(instance.httpErrors.internalServerError())
+                  reply.internalServerError()
                 })
               await reply
             }
@@ -50,12 +42,12 @@ module.exports = fp(async instance => {
               model
                 .findById(request.params.id, columns)
                 .then(items => {
-                  if (!items) reply.send(instance.httpErrors.notFound())
+                  if (!items) reply.notFound()
                   reply.send(items)
                 })
                 .catch(err => {
                   instance.log.error(err)
-                  reply.send(instance.httpErrors.internalServerError())
+                  reply.internalServerError()
                 })
               await reply
             }
@@ -77,7 +69,7 @@ module.exports = fp(async instance => {
               })
               .catch(err => {
                 instance.log.error(err)
-                reply.send(instance.httpErrors.badRequest())
+                reply.badRequest()
               })
             await reply
           }
@@ -141,7 +133,7 @@ module.exports = fp(async instance => {
 
       if (!route.multiple && method !== 'POST') {
         idParam = '/:id'
-        preHandler.push(validateId)
+        preHandler.push(instance.validation.Id)
         schema = {
           params: 'id#'
         }
@@ -167,9 +159,20 @@ module.exports = fp(async instance => {
         preHandler.push(instance.auth(authHandlers))
       }
 
+      // Small validation for custom route
+      if (
+        route.route &&
+        !route.route.includes(':id') === !route.multiple &&
+        method !== 'POST'
+      ) {
+        instance.log.warn('No id for operation on single object')
+      }
+      if (route.route && route.route.startsWith('/'))
+        instance.log.warn("Custom Routes should start without '/' ")
+
       return {
         method: method,
-        url: '/api/' + collectionName + idParam,
+        url: '/api/' + (route.route || collectionName + idParam),
         preHandler: preHandler,
         schema: schema,
         handler: getHandler(route, method)

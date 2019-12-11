@@ -5,13 +5,8 @@ module.exports = fp(async instance => {
   const roleSchema = new instance.mongoose.Schema({
     name: {
       required: true,
+      unqiue: true,
       type: String
-    },
-    identifier: {
-      required: true,
-      type: String,
-      lowercase: true,
-      unique: true
     },
     isDefault: {
       type: Boolean

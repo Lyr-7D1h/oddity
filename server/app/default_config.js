@@ -2,7 +2,7 @@ const fp = require('fastify-plugin')
 
 const createAdminUser = instance => {
   return new Promise((resolve, reject) => {
-    instance.Role.findOne({ identifier: 'admin' }, '_id').then(role => {
+    instance.Role.findOne({ name: 'Admin' }, '_id').then(role => {
       if (role === null) {
         reject(
           new Error(
@@ -40,10 +40,9 @@ const createAdminUser = instance => {
 
 const createAdminRole = instance => {
   return new Promise((resolve, reject) => {
-    instance.Role.findOne({ identifier: 'admin' }).then(role => {
+    instance.Role.findOne({ name: 'Admin' }).then(role => {
       if (role === null) {
         instance.Role.create({
-          identifier: 'admin',
           name: 'Admin',
           permissions: 1
         })
@@ -62,10 +61,9 @@ const createAdminRole = instance => {
 
 const createUserRole = instance => {
   return new Promise((resolve, reject) => {
-    instance.Role.findOne({ identifier: 'user' }).then(role => {
+    instance.Role.findOne({ name: 'User' }).then(role => {
       if (role === null) {
         instance.Role.create({
-          identifier: 'user',
           name: 'User',
           isDefault: true,
           permissions: 0
@@ -87,9 +85,11 @@ const createDefaultConfig = instance => {
           name: 'default',
           isActive: true,
           title: 'Oddity',
-          modules: [
-            { name: 'Forum', route: 'forum', config: 'forum' },
-            { name: 'Servers', route: 'servers', config: 'servers' }
+          routes: [
+            { name: 'Home', path: '', module: 'home', default: true },
+            { name: 'Forum', path: 'forum', module: 'forum' },
+            { name: 'Members', path: 'members', module: 'members' },
+            { name: 'Servers', path: 'servers', module: 'servers' }
           ]
         })
           .then(() => resolve(true))
@@ -162,7 +162,7 @@ const createAdminPortal = instance => {
 
 module.exports = fp(async instance => {
   const errHandler = err => {
-    instance.fastify.log.fatal(err)
+    instance.log.fatal(err)
     process.exit(1)
   }
 
