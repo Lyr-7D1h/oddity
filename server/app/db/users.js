@@ -6,12 +6,14 @@ module.exports = fp(async instance => {
       type: String,
       required: true,
       unique: true,
+      min: 3,
       max: 30
     },
     identifier: {
       type: String,
       required: true,
       unique: true,
+      min: 3,
       max: 30,
       lowercase: true
     },
