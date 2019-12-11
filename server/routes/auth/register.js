@@ -18,7 +18,7 @@ module.exports = fastify => {
       fastify.Role.find({ isDefault: true }, '_id')
         .then(roles => {
           if (roles.length === 1) {
-            fastify.crypto.encryptKey(request.body.password).then(hash => {
+            fastify.crypto.hash(request.body.password).then(hash => {
               const user = {
                 username: request.body.username,
                 identifier: request.body.username,

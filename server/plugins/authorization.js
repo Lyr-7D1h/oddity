@@ -19,7 +19,7 @@ module.exports = fp(async instance => {
         .then(portals => {
           if (portals.length > 0) {
             instance.crypto
-              .validateKey(basicCredentials.pass, portals[0].secretKey)
+              .validate(basicCredentials.pass, portals[0].secretKey)
               .then(isValid => {
                 if (isValid) {
                   request.credentials.id = portals[0]._id
@@ -55,7 +55,7 @@ module.exports = fp(async instance => {
         .then(users => {
           if (users.length > 0) {
             instance.crypto
-              .validateKey(basicCredentials.pass, users[0].password)
+              .validate(basicCredentials.pass, users[0].password)
               .then(isValid => {
                 if (isValid) {
                   request.credentials.id = users[0]._id

@@ -13,7 +13,7 @@ const createAdminUser = instance => {
         instance.User.findOne({ identifier: 'admin' }).then(adminUser => {
           if (adminUser === null) {
             instance.crypto
-              .encryptKey('admin')
+              .hash('admin')
               .then(hash => {
                 instance.User.create({
                   username: 'Admin',
@@ -111,7 +111,7 @@ const createAdminPortal = instance => {
       .then(portals => {
         // create if does not exist
         if (portals.length === 0) {
-          instance.crypto.encryptKey(secret).then(hash => {
+          instance.crypto.hash(secret).then(hash => {
             instance.Portal.create({
               name: 'admin',
               accessKey: instance.crypto.createKey(10),
@@ -127,11 +127,11 @@ const createAdminPortal = instance => {
         } else {
           // update if it does exist
           instance.crypto
-            .validateKey(secret, portals[0].secretKey)
+            .validate(secret, portals[0].secretKey)
             .then(isValid => {
               // if pass is not secret make it secret
               if (!isValid) {
-                instance.crypto.encryptKey(secret).then(hash => {
+                instance.crypto.hash(secret).then(hash => {
                   instance.Portal.updateOne(
                     { _id: portals[0]._id },
                     { secretKey: hash }
