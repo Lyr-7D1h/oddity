@@ -13,7 +13,7 @@ module.exports = async fastify => {
       },
       {
         method: 'post',
-        auth: fastify.verify.cookie
+        auth: [fastify.verify.cookie, fastify.verify.basic.user]
       },
       {
         method: 'delete',

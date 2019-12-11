@@ -3,7 +3,9 @@ import Cookies from 'js-cookie'
 
 const baseUrl = '/api/'
 
-const get = route => {
+const requester = {}
+
+requester.get = route => {
   return new Promise((resolve, reject) => {
     axios
       .get(baseUrl + route)
@@ -11,12 +13,15 @@ const get = route => {
         resolve(res.data)
       })
       .catch(err => {
+        if (err.response && err.response.data && err.response.data.message) {
+          err.message = err.response.data.message
+        }
         reject(err)
       })
   })
 }
 
-const post = (route, data) => {
+requester.post = (route, data) => {
   return new Promise((resolve, reject) => {
     axios
       .post(baseUrl + route, data)
@@ -24,12 +29,47 @@ const post = (route, data) => {
         resolve(res.data)
       })
       .catch(err => {
+        if (err.response && err.response.data && err.response.data.message) {
+          err.message = err.response.data.message
+        }
         reject(err)
       })
   })
 }
 
-const put = (route, data) => {
+requester.delete = route => {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(baseUrl + route)
+      .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        if (err.response && err.response.data && err.response.data.message) {
+          err.message = err.response.data.message
+        }
+        reject(err)
+      })
+  })
+}
+
+requester.patch = (route, data) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(baseUrl + route, data)
+      .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        if (err.response && err.response.data && err.response.data.message) {
+          err.message = err.response.data.message
+        }
+        reject(err)
+      })
+  })
+}
+
+requester.put = (route, data) => {
   return new Promise((resolve, reject) => {
     axios
       .put(baseUrl + route, data)
@@ -37,12 +77,15 @@ const put = (route, data) => {
         resolve(res.data)
       })
       .catch(err => {
+        if (err.response && err.response.data && err.response.data.message) {
+          err.message = err.response.data.message
+        }
         reject(err)
       })
   })
 }
 
-const login = values => {
+requester.login = values => {
   return new Promise((resolve, reject) => {
     axios
       .get(`${baseUrl}auth/login`, {
@@ -61,7 +104,7 @@ const login = values => {
   })
 }
 
-const logout = () => {
+requester.logout = () => {
   return new Promise((resolve, reject) => {
     axios
       .get(`${baseUrl}auth/logout`)
@@ -82,10 +125,4 @@ const logout = () => {
   })
 }
 
-export default {
-  post,
-  put,
-  get,
-  login,
-  logout
-}
+export default requester

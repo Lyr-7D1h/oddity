@@ -29,16 +29,14 @@ module.exports = fp(async instance => {
     ip: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
       max: 30
     },
     permissions: {
-      type: Number,
-      required: true
+      type: Number
     },
     roleId: {
-      type: instance.mongoose.ObjectId,
+      type: instance.mongoose.Types.ObjectId,
       required: true
     }
   })

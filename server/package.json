@@ -32,6 +32,7 @@
     "fastify-static": "^2.5.0",
     "make-promises-safe": "^5.1.0",
     "mongoose": "^5.7.5",
+    "mongoose-delete": "^0.5.1",
     "pino-pretty": "^3.2.2"
   },
   "devDependencies": {

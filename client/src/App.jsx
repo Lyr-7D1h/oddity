@@ -14,16 +14,18 @@ import NotFoundPage from './pages/NotFoundPage'
 import ForumPage from './pages/ForumPage'
 import ServersPage from './pages/ServersPage'
 import MembersPage from './pages/MembersPage'
+import NoHomePage from './pages/NoHomePage'
 
-const App = ({ modules }) => {
+const App = ({ routes }) => {
+  let noHomeSet = true
   return (
     <BrowserRouter>
       <ConfigLoader>
-        {modules ? (
+        {routes ? (
           <Switch>
-            {modules.map((mod, i) => {
+            {routes.map((route, i) => {
               let component = NotFoundPage
-              switch (mod.config) {
+              switch (route.module) {
                 case 'servers':
                   component = ServersPage
                   break
@@ -33,20 +35,26 @@ const App = ({ modules }) => {
                 case 'members':
                   component = MembersPage
                   break
+                case 'home':
+                  component = HomePage
+                  break
                 default:
+                  console.error(
+                    `Module ${route.module} is not defined from route: `,
+                    route
+                  )
                   notificationHandler.error('Modules misconfigured')
               }
 
+              const path = route.default ? '/' : '/' + route.path
+              if (route.default) noHomeSet = false
               return (
-                <Route
-                  key={i}
-                  exact
-                  path={'/' + mod.route}
-                  component={component}
-                ></Route>
+                <Route key={i} exact path={path} component={component}></Route>
               )
             })}
-            <Route exact path="/" component={HomePage}></Route>
+
+            {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
+
             <Route exact path="/login" component={LoginPage}></Route>
             <Route exact path="/register" component={RegisterPage}></Route>
             <Route exact path="/admin" component={AdminPage}></Route>
@@ -61,4 +69,4 @@ const App = ({ modules }) => {
   )
 }
 
-export default connect(state => ({ modules: state.config.modules }))(App)
+export default connect(state => ({ routes: state.config.routes }))(App)
