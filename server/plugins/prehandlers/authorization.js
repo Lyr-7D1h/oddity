@@ -51,9 +51,17 @@ module.exports = fp(async instance => {
     const basicCredentials = auth(request)
 
     if (basicCredentials && basicCredentials.name && basicCredentials.pass) {
-      instance.User.find({ identifier: basicCredentials.name }, 'password _id')
+      instance.User.find(
+        {
+          $or: [
+            { identifier: basicCredentials.name },
+            { email: basicCredentials.name }
+          ]
+        },
+        'password _id'
+      )
         .then(users => {
-          if (users.length > 0) {
+          if (users.length === 1) {
             instance.crypto
               .validate(basicCredentials.pass, users[0].password)
               .then(isValid => {
@@ -68,6 +76,11 @@ module.exports = fp(async instance => {
                 instance.log.error(err)
                 done(new InternalServerError())
               })
+          } else if (users.length > 1) {
+            instance.log.error(
+              `Multiple users found for id or email with name: ${basicCredentials.name}`
+            )
+            done(new Unauthorized())
           } else {
             // if none found unauthorized
             done(new Unauthorized())
