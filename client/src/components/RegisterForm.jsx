@@ -16,6 +16,7 @@ class RegistrationForm extends React.Component {
     e.preventDefault()
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
+        values.identifier = this.state.identifier
         console.log(values)
         requester
           .post('auth/register', values)

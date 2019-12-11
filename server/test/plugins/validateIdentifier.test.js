@@ -22,7 +22,9 @@ const falseyIds = [
   'this_is_test ',
   'with_symbol!',
   '?wow',
-  '22'
+  '22',
+  null,
+  undefined
 ]
 
 test('Validate Identifier: Ids should be truthful', t => {

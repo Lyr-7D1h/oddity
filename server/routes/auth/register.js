@@ -41,12 +41,12 @@ module.exports = fastify => {
             })
           } else {
             fastify.log.fatal('Multiple or no Default Roles')
-            reply.send(fastify.httpErrors.internalServerError())
+            reply.internalServerError()
           }
         })
         .catch(err => {
           fastify.log.error(err)
-          reply.send(fastify.httpErrors.internalServerError())
+          reply.internalServerError()
         })
     }
   )
