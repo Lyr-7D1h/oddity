@@ -49,8 +49,8 @@ const LoginForm = ({ updateUser, ...props }) => {
         <Input
           prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
           type="text"
-          name="username"
-          placeholder="Username"
+          name="user"
+          placeholder="ID or Email"
           required
         />
       </Form.Item>
@@ -86,7 +86,4 @@ const mapActionsToProps = {
   updateUser
 }
 
-export default connect(
-  mapStateToProps,
-  mapActionsToProps
-)(LoginForm)
+export default connect(mapStateToProps, mapActionsToProps)(LoginForm)

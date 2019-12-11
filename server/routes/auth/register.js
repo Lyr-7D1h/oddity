@@ -1,4 +1,13 @@
 module.exports = fastify => {
+  const validateIdentifier = (id, username) => {
+    if (id.includes(username.toLowerCase())) {
+      const identifier = e.target.value.toLowerCase().replace(' ', '_')
+      new RegExp('([a-z])w+')
+    }
+
+    return false
+  }
+
   fastify.post(
     `/auth/register`,
     {
@@ -18,10 +27,14 @@ module.exports = fastify => {
       fastify.Role.find({ isDefault: true }, '_id')
         .then(roles => {
           if (roles.length === 1) {
+            if ((!validateIdentifier, request.body.username)) {
+              return reply.badRequest('Invalid Identifier')
+            }
+
             fastify.crypto.hash(request.body.password).then(hash => {
               const user = {
                 username: request.body.username,
-                identifier: request.body.username,
+                identifier: request.body.identifier,
                 email: request.body.email,
                 roleId: roles[0]._id,
                 password: hash,

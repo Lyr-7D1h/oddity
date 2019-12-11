@@ -12,7 +12,8 @@ module.exports = fp(async instance => {
       type: String,
       required: true,
       unique: true,
-      max: 30
+      max: 30,
+      lowercase: true
     },
     password: {
       type: String,
