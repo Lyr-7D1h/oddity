@@ -17,6 +17,7 @@ module.exports = async fastify => {
               const userCookie = {
                 _id: user._id.toString(),
                 username: user.username,
+                avatar: user.avatar,
                 email: user.email
               }
 

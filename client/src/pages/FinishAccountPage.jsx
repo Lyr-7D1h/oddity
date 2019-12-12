@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import Page from '../containers/Page'
 import Centered from '../containers/Centered'
 import { Redirect } from 'react-router-dom'
+import { connect } from 'react-redux'
 import {
   Steps,
   Upload,
@@ -11,38 +11,47 @@ import {
   Col,
   Button,
   Card,
-  Typography
+  Typography,
+  Layout
 } from 'antd'
 import notificationHandler from '../helpers/notificationHandler'
+import { updateUser } from '../redux/actions/userActions'
 
 const { Step } = Steps
 
-export default () => {
+const FinishAccountPage = ({ user, dispatch }) => {
   const [imgUrl, setImgUrl] = useState('')
-  const [currentStep, setCurrentStep] = useState(2)
+  const [currentStep, setCurrentStep] = useState(1)
+
   const props = {
     name: 'file',
     multiple: false,
     accept: 'image/jpeg, image/png',
     showUploadList: false,
-    previewImage: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+    action: `api/resources/users/${user._id}`,
 
     onChange(info) {
       const { status } = info.file
       if (status !== 'uploading') {
-        console.log(info.file)
       }
       if (status === 'done') {
         setImgUrl(info.file.response.url)
         notificationHandler.success('Uploaded Profile Picture successfully')
       } else if (status === 'error') {
-        notificationHandler.error(`file upload failed.`)
+        notificationHandler.error(
+          `file upload failed.`,
+          info.file.response.message || ''
+        )
       }
     }
   }
 
   const next = () => {
+    if (currentStep + 1 === 3) {
+      const newUser = { ...user }
+      newUser.avatar = imgUrl
+      dispatch(updateUser(newUser))
+    }
     setCurrentStep(currentStep + 1)
   }
 
@@ -135,7 +144,10 @@ export default () => {
   )
 
   return (
-    <Page>
+    <Layout style={{ padding: '10px' }}>
+      <Typography.Title style={{ marginBottom: '50px', textAlign: 'center' }}>
+        Finish Account
+      </Typography.Title>
       <Steps progressDot style={{ marginBottom: 50 }} current={currentStep}>
         <Step title="Created Account" />
         <Step title="Upload Profile Picture" />
@@ -146,6 +158,8 @@ export default () => {
         {currentStep === 2 && ConnectThirdParty}
         {currentStep === 3 && <Redirect to="/account"></Redirect>}
       </Centered>
-    </Page>
+    </Layout>
   )
 }
+
+export default connect(state => ({ user: state.user }))(FinishAccountPage)

@@ -16,6 +16,17 @@ module.exports = async (fastify, opts) => {
       }
     })
 
+    .register(require('fastify-multipart'), {
+      limits: {
+        fieldNameSize: 100, // Max field name size in bytes
+        fieldSize: 1000000, // Max field value size in bytes
+        fields: 10, // Max number of non-file fields
+        fileSize: 10000, // For multipart forms, the max file size
+        files: 1, // Max number of file fields
+        headerPairs: 2000 // Max number of header key=>value pairs
+      }
+    })
+
     .register(require('fastify-cors'), {
       origin: 'http://localhost:3000'
     })
@@ -44,6 +55,12 @@ module.exports = async (fastify, opts) => {
       )
     })
 
+    .register(require('fastify-static'), {
+      prefix: '/resources',
+      root: path.join(__dirname, '../../resources')
+    })
+
+  // Load default config if not a test
   if (fastify.config.NODE_ENV !== 'testing') {
     fastify.log.info('Loading Default Config..')
     fastify.register(require('./default_config'))

@@ -29,6 +29,10 @@ module.exports = fp(async instance => {
       unique: true,
       lowercase: true
     },
+    avatar: {
+      type: String,
+      unique: true
+    },
     ip: {
       type: String,
       required: true,
