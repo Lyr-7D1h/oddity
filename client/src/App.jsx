@@ -73,10 +73,9 @@ const App = ({ routes, userNeedsSetup }) => {
   )
 }
 
-export default connect(state => () => {
-  console.log('New state', state)
+export default connect(state => {
   let userNeedsSetup = false
-  if (state.user.username) {
+  if (state.user.username && state.user.identifier !== 'admin') {
     if (!state.user.avatar) {
       userNeedsSetup = true
     }
