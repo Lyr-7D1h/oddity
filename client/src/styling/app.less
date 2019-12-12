@@ -1,3 +1,5 @@
+@import './theme.less';
+
 // Title
 .title {
   font-size: 2em;
@@ -12,12 +14,34 @@
   }
 }
 
+/*
+  ODDITY NOTIFICATION
+*/
+.oddity-notification {
+  transition-duration: 1s;
+  z-index: 5;
+  transform: translate(-50%);
+  bottom: 40px;
+  position: fixed;
+  width: 400px;
+  background-color: fade(@primary-color, 80%);
+  left: 50vw;
+  color: #fff - @primary-color;
+  button {
+    background-color: @success-color;
+    border-color: @primary-color;
+    &:hover {
+      background-color: fade(@success-color, 80%);
+    }
+  }
+}
+
 .ant-table-tbody > .oddity-row:hover > td {
   background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /*
-  ANT DESIGN
+  ANT DESIGN OVERWRITES
 */
 .ant-menu-item-disabled,
 .ant-input-disabled {

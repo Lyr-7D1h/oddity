@@ -10,6 +10,7 @@ import {
   Col,
   Switch
 } from 'antd'
+import ActionPopup from './ActionPopup'
 
 const EditableContext = React.createContext()
 
@@ -35,11 +36,13 @@ const getInput = (dataType, placeHolder) => {
     console.error('Invalid DataType')
   }
 }
+
 class EditableCell extends React.Component {
   renderCell = ({ getFieldDecorator }) => {
     const {
-      editing,
+      onChange,
       dataIndex,
+      rowKey,
       title,
       dataType,
       required,
@@ -51,22 +54,19 @@ class EditableCell extends React.Component {
 
     return (
       <td {...restProps}>
-        {editing ? (
-          <Form.Item style={{ margin: 0 }}>
-            {getFieldDecorator(dataIndex, {
-              rules: [
-                {
-                  required: required,
-                  message: `Please Input ${title}`
-                }
-              ],
-              valuePropName: dataType === 'bool' ? 'checked' : 'value',
-              initialValue: record[dataIndex]
-            })(getInput(dataType))}
-          </Form.Item>
-        ) : (
-          children
-        )}
+        <Form.Item style={{ margin: 0 }}>
+          {getFieldDecorator(`${record[rowKey]}___${dataIndex}`, {
+            getValueFromEvent: onChange,
+            rules: [
+              {
+                required: required,
+                message: `Please Input ${title}`
+              }
+            ],
+            valuePropName: dataType === 'bool' ? 'checked' : 'value',
+            initialValue: record[dataIndex]
+          })(getInput(dataType))}
+        </Form.Item>
       </td>
     )
   }
@@ -84,124 +84,86 @@ class EditableCell extends React.Component {
  * @param {function} onDelete - Returns item with ID
  * @param {function} onCreate - Returns item WITHOUT ID
  */
-const EditableTable = ({
-  rowKey,
-  columns,
-  dataSource,
-  form,
-  onSave,
-  onDelete,
-  onCreate
-}) => {
+const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
   rowKey = rowKey || '_id' // sets _id by default if nothing else specified
-  const [editingKey, setEditingKey] = useState('')
-  const data = dataSource
+  const [data, setData] = useState(dataSource)
+  const [hasChanges, setHasChanges] = useState(false)
 
-  // #region Functions
-  const isEditing = record => record[rowKey] === editingKey
-
-  const cancel = () => {
-    setEditingKey('')
-  }
-
-  const del = (form, key) => {
+  const create = form => {
     form.validateFields((error, row) => {
       if (error) {
         return
       }
+      row[rowKey] = 'created' + (data.length + 1)
 
-      onDelete(key)
-    })
-  }
-
-  const create = (form, key) => {
-    form.validateFields((error, row) => {
-      if (error) {
-        return
+      setData(data.concat([row]))
+      if (!hasChanges) {
+        setHasChanges(true)
       }
-
-      onCreate(row)
     })
   }
 
-  const save = (form, key) => {
-    form.validateFields((error, row) => {
-      if (error) {
-        return
+  const handleOnChange = event => {
+    setHasChanges(true)
+    let value
+    // checkbox and option gives different event
+    if (event !== null) {
+      if (!event.target) {
+        value = event
+      } else {
+        value = event.target.value
       }
-
-      const item = row
-      item[rowKey] = key
-
-      onSave(item)
-      setEditingKey('')
-    })
-  }
-
-  const edit = key => {
-    setEditingKey(key)
-  }
-  //#endregion
-
-  //#region Add Operations to columns
-  const operations = {
-    title: 'operation',
-    dataIndex: 'operation',
-    render: (text, record) => {
-      const editable = isEditing(record)
-      return editable ? (
-        <span>
-          <EditableContext.Consumer>
-            {form => (
-              <Button
-                onClick={() => save(form, record[rowKey])}
-                style={{ marginRight: 8 }}
-              >
-                Save
-              </Button>
-            )}
-          </EditableContext.Consumer>
-
-          <Button onClick={() => cancel(record[rowKey])}>Cancel</Button>
-        </span>
-      ) : (
-        <Row>
-          <Col span={12}>
-            <Button
-              block
-              disabled={editingKey !== ''}
-              onClick={() => edit(record[rowKey])}
-            >
-              Edit
-            </Button>
-          </Col>
-          {/* Add Delete if there is a handler for it */}
-          {onDelete ? (
-            <Col span={12}>
-              <EditableContext.Consumer>
-                {form => (
-                  <Button
-                    type="danger"
-                    block
-                    disabled={editingKey !== ''}
-                    onClick={() => del(form, record[rowKey])}
-                  >
-                    Delete
-                  </Button>
-                )}
-              </EditableContext.Consumer>
-            </Col>
-          ) : (
-            ''
-          )}
-        </Row>
-      )
     }
+    return value
   }
 
-  const columnsWithOperations = columns.concat([operations])
+  const save = () => {
+    form.validateFields((error, row) => {
+      if (error) {
+        return
+      }
 
-  const editableColumns = columnsWithOperations.map(col => {
+      const result = []
+      let obj = {}
+      Object.keys(row).forEach(key => {
+        const split = key.split('___')
+        const field = split[1]
+        const id = split[0]
+
+        // set _id if does not exsist
+        if (!obj[rowKey]) {
+          obj[rowKey] = id
+        } else {
+          // is object from different item?
+          if (obj[rowKey] !== id) {
+            // remove created id
+            if (obj[rowKey].includes('created')) {
+              delete obj[rowKey]
+            }
+            result.push(obj)
+
+            // start new object
+            obj = {}
+            obj[rowKey] = id
+          }
+        }
+
+        obj[field] = row[key]
+      })
+      // remove created id
+      if (obj[rowKey].includes('created')) {
+        delete obj[rowKey]
+      }
+      // push last obj
+      result.push(obj)
+
+      setHasChanges(false)
+
+      onSave(result)
+    })
+  }
+
+  const editableColumns = columns.map(col => {
     if (!col.editable) {
       return col
     }
@@ -209,75 +171,81 @@ const EditableTable = ({
       ...col,
       onCell: record => {
         return {
+          rowKey,
+          onChange: handleOnChange,
           record,
           dataType: col.dataType,
           dataIndex: col.dataIndex,
           required: col.required,
-          title: col.title,
-          editing: isEditing(record)
+          title: col.title
         }
       }
     }
   })
-  //#endregion
 
   const components = {
     body: {
       cell: EditableCell
     }
   }
+
   const CreateForm = Form.create()(({ form }) => {
+    const colSize = Math.floor(24 / (editableColumns.length + 1))
     return (
       <Row gutter={16}>
         <Form>
           {editableColumns.map((col, i) => {
-            const colSize = Math.floor(24 / editableColumns.length)
-            if (col.title === 'operation') {
-              return (
-                <Col key={i} span={colSize}>
-                  <Button onClick={() => create(form)} block>
-                    Create
-                  </Button>
-                </Col>
-              )
-            } else {
-              if (!col.creatable && !col.editable) {
-                return ''
-              }
-              return (
-                <Col key={i} span={colSize}>
-                  <Form.Item style={{ margin: 0 }}>
-                    {form.getFieldDecorator(col.dataIndex, {
-                      rules: [
-                        {
-                          required: true,
-                          message: `Please Input ${col.title}`
-                        }
-                      ],
-                      valuePropName:
-                        col.dataType === 'bool' ? 'checked' : 'value',
-                      initialValue: col.dataType === 'bool' ? false : ''
-                    })(getInput(col.dataType, col.title))}
-                  </Form.Item>
-                </Col>
-              )
+            if (!col.creatable && !col.editable) {
+              return ''
             }
+            return (
+              <Col key={i} span={colSize}>
+                <Form.Item style={{ margin: 0 }}>
+                  {form.getFieldDecorator(col.dataIndex, {
+                    rules: [
+                      {
+                        required: true,
+                        message: `Please Input ${col.title}`
+                      }
+                    ],
+                    valuePropName:
+                      col.dataType === 'bool' ? 'checked' : 'value',
+                    initialValue: col.dataType === 'bool' ? false : ''
+                  })(getInput(col.dataType, col.title))}
+                </Form.Item>
+              </Col>
+            )
           })}
+          <Col span={colSize}>
+            <Button onClick={() => create(form)} block>
+              Create
+            </Button>
+          </Col>
         </Form>
       </Row>
     )
   })
+
   return (
     <EditableContext.Provider value={form}>
+      {hasChanges && (
+        <ActionPopup>
+          <div>
+            <div style={{ marginBottom: 15 }}>You have unsaved changes</div>
+
+            <Button type="oddity" onClick={save} block>
+              Save Changes
+            </Button>
+          </div>
+        </ActionPopup>
+      )}
+
       <Table
         rowKey={rowKey}
         components={components}
         dataSource={data}
         columns={editableColumns}
         rowClassName="oddity-row"
-        pagination={{
-          onChange: cancel
-        }}
         footer={() => <CreateForm />}
       />
     </EditableContext.Provider>
