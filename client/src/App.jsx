@@ -15,6 +15,7 @@ import ForumPage from './pages/ForumPage'
 import ServersPage from './pages/ServersPage'
 import MembersPage from './pages/MembersPage'
 import NoHomePage from './pages/NoHomePage'
+import AccountPage from './pages/AccountPage'
 
 const App = ({ routes }) => {
   let noHomeSet = true
@@ -56,6 +57,7 @@ const App = ({ routes }) => {
             {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
 
             <Route exact path="/login" component={LoginPage}></Route>
+            <Route exact path="/account" component={AccountPage}></Route>
             <Route exact path="/register" component={RegisterPage}></Route>
             <Route exact path="/admin" component={AdminPage}></Route>
             <Route exact path="/tos" component={TermsOfServicePage}></Route>
