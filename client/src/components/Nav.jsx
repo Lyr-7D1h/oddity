@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Menu, Row, Col } from 'antd'
+import { Menu, Row, Col, Typography } from 'antd'
 
 import { Link } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
@@ -52,21 +52,32 @@ const Nav = ({ selected, config, user, updateUser }) => {
               </Menu.Item>
             ))}
 
-            {user.username !== undefined || (
+            {user.username === undefined && (
               <Menu.Item style={{ float: 'right' }} key="login">
                 <Link to="/login">Login</Link>
               </Menu.Item>
             )}
-            {user.username !== undefined || (
+            {user.username === undefined && (
               <Menu.Item style={{ float: 'right' }} key="register">
                 <Link to="/register">Register</Link>
               </Menu.Item>
             )}
 
-            {user.username === undefined || (
-              <Menu.Item style={{ float: 'right' }} key="logout">
-                <div onClick={handleLogout}>Logout</div>
-              </Menu.Item>
+            {user.username && (
+              <Menu.SubMenu style={{ float: 'right' }} title={user.username}>
+                <Menu.ItemGroup title="Profile">
+                  <Menu.Item key="account">
+                    <Link to="/account">Account</Link>
+                  </Menu.Item>
+                </Menu.ItemGroup>
+                <Menu.ItemGroup title="Actions">
+                  <Menu.Item key="logout">
+                    <Typography.Text type="danger" onClick={handleLogout}>
+                      Logout
+                    </Typography.Text>
+                  </Menu.Item>
+                </Menu.ItemGroup>
+              </Menu.SubMenu>
             )}
 
             {user.permissions === 1 ? (
