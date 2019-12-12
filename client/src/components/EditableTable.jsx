@@ -52,6 +52,10 @@ class EditableCell extends React.Component {
       ...restProps
     } = this.props
 
+    if (dataIndex === 'operation') {
+      return <td {...restProps}> {children}</td>
+    }
+
     return (
       <td {...restProps}>
         <Form.Item style={{ margin: 0 }}>
@@ -101,6 +105,13 @@ const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
         setHasChanges(true)
       }
     })
+  }
+
+  const del = (form, key) => {
+    let newData = [].concat(data)
+    newData = newData.filter(item => item[rowKey] !== key)
+    setHasChanges(true)
+    setData(newData)
   }
 
   const handleOnChange = event => {
@@ -163,10 +174,31 @@ const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
     })
   }
 
-  const editableColumns = columns.map(col => {
-    if (!col.editable) {
-      return col
-    }
+  const operations = {
+    title: 'Operation',
+    dataIndex: 'operation',
+    render: (text, record) => (
+      <Row>
+        <Col>
+          <EditableContext.Consumer>
+            {form => (
+              <Button
+                type="danger"
+                block
+                onClick={() => del(form, record[rowKey])}
+              >
+                Delete
+              </Button>
+            )}
+          </EditableContext.Consumer>
+        </Col>
+      </Row>
+    )
+  }
+
+  const columnsWithOperations = columns.concat([operations])
+
+  const editableColumns = columnsWithOperations.map(col => {
     return {
       ...col,
       onCell: record => {

@@ -12,14 +12,12 @@ const columns = [
     title: 'Title',
     dataIndex: 'name',
     dataType: 'text',
-    editable: true,
     required: true
   },
   {
     title: 'Path',
     dataIndex: 'path',
     dataType: 'text',
-    editable: true,
     required: true,
     render: route => '/' + route
   },
@@ -27,14 +25,12 @@ const columns = [
     title: 'Module',
     dataIndex: 'module',
     dataType: ['forum', 'servers', 'members', 'home'],
-    required: true,
-    editable: true
+    required: true
   },
   {
     title: 'Is Home',
     dataIndex: 'default',
     dataType: 'bool',
-    editable: true,
     required: true,
     render: isDefault => <Switch checked={isDefault} disabled></Switch>
   }
