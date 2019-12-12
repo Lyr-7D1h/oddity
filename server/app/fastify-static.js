@@ -122,13 +122,6 @@ function fastifyStatic(fastify, opts, next) {
     }
   }
 
-  // DecorateReply
-  if (opts.decorateReply !== false) {
-    fastify.decorateReply('sendFile', function(filePath) {
-      pumpSendToReply(this.request, this, filePath)
-    })
-  }
-
   // Serve
   if (opts.serve !== false) {
     if (opts.wildcard === undefined || opts.wildcard === true) {

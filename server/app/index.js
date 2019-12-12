@@ -57,6 +57,7 @@ module.exports = async (fastify, opts) => {
 
     .register(require('fastify-static'), {
       prefix: '/resources',
+      decorateReply: false,
       root: path.join(__dirname, '../../resources')
     })
 
