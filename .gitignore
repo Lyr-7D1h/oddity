@@ -18,6 +18,8 @@ node_modules
 # Optional REPL history
 .node_repl_history
 
+resources
+
 # vscode
 .vscode
 *code-workspace
