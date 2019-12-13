@@ -31,7 +31,6 @@ const columns = [
     title: 'Is Home',
     dataIndex: 'default',
     dataType: 'bool',
-    required: true,
     render: isDefault => <Switch checked={isDefault} disabled></Switch>
   }
 ]

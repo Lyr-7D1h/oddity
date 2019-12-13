@@ -56,6 +56,10 @@ class EditableCell extends React.Component {
       return <td {...restProps}> {children}</td>
     }
 
+    if (dataType === 'bool' && required) {
+      console.error('Boolean datatypes can not be required')
+    }
+
     return (
       <td {...restProps}>
         <Form.Item style={{ margin: 0 }}>
