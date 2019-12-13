@@ -16,6 +16,8 @@ const Nav = ({ selected, config, user, updateUser }) => {
   // make sure default route / home route is not included
   routes = routes.filter(route => !route.default)
 
+  console.log(selected)
+
   const handleLogout = () => {
     requester
       .logout()

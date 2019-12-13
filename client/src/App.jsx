@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
 import { connect } from 'react-redux'
 import notificationHandler from './helpers/notificationHandler'
+import { updatePage } from './redux/actions/pageActions'
 
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
@@ -18,8 +19,22 @@ import NoHomePage from './pages/NoHomePage'
 import AccountPage from './pages/AccountPage'
 import FinishAccountPage from './pages/FinishAccountPage'
 
-const App = ({ routes, userNeedsSetup }) => {
+const App = ({ routes, userNeedsSetup, dispatch }) => {
   let noHomeSet = true
+
+  const WrapperRoute = ({ children, path }) => {
+    return (
+      <Route
+        exact
+        path={path}
+        render={({ location }) => {
+          console.log(location)
+          dispatch(updatePage(location.pathname))
+          return children
+        }}
+      />
+    )
+  }
 
   const Routes = routes ? (
     <Switch>
@@ -53,7 +68,9 @@ const App = ({ routes, userNeedsSetup }) => {
 
       {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
 
-      <Route exact path="/login" component={LoginPage}></Route>
+      <WrapperRoute path="/login">
+        <LoginPage></LoginPage>
+      </WrapperRoute>
       <Route exact path="/account" component={AccountPage}></Route>
       <Route exact path="/register" component={RegisterPage}></Route>
       <Route exact path="/admin" component={AdminPage}></Route>
@@ -67,6 +84,7 @@ const App = ({ routes, userNeedsSetup }) => {
   return (
     <BrowserRouter>
       <ConfigLoader>
+        {window.location.pathname}
         {userNeedsSetup ? <FinishAccountPage /> : Routes}
       </ConfigLoader>
     </BrowserRouter>
