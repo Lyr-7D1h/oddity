@@ -227,7 +227,7 @@ const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
       <Row gutter={16}>
         <Form>
           {editableColumns.map((col, i) => {
-            if (!col.creatable && !col.editable) {
+            if (col.dataIndex === 'operation') {
               return ''
             }
             return (
