@@ -7,6 +7,7 @@ import getUser from '../helpers/getUser'
 
 import configReducer from './reducers/configReducer'
 import userReducer from './reducers/userReducer'
+import pageReducer from './reducers/pageReducer'
 
 import { updateUser } from './actions/userActions'
 import { updateConfig, fetchConfig } from './actions/configActions'
@@ -14,7 +15,8 @@ import { updateConfig, fetchConfig } from './actions/configActions'
 const store = createStore(
   combineReducers({
     config: configReducer,
-    user: userReducer
+    user: userReducer,
+    page: pageReducer
   }),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )

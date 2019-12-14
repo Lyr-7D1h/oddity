@@ -16,6 +16,8 @@ const Nav = ({ selected, config, user, updateUser }) => {
   // make sure default route / home route is not included
   routes = routes.filter(route => !route.default)
 
+  selected = selected.startsWith('/') && selected.substring(1)
+
   const handleLogout = () => {
     requester
       .logout()
@@ -103,7 +105,8 @@ export default connect(
   state => {
     return {
       user: state.user,
-      config: state.config
+      config: state.config,
+      selected: state.page.selected
     }
   },
   {
