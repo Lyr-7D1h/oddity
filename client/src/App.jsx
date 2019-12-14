@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
 import { connect } from 'react-redux'
 import notificationHandler from './helpers/notificationHandler'
-import { updatePage } from './redux/actions/pageActions'
 
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
@@ -18,74 +17,87 @@ import MembersPage from './pages/MembersPage'
 import NoHomePage from './pages/NoHomePage'
 import AccountPage from './pages/AccountPage'
 import FinishAccountPage from './pages/FinishAccountPage'
+import { setSelected } from './redux/actions/pageActions'
 
 const App = ({ routes, userNeedsSetup, dispatch }) => {
   let noHomeSet = true
 
-  const WrapperRoute = ({ children, path }) => {
+  const moduleRoutes =
+    routes &&
+    routes.map((route, i) => {
+      let component = NotFoundPage
+      switch (route.module) {
+        case 'servers':
+          component = ServersPage
+          break
+        case 'forum':
+          component = ForumPage
+          break
+        case 'members':
+          component = MembersPage
+          break
+        case 'home':
+          component = HomePage
+          break
+        default:
+          console.error(
+            `Module ${route.module} is not defined from route: `,
+            route
+          )
+          notificationHandler.error('Modules misconfigured')
+      }
+
+      const path = route.default ? '/' : '/' + route.path
+
+      if (route.default) noHomeSet = false
+
+      return (
+        <Route
+          key={i}
+          exact
+          path={path}
+          render={({ location }) => {
+            dispatch(setSelected(location.pathname))
+            return React.createElement(component, {})
+          }}
+        ></Route>
+      )
+    })
+
+  const defaultRoutes = [
+    { path: '/login', component: LoginPage },
+    { path: '/account', component: AccountPage },
+    { path: '/register', component: RegisterPage },
+    { path: '/admin', component: AdminPage },
+    { path: '/tos', component: TermsOfServicePage }
+  ].map((route, i) => {
     return (
       <Route
+        key={i}
         exact
-        path={path}
+        path={route.path}
         render={({ location }) => {
-          console.log(location)
-          dispatch(updatePage(location.pathname))
-          return children
+          dispatch(setSelected(location.pathname))
+          return React.createElement(route.component, {})
         }}
       />
     )
-  }
-
-  const Routes = routes ? (
-    <Switch>
-      {routes.map((route, i) => {
-        let component = NotFoundPage
-        switch (route.module) {
-          case 'servers':
-            component = ServersPage
-            break
-          case 'forum':
-            component = ForumPage
-            break
-          case 'members':
-            component = MembersPage
-            break
-          case 'home':
-            component = HomePage
-            break
-          default:
-            console.error(
-              `Module ${route.module} is not defined from route: `,
-              route
-            )
-            notificationHandler.error('Modules misconfigured')
-        }
-
-        const path = route.default ? '/' : '/' + route.path
-        if (route.default) noHomeSet = false
-        return <Route key={i} exact path={path} component={component}></Route>
-      })}
-
-      {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
-
-      <WrapperRoute path="/login">
-        <LoginPage></LoginPage>
-      </WrapperRoute>
-      <Route exact path="/account" component={AccountPage}></Route>
-      <Route exact path="/register" component={RegisterPage}></Route>
-      <Route exact path="/admin" component={AdminPage}></Route>
-      <Route exact path="/tos" component={TermsOfServicePage}></Route>
-      <Route path="*" component={NotFoundPage}></Route>
-    </Switch>
-  ) : (
-    ''
-  )
+  })
 
   return (
     <BrowserRouter>
       <ConfigLoader>
-        {window.location.pathname}
-        {userNeedsSetup ? <FinishAccountPage /> : Routes}
+        {userNeedsSetup ? (
+          <FinishAccountPage />
+        ) : (
+          <Switch>
+            {moduleRoutes}
+
+            {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
+
+            {defaultRoutes}
+          </Switch>
+        )}
       </ConfigLoader>
     </BrowserRouter>
   )

@@ -1,10 +1,10 @@
-export const UPDATE_PAGE = 'age:updatePage'
+export const SET_SELECTED = 'page:setSelected'
 
-export const updatePage = page => {
+export const setSelected = path => {
   return {
-    type: UPDATE_PAGE,
+    type: SET_SELECTED,
     payload: {
-      page: page
+      selected: path
     }
   }
 }
