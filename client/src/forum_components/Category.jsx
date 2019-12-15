@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Icon, Avatar, Row, Col, Typography } from 'antd'
+import { Card, Avatar, Row, Col, Typography } from 'antd'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 

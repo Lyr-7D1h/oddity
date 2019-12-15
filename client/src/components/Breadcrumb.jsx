@@ -8,7 +8,7 @@ export default connect(state => ({ selected: state.page.selected }))(
     const render = (route, params, routes, paths) => {
       const last = routes.indexOf(route) === routes.length - 1
       const path =
-        paths.join('/') == '' ? `/${selected[0]}` : `/${paths.join('/')}`
+        paths.join('/') === '' ? `/${selected[0]}` : `/${paths.join('/')}`
       return last ? (
         <span>{route.breadcrumbName}</span>
       ) : (

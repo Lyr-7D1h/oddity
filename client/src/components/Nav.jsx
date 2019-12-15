@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Menu, Row, Col, Typography, Card } from 'antd'
+import { Menu, Row, Col, Typography } from 'antd'
 
 import { Link } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
