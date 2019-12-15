@@ -4,7 +4,7 @@ import Nav from '../components/Nav'
 
 export default ({ children, selected }) => {
   return (
-    <Layout>
+    <Layout style={{ minHeight: '100vh' }}>
       <Nav selected={selected}></Nav>
       <Layout style={{ padding: '10px' }}>{children}</Layout>
     </Layout>

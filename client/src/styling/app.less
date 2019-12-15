@@ -14,6 +14,21 @@
   }
 }
 
+.oddity-nav {
+  background-color: @white;
+}
+
+.oddity-category-item {
+  transition-duration: 0.5s;
+  padding: 10px;
+  &:hover {
+    background-color: fade(@primary-color, 30%);
+  }
+  .oddity-category-item-description {
+    padding: 20px;
+  }
+}
+
 /*
   ODDITY NOTIFICATION
 */
@@ -47,9 +62,9 @@
 .ant-input-disabled {
   cursor: default !important;
 }
-.ant-layout {
-  background-color: #fff !important;
-}
+// .ant-layout {
+//   background-color: #fff !important;
+// }
 .ant-card {
   margin: 10px !important;
 }

@@ -26,13 +26,61 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
     routes &&
     routes.map((route, i) => {
       let component = NotFoundPage
+
+      const path = route.default ? '/' : '/' + route.path
+
       switch (route.module) {
         case 'servers':
           component = ServersPage
           break
         case 'forum':
-          component = ForumPage
-          break
+          return (
+            <React.Fragment key={i}>
+              <Route
+                path={path}
+                exact
+                render={({ location }) => {
+                  dispatch(setSelected(location.pathname))
+                  return <ForumPage />
+                }}
+              ></Route>
+              <Route
+                path={path + '/:category'}
+                exact
+                render={({ location, match }) => {
+                  dispatch(setSelected(location.pathname))
+                  return <ForumPage category={match.params.category} />
+                }}
+              ></Route>
+              <Route
+                path={path + '/:category/:thread'}
+                exact
+                render={({ location, match }) => {
+                  dispatch(setSelected(location.pathname))
+                  return (
+                    <ForumPage
+                      category={match.params.category}
+                      thread={match.params.thread}
+                    />
+                  )
+                }}
+              ></Route>
+              <Route
+                path={path + '/:category/:thread/:post'}
+                exact
+                render={({ location, match }) => {
+                  dispatch(setSelected(location.pathname))
+                  return (
+                    <ForumPage
+                      category={match.params.category}
+                      thread={match.params.thread}
+                      post={match.params.post}
+                    />
+                  )
+                }}
+              ></Route>
+            </React.Fragment>
+          )
         case 'members':
           component = MembersPage
           break
@@ -46,8 +94,6 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
           )
           notificationHandler.error('Modules misconfigured')
       }
-
-      const path = route.default ? '/' : '/' + route.path
 
       if (route.default) noHomeSet = false
 
@@ -91,11 +137,13 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
           <FinishAccountPage />
         ) : (
           <Switch>
+            {defaultRoutes}
+
             {moduleRoutes}
 
             {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
 
-            {defaultRoutes}
+            <Route path="*" component={NotFoundPage}></Route>
           </Switch>
         )}
       </ConfigLoader>

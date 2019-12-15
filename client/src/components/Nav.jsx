@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Menu, Row, Col, Typography } from 'antd'
+import { Menu, Row, Col, Typography, Card } from 'antd'
 
 import { Link } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
@@ -16,7 +16,7 @@ const Nav = ({ selected, config, user, updateUser }) => {
   // make sure default route / home route is not included
   routes = routes.filter(route => !route.default)
 
-  selected = selected.startsWith('/') && selected.substring(1)
+  selected = selected[0]
 
   const handleLogout = () => {
     requester
@@ -35,7 +35,7 @@ const Nav = ({ selected, config, user, updateUser }) => {
   return (
     <>
       {loginError ? <Redirect to="/login" /> : ''}
-      <Row>
+      <Row className="oddity-nav">
         <Col span={4}>
           <div className="title">
             <Link to="/">{title}</Link>

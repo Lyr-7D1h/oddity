@@ -1,4 +1,5 @@
 import React from 'react'
+import { Card } from 'antd'
 import Page from '../containers/Page'
 import Title from 'antd/lib/typography/Title'
 import Centered from '../containers/Centered'
@@ -10,8 +11,10 @@ export default () => {
     <AdminRedirect>
       <Page selected="admin">
         <Centered>
-          <Title>Routing</Title>
-          <RoutingTable />
+          <Card>
+            <Title>Routing</Title>
+            <RoutingTable />
+          </Card>
         </Centered>
       </Page>
     </AdminRedirect>
