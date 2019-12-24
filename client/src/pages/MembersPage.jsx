@@ -2,12 +2,15 @@ import React from 'react'
 import Page from '../containers/Page'
 import MembersTable from '../components/MembersTable'
 import Centered from '../containers/Centered'
+import { Card } from 'antd'
 
 export default () => {
   return (
     <Page>
       <Centered>
-        <MembersTable></MembersTable>
+        <Card bodyStyle={{ paddingTop: 10, paddingBottom: 10 }}>
+          <MembersTable></MembersTable>
+        </Card>
       </Centered>
     </Page>
   )

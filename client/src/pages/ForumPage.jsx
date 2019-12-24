@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import Page from '../containers/Page'
 import Breadcrumb from '../components/Breadcrumb'
 import Category from '../forum_components/Category'
@@ -12,6 +13,7 @@ import notificationHandler from '../helpers/notificationHandler'
 export default connect(state => ({ path: state.page.selected }))(
   ({ path, category, thread, post }) => {
     const [forumItems, setForumItems] = useState([])
+    console.log(useParams())
     const routes = [
       {
         path: ``,

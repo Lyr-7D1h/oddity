@@ -22,38 +22,42 @@ import { setSelected } from './redux/actions/pageActions'
 const App = ({ routes, userNeedsSetup, dispatch }) => {
   let noHomeSet = true
 
-  const moduleRoutes =
-    routes &&
-    routes.map((route, i) => {
-      let component = NotFoundPage
+  const getModuleRoutes = () => {
+    if (routes) {
+      let moduleRoutes = []
+      for (let i in routes) {
+        const route = routes[i]
+        let component = NotFoundPage
 
-      const path = route.default ? '/' : '/' + route.path
+        const path = route.default ? '/' : '/' + route.path
 
-      switch (route.module) {
-        case 'servers':
-          component = ServersPage
-          break
-        case 'forum':
-          return (
-            <React.Fragment key={i}>
+        switch (route.module) {
+          case 'servers':
+            component = ServersPage
+            break
+          case 'forum':
+            moduleRoutes = moduleRoutes.concat([
               <Route
                 path={path}
+                key={i}
                 exact
                 render={({ location }) => {
                   dispatch(setSelected(location.pathname))
                   return <ForumPage />
                 }}
-              ></Route>
+              ></Route>,
               <Route
                 path={path + '/:category'}
+                key={'category' + i}
                 exact
                 render={({ location, match }) => {
                   dispatch(setSelected(location.pathname))
                   return <ForumPage category={match.params.category} />
                 }}
-              ></Route>
+              ></Route>,
               <Route
                 path={path + '/:category/:thread'}
+                key={'thread' + i}
                 exact
                 render={({ location, match }) => {
                   dispatch(setSelected(location.pathname))
@@ -64,9 +68,10 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
                     />
                   )
                 }}
-              ></Route>
+              ></Route>,
               <Route
                 path={path + '/:category/:thread/:post'}
+                key={'post' + i}
                 exact
                 render={({ location, match }) => {
                   dispatch(setSelected(location.pathname))
@@ -79,36 +84,41 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
                   )
                 }}
               ></Route>
-            </React.Fragment>
-          )
-        case 'members':
-          component = MembersPage
-          break
-        case 'home':
-          component = HomePage
-          break
-        default:
-          console.error(
-            `Module ${route.module} is not defined from route: `,
-            route
-          )
-          notificationHandler.error('Modules misconfigured')
+            ])
+            continue
+          case 'members':
+            component = MembersPage
+            break
+          case 'home':
+            component = HomePage
+            break
+          default:
+            console.error(
+              `Module ${route.module} is not defined from route: `,
+              route
+            )
+            notificationHandler.error('Modules misconfigured')
+        }
+
+        if (route.default) noHomeSet = false
+
+        console.log(path)
+
+        moduleRoutes.push(
+          <Route
+            key={i}
+            exact
+            path={path}
+            render={({ location }) => {
+              dispatch(setSelected(location.pathname))
+              return React.createElement(component, {})
+            }}
+          ></Route>
+        )
       }
-
-      if (route.default) noHomeSet = false
-
-      return (
-        <Route
-          key={i}
-          exact
-          path={path}
-          render={({ location }) => {
-            dispatch(setSelected(location.pathname))
-            return React.createElement(component, {})
-          }}
-        ></Route>
-      )
-    })
+      return moduleRoutes
+    }
+  }
 
   const defaultRoutes = [
     { path: '/login', component: LoginPage },
@@ -139,7 +149,7 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
           <Switch>
             {defaultRoutes}
 
-            {moduleRoutes}
+            {getModuleRoutes()}
 
             {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
 
