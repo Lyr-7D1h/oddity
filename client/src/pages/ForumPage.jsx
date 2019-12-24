@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import Page from '../containers/Page'
 import Breadcrumb from '../components/Breadcrumb'
 import Category from '../forum_components/Category'
