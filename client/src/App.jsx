@@ -102,8 +102,6 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
 
         if (route.default) noHomeSet = false
 
-        console.log(path)
-
         moduleRoutes.push(
           <Route
             key={i}
@@ -124,7 +122,6 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
     { path: '/login', component: LoginPage },
     { path: '/account', component: AccountPage },
     { path: '/register', component: RegisterPage },
-    { path: '/admin', component: AdminPage },
     { path: '/tos', component: TermsOfServicePage }
   ].map((route, i) => {
     return (
@@ -140,6 +137,27 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
     )
   })
 
+  const adminRoutes = [
+    <Route
+      key={1}
+      exact
+      path="/admin"
+      render={({ location }) => {
+        dispatch(setSelected(location.pathname))
+        return <AdminPage />
+      }}
+    />,
+    <Route
+      key={2}
+      exact
+      path="/admin/:page"
+      render={({ location, match }) => {
+        dispatch(setSelected(location.pathname))
+        return <AdminPage page={match.params.page} />
+      }}
+    />
+  ]
+
   return (
     <BrowserRouter>
       <ConfigLoader>
@@ -148,6 +166,7 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
         ) : (
           <Switch>
             {defaultRoutes}
+            {adminRoutes}
 
             {getModuleRoutes()}
 

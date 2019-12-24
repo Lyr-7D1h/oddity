@@ -13,7 +13,6 @@ import notificationHandler from '../helpers/notificationHandler'
 export default connect(state => ({ path: state.page.selected }))(
   ({ path, category, thread, post }) => {
     const [forumItems, setForumItems] = useState([])
-    console.log(useParams())
     const routes = [
       {
         path: ``,
