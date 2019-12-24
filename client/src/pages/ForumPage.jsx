@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Page from '../containers/Page'
 import Breadcrumb from '../components/Breadcrumb'
 import Category from '../forum_components/Category'
@@ -6,9 +6,12 @@ import { Card } from 'antd'
 import { connect } from 'react-redux'
 import Thread from '../forum_components/Thread'
 import Post from '../forum_components/Post'
+import requester from '../helpers/requester'
+import notificationHandler from '../helpers/notificationHandler'
 
 export default connect(state => ({ path: state.page.selected }))(
   ({ path, category, thread, post }) => {
+    const [forumItems, setForumItems] = useState([])
     const routes = [
       {
         path: ``,
@@ -26,6 +29,17 @@ export default connect(state => ({ path: state.page.selected }))(
         path: `${path[0]}/${thread}/${post}`,
         breadcrumbName: post
       })
+
+    useEffect(() => {
+      requester
+        .get('forum')
+        .then(forum => {
+          setForumItems(forum)
+        })
+        .catch(err => {
+          notificationHandler.error('Could not fetch forum data')
+        })
+    }, [])
 
     const categoryItems = [
       {
@@ -61,8 +75,8 @@ export default connect(state => ({ path: state.page.selected }))(
     } else if (thread) {
       Content = <Thread />
     } else {
-      Content = categoryItems.map((item, i) => (
-        <Category key={i} title={item.title} items={item.items} />
+      Content = forumItems.map((item, i) => (
+        <Category key={i} title={item.title} items={item.threads} />
       ))
     }
 

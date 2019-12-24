@@ -160,11 +160,38 @@ const createAdminPortal = instance => {
   })
 }
 
+const createDefaultForumCategory = instance => {
+  return new Promise((resolve, reject) => {
+    instance.ForumCategory.findOne({ name: 'Uncategorized' })
+      .then(res => {
+        if (res === null) {
+          new instance.ForumCategory({
+            name: 'Uncategorized'
+          })
+            .save()
+            .then(() => {
+              resolve(true)
+            })
+            .catch(err => reject(err))
+        } else {
+          resolve()
+        }
+      })
+      .catch(err => reject(err))
+  })
+}
+
 module.exports = fp(async instance => {
   const errHandler = err => {
     instance.log.fatal(err)
     process.exit(1)
   }
+
+  createDefaultForumCategory(instance)
+    .then(created => {
+      if (created) instance.log.info('Created Uncategorized Forum Category')
+    })
+    .catch(errHandler)
 
   createAdminPortal(instance)
     .then(created => {
