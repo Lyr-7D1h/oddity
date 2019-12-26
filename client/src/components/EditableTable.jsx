@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Table,
   Input,
@@ -97,6 +97,14 @@ const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
   const [data, setData] = useState(dataSource)
   const [hasChanges, setHasChanges] = useState(false)
 
+  // make sure you can load when data is async
+  useEffect(() => {
+    // if no changes and data is different then source set data
+    if (!hasChanges && dataSource !== data) {
+      setData(dataSource)
+    }
+  }, [hasChanges, dataSource, data])
+
   const create = form => {
     form.validateFields((error, row) => {
       if (error) {
@@ -104,10 +112,10 @@ const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
       }
       row[rowKey] = 'created' + (data.length + 1)
 
-      setData(data.concat([row]))
       if (!hasChanges) {
         setHasChanges(true)
       }
+      setData(data.concat([row]))
     })
   }
 

@@ -6,6 +6,7 @@ import Centered from '../containers/Centered'
 import RoutingTable from '../components/RoutingTable'
 import AdminRedirect from '../containers/AdminRedirect'
 import SubNav from '../components/SubNav'
+import ForumTable from '../components/ForumTable'
 
 export default ({ page }) => {
   const nav = ['Routing', 'Forum']
@@ -21,7 +22,12 @@ export default ({ page }) => {
       )
       break
     case 'forum':
-      Content = <div>Forum</div>
+      Content = (
+        <>
+          <Title>Forum</Title>
+          <ForumTable />
+        </>
+      )
       break
     default:
       Content = <div>Admin page</div>

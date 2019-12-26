@@ -22,6 +22,64 @@
   color: black;
 }
 
+// Custom Collapse Drag and Drop
+.oddity-collapsable-custom {
+  .oddity-thread-card {
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 0;
+    border: 1px solid #d9d9d9;
+    cursor: move;
+  }
+
+  .oddity-collapsable-disabled-header {
+    padding: 10px;
+    color: @text-color;
+    padding-right: 25px;
+    background-color: fade(@primary-color, 10%);
+    &:hover {
+      background-color: fade(@primary-color, 30%) !important;
+    }
+    cursor: default;
+  }
+
+  .oddity-collapsable-custom-header {
+    padding: 10px;
+    padding-right: 25px;
+    background-color: fade(@primary-color, 10%);
+    cursor: move;
+    &:hover {
+      background-color: fade(@primary-color, 30%) !important;
+    }
+  }
+
+  .oddity-collapse-delete {
+    text-align: center;
+    width: 10%;
+    float: right;
+    &:hover {
+      color: @error-color;
+      cursor: pointer;
+    }
+  }
+
+  .oddity-dnd-select {
+    background-color: fade(@primary-color, 30%) !important;
+  }
+  .oddity-dnd-downward {
+    border-bottom: 2px dashed @primary-color;
+  }
+  .oddity-dnd-upward {
+    border-top: 2px dashed @primary-color;
+  }
+
+  .ant-collapse-header {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
 .oddity-category-item {
   transition-duration: 0.5s;
   padding: 10px;
