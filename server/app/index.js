@@ -39,10 +39,8 @@ module.exports = async (fastify, opts) => {
       options: Object.assign({}, opts)
     })
 
-    .register(fastifyAutoload, {
-      dir: path.join(__dirname, './db'),
-      options: Object.assign({}, opts)
-    })
+    // Autoload database
+    .register(require('./db'))
 
     // Autoload Routes
     // .register(fastifyAutoload, {
@@ -55,8 +53,6 @@ module.exports = async (fastify, opts) => {
     //   )
     // })
 
-    .register(require(path.join(__dirname, '../routes/roles')))
-
     .register(require('fastify-static'), {
       prefix: '/resources',
       decorateReply: false,
@@ -65,7 +61,6 @@ module.exports = async (fastify, opts) => {
 
   // Load default config if not a test
   if (fastify.config.NODE_ENV !== 'testing') {
-    fastify.log.info('Loading Default Config..')
     fastify.register(require('./default_config'))
   }
 

@@ -2,15 +2,23 @@ const fp = require('fastify-plugin')
 const Sequelize = require('sequelize')
 
 module.exports = fp(async instance => {
-  const sequelize = new Sequelize({
-    host: instance.config.DB_HOST || 'localhost',
-    database: instance.config.DB_NAME || 'oddity',
-    username: instance.config.DB_USERNAME || 'oddity',
-    password: instance.config.DB_PASS || 'wekZ^mwdfLaPXk4pGM7z',
+  const HOST = instance.config.DB_HOST || 'localhost'
+  const DATABASE = instance.config.DB_NAME || 'oddity'
+  const USERNAME = instance.config.DB_USERNAME || 'oddity'
+  const PASSWORD = instance.config.DB_PASS
 
-    dialect: 'postgres',
-    logging: (...msg) => instance.log.info('[DB] ', msg)
-  })
+  const sequelizeOpts = {
+    host: HOST,
+    dialect: 'postgres'
+  }
+
+  if (
+    instance.config.DB_LOGGING_ENABLED === false ||
+    instance.config.DB_LOGGING_ENABLED === undefined
+  )
+    sequelizeOpts.logging = false
+
+  const sequelize = new Sequelize(DATABASE, USERNAME, PASSWORD, sequelizeOpts)
 
   // first check database by authenticating to it
   try {
@@ -23,6 +31,9 @@ module.exports = fp(async instance => {
         .then(done)
         .catch(done)
     })
+    instance.log.info(
+      `Connected to Postgres postgresql://${USERNAME}:{PASSWORD}@${HOST}/${DATABASE}`
+    )
   } catch (err) {
     instance.log.fatal(err)
     process.exit(1)

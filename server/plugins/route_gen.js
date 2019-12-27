@@ -16,8 +16,11 @@ module.exports = fp(async instance => {
     if (!model || !routes || routes.length < 0) {
       throw Error('Invalid Route Options')
     }
+
+    // console.log(model.getTableName())
+
     const globalAuthorization = options.auth
-    const collectionName = model.collection.collectionName
+    const tableName = model.getTableName()
 
     const getHandler = (route, method) => {
       const columns = route.columns || ''
@@ -58,7 +61,7 @@ module.exports = fp(async instance => {
           }
           if (route.columns) {
             instance.log.warn(
-              `(${collectionName} Route) No need to specify columns for POST`
+              `(${tableName} Route) No need to specify columns for POST`
             )
           }
           return async (request, reply) => {
@@ -79,7 +82,7 @@ module.exports = fp(async instance => {
           }
           if (route.columns) {
             instance.log.warn(
-              `(${collectionName} Route) No need to specify columns for POST`
+              `(${tableName} Route) No need to specify columns for POST`
             )
           }
           return async (request, reply) => {
@@ -104,7 +107,7 @@ module.exports = fp(async instance => {
           }
           if (route.columns) {
             instance.log.warn(
-              `(${collectionName} Route) No need to specify columns for POST`
+              `(${tableName} Route) No need to specify columns for POST`
             )
           }
           return async (request, reply) => {
@@ -172,21 +175,21 @@ module.exports = fp(async instance => {
 
       return {
         method: method,
-        url: '/api/' + (route.route || collectionName + idParam),
+        url: '/api/' + (route.route || tableName + idParam),
         preHandler: preHandler,
         schema: schema,
         handler: getHandler(route, method)
       }
     }
 
-    for (const i in routes) {
-      const route = routes[i]
-      if (!route.method) {
-        throw Error('No Method defined for route')
-      }
+    // for (const i in routes) {
+    //   const route = routes[i]
+    //   if (!route.method) {
+    //     throw Error('No Method defined for route')
+    //   }
 
-      const routeOpts = buildOpts(route)
-      instance.route(routeOpts)
-    }
+    //   const routeOpts = buildOpts(route)
+    //   instance.route(routeOpts)
+    // }
   })
 })
