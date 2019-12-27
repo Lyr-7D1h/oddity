@@ -61,19 +61,21 @@ const createAdminRole = instance => {
 
 const createUserRole = instance => {
   return new Promise((resolve, reject) => {
-    instance.Role.findOne({ name: 'User' }).then(role => {
-      if (role === null) {
-        instance.Role.create({
-          name: 'User',
-          isDefault: true,
-          permissions: 0
-        })
-          .then(() => resolve(true))
-          .catch(err => reject(err))
-      } else {
-        resolve()
+    instance.Role.findOrCreate({
+      where: { name: 'User' },
+      defaults: {
+        name: 'User',
+        isDefault: true,
+        permissions: 0
       }
     })
+      .then(([role, created]) => {
+        console.log(role)
+        resolve(created)
+      })
+      .catch(err => {
+        reject(err)
+      })
   })
 }
 

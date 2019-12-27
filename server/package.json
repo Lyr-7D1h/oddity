@@ -34,8 +34,10 @@
     "make-promises-safe": "^5.1.0",
     "mongoose": "^5.7.5",
     "mongoose-delete": "^0.5.1",
+    "pg": "^7.15.2",
     "pino-pretty": "^3.2.2",
-    "pump": "^3.0.0"
+    "pump": "^3.0.0",
+    "sequelize": "^5.21.3"
   },
   "devDependencies": {
     "eslint": "^6.5.1",

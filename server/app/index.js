@@ -45,15 +45,17 @@ module.exports = async (fastify, opts) => {
     })
 
     // Autoload Routes
-    .register(fastifyAutoload, {
-      dir: path.join(__dirname, '../routes'),
-      options: Object.assign(
-        {
-          prefix: '/api'
-        },
-        opts
-      )
-    })
+    // .register(fastifyAutoload, {
+    //   dir: path.join(__dirname, '../routes'),
+    //   options: Object.assign(
+    //     {
+    //       prefix: '/api'
+    //     },
+    //     opts
+    //   )
+    // })
+
+    .register(require(path.join(__dirname, '../routes/roles')))
 
     .register(require('fastify-static'), {
       prefix: '/resources',
