@@ -3,7 +3,8 @@ module.exports = async fastify => {
 
   // Get Default Config
   fastify.get('/config', (request, reply) => {
-    fastify.Config.findOne({ isActive: true })
+    fastify.models.config
+      .findOne({ where: { isActive: true }, include: [fastify.models.route] })
       .then(config => {
         reply.send(config)
       })

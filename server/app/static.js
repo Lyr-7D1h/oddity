@@ -115,10 +115,11 @@ function fastifyStatic(fastify, opts, next) {
     opts.prefix[opts.prefix.length - 1] === '/'
       ? opts.prefix
       : opts.prefix + '/'
+
   // Set the schema hide property if defined in opts or true by default
   const schema = {
     schema: {
-      hide: typeof opts.schemaHide !== 'undefined' ? opts.schemaHide : true
+      hide: true
     }
   }
 

@@ -3,6 +3,7 @@ module.exports = fastify => {
     `/auth/register`,
     {
       schema: {
+        hide: true, // hide from docs
         body: {
           type: 'object',
           properties: {

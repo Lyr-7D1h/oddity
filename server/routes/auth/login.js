@@ -2,20 +2,25 @@ module.exports = async fastify => {
   fastify.get(
     '/auth/login',
     {
+      schema: {
+        hide: true // hide from docs
+      },
       preHandler: fastify.auth([
         fastify.verify.basic.portal,
         fastify.verify.basic.user
       ])
     },
     (request, reply) => {
-      fastify.User.findById(request.credentials.id)
+      fastify.models.user
+        .findOne({ where: { id: request.credentials.id } })
         .then(user => {
           request.session.user = request.credentials
 
-          fastify.Role.findById(user.roleId)
+          fastify.models.role
+            .findOne({ where: { id: user.role.id } })
             .then(role => {
               const userCookie = {
-                _id: user._id.toString(),
+                id: user.id,
                 username: user.username,
                 identifier: user.identifier,
                 avatar: user.avatar,
@@ -23,10 +28,11 @@ module.exports = async fastify => {
               }
 
               if (role === null) {
+                // TODO: Should not be possible so remove?
                 fastify.log.warn('User does not have a role')
               } else {
-                userCookie.roleId = role._id.toString()
-                userCookie.permissions = role.permissions
+                userCookie.roleId = role.id.toString()
+                userCookie.permissions = role.permissions // TODO: Should be permissions of user + role
               }
 
               reply.setCookie('user', JSON.stringify(userCookie), {

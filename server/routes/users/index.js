@@ -3,7 +3,7 @@
 module.exports = async fastify => {
   const columns = '-password -ip -email'
   const userRoute = {
-    model: fastify.User,
+    model: fastify.models.user,
     routes: [
       {
         method: 'get',

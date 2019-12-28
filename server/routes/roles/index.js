@@ -2,7 +2,7 @@
 
 module.exports = async fastify => {
   const roleRoute = {
-    model: fastify.Role,
+    model: fastify.models.role,
     routes: [
       {
         method: 'get',

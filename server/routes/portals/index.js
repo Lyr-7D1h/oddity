@@ -3,7 +3,7 @@
 module.exports = async fastify => {
   const columns = 'name url'
   const portalRoute = {
-    model: fastify.Portal,
+    model: fastify.models.portal,
     routes: [
       {
         method: 'get',

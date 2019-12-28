@@ -12,17 +12,17 @@ module.exports = fp(async instance => {
     console.log('PORTAL AUTH')
     const basicCredentials = auth(request)
     if (basicCredentials && basicCredentials.name && basicCredentials.pass) {
-      instance.Portal.find(
-        { accessKey: basicCredentials.name },
-        'secretKey _id'
-      )
-        .then(portals => {
-          if (portals.length > 0) {
+      instance.models.portal
+        .findOne({
+          where: { accessKey: basicCredentials.name }
+        })
+        .then(portal => {
+          if (portal) {
             instance.crypto
-              .validate(basicCredentials.pass, portals[0].secretKey)
+              .validate(basicCredentials.pass, portal.secretKey)
               .then(isValid => {
                 if (isValid) {
-                  request.credentials.id = portals[0]._id
+                  request.credentials.id = portal._id
                   request.credentials.isPortal = true
                   done()
                 }
@@ -51,15 +51,13 @@ module.exports = fp(async instance => {
     const basicCredentials = auth(request)
 
     if (basicCredentials && basicCredentials.name && basicCredentials.pass) {
-      instance.User.find(
-        {
-          $or: [
-            { identifier: basicCredentials.name },
-            { email: basicCredentials.name }
-          ]
-        },
-        'password _id'
-      )
+      instance.models.user
+        .findAll({
+          where: {
+            identifier: basicCredentials.name,
+            email: basicCredentials.name
+          }
+        })
         .then(users => {
           if (users.length === 1) {
             instance.crypto
