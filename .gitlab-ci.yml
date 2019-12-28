@@ -23,7 +23,6 @@ test:
   variables:
     POSTGRES_DB: testing
     POSTGRES_USER: test
-    # POSTGRES_PASSWORD: test_pass
     PGPASSWORD: test_pass
   dependencies:
     - build
