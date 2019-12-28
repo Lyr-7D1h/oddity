@@ -1,9 +1,25 @@
+services:
+  - postgres:latest
+
+variables:
+  POSTGRES_DB: testing
+  POSTGRES_USER: test
+  POSTGRES_PASSWORD: test_pass
+  PGPASSWORD: test_pass
+
 stages:
   - connect
   - build
   - test
   - staging
   - production
+
+connect:
+  image: postgres
+  script:
+    # official way to provide password to psql: http://www.postgresql.org/docs/9.3/static/libpq-envars.html
+    - export PGPASSWORD=test_pass
+    - psql -h "postgres" -U "test" -d "testing" -c "SELECT 'OK' AS status;"
 
 build:
   image: node:latest
@@ -19,13 +35,6 @@ build:
 test:
   image: node:latest
   stage: test
-  services:
-    - postgres:latest
-  variables:
-    POSTGRES_DB: testing
-    POSTGRES_USER: test
-    POSTGRES_PASSWORD: test_pass
-    PGPASSWORD: test_pass
   dependencies:
     - build
   script:
