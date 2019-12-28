@@ -182,9 +182,9 @@ const createDefaultForumCategory = instance => {
   return new Promise((resolve, reject) => {
     instance.models.forumCategory
       .findOrCreate({
-        where: { name: 'Uncategorized' },
+        where: { title: 'Uncategorized' },
         defaults: {
-          name: 'Uncategorized',
+          title: 'Uncategorized',
           order: 0
         }
       })

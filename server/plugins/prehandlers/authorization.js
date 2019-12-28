@@ -96,14 +96,15 @@ module.exports = fp(async instance => {
     }
   }
 
-  // USER ONLY
+  // TODO: Make more efficient and make improve permissions checking
   const cookieAuth = (request, reply, done) => {
     console.log('COOKIE AUTH')
 
     if (request.session && request.session.user) {
       if (request.session.user.id) {
         // check if still in DB
-        instance.User.find({ where: { id: request.session.user.id } })
+        instance.models.user
+          .findOne({ where: { id: request.session.user.id } })
           .then(user => {
             if (user) {
               const hasPermsUser = instance.permissions.validateRouteAuth(
@@ -114,8 +115,9 @@ module.exports = fp(async instance => {
                 request.credentials.id = request.session.user.id
                 done()
               } else if (user.roleId) {
-                instance.Role.findById(user.roleId, 'permissions').then(
-                  role => {
+                instance.models.role
+                  .findOne({ where: { id: user.roleId } })
+                  .then(role => {
                     if (role) {
                       const hasPermsRole = instance.permissions.validateRouteAuth(
                         request.raw.url,
@@ -130,8 +132,7 @@ module.exports = fp(async instance => {
                     } else {
                       done(new Unauthorized())
                     }
-                  }
-                )
+                  })
               } else {
                 done(new Unauthorized())
               }

@@ -45,10 +45,10 @@ module.exports = async fastify => {
             required: ['name', 'path', 'module']
           }
         }
-      }
-      // preHandler: [
-      //   fastify.auth([fastify.verify.cookie, fastify.verify.basic.user])
-      // ]
+      },
+      preHandler: [
+        fastify.auth([fastify.verify.cookie, fastify.verify.basic.user])
+      ]
     },
     (request, reply) => {
       fastify.models.config

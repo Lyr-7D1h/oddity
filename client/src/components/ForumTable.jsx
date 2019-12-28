@@ -38,7 +38,6 @@ const RoutingTable = ({ config, updateConfig }) => {
 
     const categories = []
     let threads = []
-    console.log(newItems)
     for (let i in newItems) {
       newItems[i].threads = newItems[i].threads.map((thread, threadIndex) => {
         thread.categoryId = newItems[i].id
@@ -51,22 +50,12 @@ const RoutingTable = ({ config, updateConfig }) => {
       categories.push(newItems[i])
     }
 
-    console.log(categories, threads)
-
     requester
       .put(`forum/categories`, categories)
       .then(categories => {
         requester
           .put('forum/threads', threads)
           .then(threads => {
-            console.log(
-              categories.map(category => {
-                category.threads = threads.filter(
-                  thread => thread.categoryId === category.id
-                )
-                return category
-              })
-            )
             setItems(
               categories.map(category => {
                 category.threads = threads.filter(
@@ -99,11 +88,12 @@ const RoutingTable = ({ config, updateConfig }) => {
   }
 
   const handleCreateThread = () => {
+    if (!forumInput.current.state.value) return
     const newItems = [...items]
     newItems.map(item => {
-      if (item.name === 'Uncategorized') {
+      if (item.title === 'Uncategorized') {
         item.threads.push({
-          name: forumInput.current.state.value
+          title: forumInput.current.state.value
         })
       }
 
@@ -113,9 +103,10 @@ const RoutingTable = ({ config, updateConfig }) => {
     setHasChanges(true)
   }
   const handleCreateCategory = () => {
+    if (!forumInput.current.state.value) return
     const newItems = [...items]
     newItems.push({
-      name: forumInput.current.state.value,
+      title: forumInput.current.state.value,
       threads: []
     })
     setItems(newItems)
@@ -125,7 +116,7 @@ const RoutingTable = ({ config, updateConfig }) => {
   const Thread = ({
     categoryIndex,
     threadIndex,
-    name,
+    title,
     isOver,
     connectDragSource,
     connectDropTarget,
@@ -145,7 +136,7 @@ const RoutingTable = ({ config, updateConfig }) => {
     return connectDragSource(
       connectDropTarget(
         <div index={threadIndex} thread="true" className={className}>
-          {name}
+          {title}
           <div
             onClick={() => handleDelete(categoryIndex, threadIndex)}
             className="oddity-collapse-delete"
@@ -221,7 +212,7 @@ const RoutingTable = ({ config, updateConfig }) => {
 
   const Category = ({
     index,
-    name,
+    title,
     isOver,
     itemType,
     connectDragSource,
@@ -243,10 +234,10 @@ const RoutingTable = ({ config, updateConfig }) => {
       }
     }
 
-    if (name === 'Uncategorized') {
+    if (title === 'Uncategorized') {
       return (
         <div index={index} className="oddity-collapsable-disabled-header">
-          {name}
+          {title}
         </div>
       )
     }
@@ -254,7 +245,7 @@ const RoutingTable = ({ config, updateConfig }) => {
     return connectDragSource(
       connectDropTarget(
         <div index={index} className={className}>
-          {name}
+          {title}
 
           <div
             onClick={() => handleDelete(index)}
@@ -334,7 +325,7 @@ const RoutingTable = ({ config, updateConfig }) => {
   )
 
   const uncategorizedIndex = items.findIndex(
-    item => item.name === 'Uncategorized'
+    item => item.title === 'Uncategorized'
   )
   return (
     <>
@@ -349,7 +340,7 @@ const RoutingTable = ({ config, updateConfig }) => {
           </div>
         </ActionPopup>
       )}
-      <Input ref={forumInput} placeholder="Title" />
+      <Input required ref={forumInput} placeholder="Title" />
       <Row style={{ marginBottom: '30px' }}>
         <Col span={12}>
           <Button onClick={handleCreateCategory} type="primary" block>
@@ -369,14 +360,14 @@ const RoutingTable = ({ config, updateConfig }) => {
           <Collapse defaultActiveKey={uncategorizedIndex + 1}>
             {items.map((item, i) => (
               <Collapse.Panel
-                disabled={item.name === 'Uncategorized' ? true : false}
-                showArrow={item.name === 'Uncategorized' ? false : true}
+                disabled={item.title === 'Uncategorized' ? true : false}
+                showArrow={item.title === 'Uncategorized' ? false : true}
                 className="oddity-collapsable-custom"
                 header={
                   <CategoryDnD
                     index={i}
                     className="oddity-collapsable-custom-header"
-                    name={item.name}
+                    title={item.title}
                   />
                 }
                 key={i + 1}
@@ -388,7 +379,7 @@ const RoutingTable = ({ config, updateConfig }) => {
                     threadIndex={j}
                     index={j}
                     key={j}
-                    name={thread.name}
+                    title={thread.title}
                   />
                 ))}
               </Collapse.Panel>

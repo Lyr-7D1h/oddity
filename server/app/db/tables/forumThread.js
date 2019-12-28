@@ -2,7 +2,7 @@ module.exports = async fastify => {
   const seq = fastify.Sequelize
 
   const model = fastify.db.define('forumThread', {
-    name: {
+    title: {
       type: seq.STRING,
       allowNull: false
     },

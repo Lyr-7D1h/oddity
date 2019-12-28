@@ -19,18 +19,17 @@ module.exports = fp((fastify, opts, done) => {
         syncModels.push(model.sync())
       })
 
-      fastify.log.info('[DB] Setting up associations')
-      require('./associations')(models)
-
       // Sync all models
       Promise.all(syncModels)
         .then(() => {
           fastify.log.info('[DB] Synchronized models')
+          require('./associations')(models)
+          fastify.log.info('[DB] Associations setup')
+
+          fastify.decorate('models', models)
           done()
         })
         .catch(err => fastify.log.error(err))
-
-      fastify.decorate('models', models)
     })
   }
 
