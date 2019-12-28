@@ -2,6 +2,7 @@ variables:
   POSTGRES_DB: testing
   POSTGRES_USER: test
   POSTGRES_PASSWORD: test_pass
+  DB_HOST: postgres
 
 stages:
   - connect
@@ -40,7 +41,7 @@ test:
     - build
   script:
     - cd ./client && npm test
-    - cd ../server && npm test
+    - cd ../server && DB_HOST=postgres npm test
 
 staging:
   image: docker:latest

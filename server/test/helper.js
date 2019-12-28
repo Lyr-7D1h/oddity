@@ -30,6 +30,7 @@ const envSchema = {
     'DB_NAME'
   ],
   properties: {
+    DB_HOST: { type: 'string' },
     DB_NAME: { type: 'string' },
     DB_USERNAME: { type: 'string' },
     DB_PASSWORD: { type: 'string' },
