@@ -5,16 +5,19 @@ variables:
   POSTGRES_USER: test
   POSTGRES_PASSWORD: test_pass
 
-script:
-  # official way to provide password to psql: http://www.postgresql.org/docs/9.3/static/libpq-envars.html
-  - export PGPASSWORD=$POSTGRES_PASSWORD
-  - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
-
 stages:
+  - connect
   - build
   - test
   - staging
   - production
+
+connect:
+  image: postgres
+  script:
+    # official way to provide password to psql: http://www.postgresql.org/docs/9.3/static/libpq-envars.html
+    - export PGPASSWORD=$POSTGRES_PASSWORD
+    - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
 
 build:
   image: node:latest
