@@ -17,7 +17,7 @@ module.exports = async fastify => {
           request.session.user = request.credentials
 
           fastify.models.role
-            .findOne({ where: { id: user.role.id } })
+            .findOne({ where: { id: user.roleId } })
             .then(role => {
               const userCookie = {
                 id: user.id,

@@ -22,7 +22,7 @@ module.exports = fp(async instance => {
               .validate(basicCredentials.pass, portal.secretKey)
               .then(isValid => {
                 if (isValid) {
-                  request.credentials.id = portal._id
+                  request.credentials.id = portal.id
                   request.credentials.isPortal = true
                   done()
                 }
@@ -54,17 +54,20 @@ module.exports = fp(async instance => {
       instance.models.user
         .findAll({
           where: {
-            identifier: basicCredentials.name,
-            email: basicCredentials.name
+            [instance.Sequelize.Op.or]: [
+              { identifier: basicCredentials.name },
+              { email: basicCredentials.name }
+            ]
           }
         })
         .then(users => {
+          console.log(users)
           if (users.length === 1) {
             instance.crypto
               .validate(basicCredentials.pass, users[0].password)
               .then(isValid => {
                 if (isValid) {
-                  request.credentials.id = users[0]._id
+                  request.credentials.id = users[0].id
                   done()
                 } else {
                   done(new Unauthorized())
@@ -100,10 +103,7 @@ module.exports = fp(async instance => {
     if (request.session && request.session.user) {
       if (request.session.user.id) {
         // check if still in DB
-        instance.User.findById(
-          request.session.user.id,
-          '_id permissions roleId'
-        )
+        instance.User.find({ where: { id: request.session.user.id } })
           .then(user => {
             if (user) {
               const hasPermsUser = instance.permissions.validateRouteAuth(

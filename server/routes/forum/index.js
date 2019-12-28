@@ -1,35 +1,36 @@
 'use strict'
 
 module.exports = async fastify => {
-  fastify.get('/forum', async (request, reply) => {
-    try {
-      const categories = await fastify.ForumCategory.find({})
-      const threads = await fastify.ForumThread.find({})
-      const posts = await fastify.ForumPost.find({})
-
-      const result = []
-      for (let i in categories) {
-        const catThreads = threads
-          .filter(thread => thread.categoryId === categories[i]._id)
-          .map(thread => {
-            const threadPosts = posts
-              .filter(post => post.threadId === thread._id)
-              .sort(post => post.createdAt)
-            if (threadPosts[0]) {
-              thread.latestPost = threadPosts[0]
+  fastify.get('/forum', (request, reply) => {
+    fastify.models.forumCategory
+      .findAll({
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        },
+        include: [
+          {
+            model: fastify.models.forumThread,
+            as: 'threads',
+            include: {
+              model: fastify.models.forumPost,
+              as: 'latestPost',
+              limit: 1
             }
-            return thread
-          })
-        result.push({ title: categories[i].name, threads: catThreads })
-      }
-      reply.send(result)
-    } catch (err) {
-      fastify.log.error(err)
-      reply.internalServerError()
-    }
+          }
+        ]
+      })
+      .then(result => {
+        reply.send(result)
+      })
+      .catch(err => {
+        fastify.log.error(err)
+        reply.internalServerError()
+      })
   })
+
   fastify.get('/forum/categories', (request, reply) => {
-    fastify.ForumCategory.find({})
+    fastify.models.forumCategory
+      .findAll()
       .then(categories => {
         reply.send(categories)
       })
@@ -38,8 +39,10 @@ module.exports = async fastify => {
         reply.internalServerError()
       })
   })
+
   fastify.get('/forum/threads', (request, reply) => {
-    fastify.ForumThread.find({})
+    fastify.models.forumThread
+      .findAll()
       .then(threads => {
         reply.send(threads)
       })
@@ -48,6 +51,7 @@ module.exports = async fastify => {
         reply.internalServerError()
       })
   })
+
   fastify.put(
     '/forum/categories',
     {
@@ -78,6 +82,7 @@ module.exports = async fastify => {
         })
     }
   )
+
   fastify.put(
     '/forum/threads',
     {

@@ -16,9 +16,10 @@ module.exports = fastify => {
       }
     },
     (request, reply) => {
-      fastify.Role.find({ isDefault: true }, '_id')
-        .then(roles => {
-          if (roles.length === 1) {
+      fastify.models.role
+        .findOne({ where: { isDefault: true } })
+        .then(role => {
+          if (role) {
             if (!fastify.validateIdentifier(request.body.identifier)) {
               return reply.badRequest('Invalid Identifier')
             }
@@ -28,12 +29,13 @@ module.exports = fastify => {
                 username: request.body.username,
                 identifier: request.body.identifier,
                 email: request.body.email,
-                roleId: roles[0]._id,
+                roleId: role.id,
                 password: hash,
                 ip: request.ip
               }
 
-              fastify.User.create(user)
+              fastify.models.user
+                .create(user)
                 .then(() => reply.success())
                 .catch(err => {
                   fastify.log.error(err)
@@ -41,7 +43,7 @@ module.exports = fastify => {
                 })
             })
           } else {
-            fastify.log.fatal('Multiple or no Default Roles')
+            fastify.log.fatal('No Default Role')
             reply.internalServerError()
           }
         })

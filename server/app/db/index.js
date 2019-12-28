@@ -20,12 +20,7 @@ module.exports = fp((fastify, opts, done) => {
       })
 
       fastify.log.info('[DB] Setting up associations')
-
-      models.forumThread.belongsTo(models.forumCategory)
-      models.forumCategory.hasMany(models.forumThread)
-
-      models.route.belongsTo(models.config)
-      models.config.hasMany(models.route)
+      require('./associations')(models)
 
       // Sync all models
       Promise.all(syncModels)

@@ -29,6 +29,10 @@ module.exports = async fastify => {
     authorId: {
       type: seq.INTEGER,
       allowNull: false
+    },
+    threadId: {
+      type: seq.INTEGER,
+      allowNull: false
     }
   })
 
