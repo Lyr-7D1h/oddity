@@ -20,7 +20,7 @@ const RoutingTable = ({ config, updateConfig }) => {
         setItems(
           categories.map(category => {
             category.threads = threads.filter(
-              thread => thread.categoryId === category._id
+              thread => thread.categoryId === category.id
             )
             return category
           })
@@ -40,7 +40,7 @@ const RoutingTable = ({ config, updateConfig }) => {
     let threads = []
     for (let i in newItems) {
       newItems[i].threads = newItems[i].threads.map(thread => {
-        thread.categoryId = newItems[i]._id
+        thread.categoryId = newItems[i].id
         return thread
       })
       threads = threads.concat(newItems[i].threads)
@@ -60,7 +60,7 @@ const RoutingTable = ({ config, updateConfig }) => {
             setItems(
               categories.map(category => {
                 category.threads = threads.filter(
-                  thread => thread.categoryId === category._id
+                  thread => thread.categoryId === category.id
                 )
                 return category
               })

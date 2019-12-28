@@ -25,7 +25,6 @@ module.exports = async fastify => {
         }
       },
       preHandler: [
-        fastify.validation.Id,
         fastify.auth([fastify.verify.cookie, fastify.verify.basic.user])
       ]
     },

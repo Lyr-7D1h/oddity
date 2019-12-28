@@ -64,8 +64,8 @@ module.exports = async fastify => {
     },
     (request, reply) => {
       request.body = request.body.map(item => {
-        if (!item._id) {
-          item._id = new fastify.mongoose.Types.ObjectId()
+        if (!item.id) {
+          item.id = new fastify.mongoose.Types.ObjectId()
         }
         return item
       })
@@ -94,13 +94,6 @@ module.exports = async fastify => {
       // preHandler: [fastify.auth([fastify.verify.cookie])]
     },
     (request, reply) => {
-      // request.body = request.body.map(item => {
-      //   if (!item._id) {
-      //     item._id = new fastify.mongoose.Types.ObjectId()
-      //   }
-      //   return item
-      // })
-
       console.log(request.body)
       // TODO: Fix loop updating
 

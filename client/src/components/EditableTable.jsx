@@ -93,7 +93,7 @@ class EditableCell extends React.Component {
  * @param {function} onCreate - Returns item WITHOUT ID
  */
 const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
-  rowKey = rowKey || '_id' // sets _id by default if nothing else specified
+  rowKey = rowKey || 'id' // sets id by default if nothing else specified
   const [data, setData] = useState(dataSource)
   const [hasChanges, setHasChanges] = useState(false)
 
@@ -153,7 +153,7 @@ const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
         const field = split[1]
         const id = split[0]
 
-        // set _id if does not exsist
+        // set id if does not exsist
         if (!obj[rowKey]) {
           obj[rowKey] = id
         } else {

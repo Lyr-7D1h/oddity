@@ -28,7 +28,7 @@ const FinishAccountPage = ({ user, dispatch }) => {
     multiple: false,
     accept: 'image/jpeg, image/png',
     showUploadList: false,
-    action: `api/resources/users/${user._id}`,
+    action: `api/resources/users/${user.id}`,
 
     onChange(info) {
       const { status } = info.file

@@ -139,7 +139,6 @@ module.exports = fp(async instance => {
 
       if (!route.multiple && method !== 'POST') {
         idParam = '/:id'
-        preHandler.push(instance.validation.Id)
         schema = {
           params: 'id#'
         }

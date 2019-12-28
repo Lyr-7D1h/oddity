@@ -38,7 +38,7 @@ const columns = [
 const RoutingTable = ({ config, updateConfig }) => {
   const handleSave = items => {
     requester
-      .post(`configs/${config._id}/routes`, items)
+      .post(`configs/${config.id}/routes`, items)
       .then(routes => {
         const newConfig = { ...config }
 
