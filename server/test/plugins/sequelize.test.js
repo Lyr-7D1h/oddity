@@ -9,8 +9,6 @@ test('fastify.db and fastify.Sequelize should exist', t => {
   const app = build(t)
 
   app.ready(err => {
-    console.log(app.config)
-
     t.error(err)
     t.ok(app.db)
     t.ok(app.Sequelize)

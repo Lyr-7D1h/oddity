@@ -11,6 +11,7 @@ const Fastify = require('fastify')
 const config = () => {
   return {
     NODE_ENV: 'testing',
+    DB_HOST: process.env.DB_HOST || 'localhost',
     DB_NAME: 'testing',
     DB_USERNAME: 'test',
     DB_PASSWORD: 'test_pass',
@@ -46,6 +47,8 @@ const envSchema = {
 // automatically build and tear down our instance
 const build = t => {
   const app = Fastify()
+
+  console.log(config())
 
   // Set Fastify Env with env variables defined here
   app.register(require('fastify-env'), { schema: envSchema, data: config() })

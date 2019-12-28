@@ -11,16 +11,6 @@ stages:
   - staging
   - production
 
-connect:
-  image: postgres
-  stage: connect
-  services:
-    - postgres:latest
-  script:
-    # official way to provide password to psql: http://www.postgresql.org/docs/9.3/static/libpq-envars.html
-    - export PGPASSWORD=$POSTGRES_PASSWORD
-    - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
-
 build:
   image: node:latest
   stage: build
@@ -39,6 +29,9 @@ test:
     - postgres:latest
   dependencies:
     - build
+  before_script:
+    - export PGPASSWORD=$POSTGRES_PASSWORD
+    - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
   script:
     - cd ./client && npm test
     - cd ../server && DB_HOST=postgres npm test
