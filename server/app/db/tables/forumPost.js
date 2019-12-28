@@ -21,6 +21,11 @@ module.exports = async fastify => {
       unique: true,
       len: [3, 40]
     },
+    order: {
+      type: seq.INTEGER,
+      allowNull: false,
+      unique: true
+    },
     content: {
       type: seq.TEXT,
       allowNull: false,

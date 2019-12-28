@@ -38,13 +38,16 @@ const RoutingTable = ({ config, updateConfig }) => {
 
     const categories = []
     let threads = []
+    console.log(newItems)
     for (let i in newItems) {
-      newItems[i].threads = newItems[i].threads.map(thread => {
+      newItems[i].threads = newItems[i].threads.map((thread, threadIndex) => {
         thread.categoryId = newItems[i].id
+        thread.order = threadIndex
         return thread
       })
       threads = threads.concat(newItems[i].threads)
       delete newItems[i].threads
+      newItems[i].order = i
       categories.push(newItems[i])
     }
 
@@ -56,7 +59,14 @@ const RoutingTable = ({ config, updateConfig }) => {
         requester
           .put('forum/threads', threads)
           .then(threads => {
-            console.log(threads)
+            console.log(
+              categories.map(category => {
+                category.threads = threads.filter(
+                  thread => thread.categoryId === category.id
+                )
+                return category
+              })
+            )
             setItems(
               categories.map(category => {
                 category.threads = threads.filter(

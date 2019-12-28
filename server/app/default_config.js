@@ -184,7 +184,8 @@ const createDefaultForumCategory = instance => {
       .findOrCreate({
         where: { name: 'Uncategorized' },
         defaults: {
-          name: 'Uncategorized'
+          name: 'Uncategorized',
+          order: 0
         }
       })
       .then(([forumCategory, created]) => resolve(created))

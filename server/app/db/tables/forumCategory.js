@@ -4,6 +4,10 @@ module.exports = async fastify => {
   const forumCategory = fastify.db.define('forumCategory', {
     name: {
       type: seq.STRING,
+      allowNull: false
+    },
+    order: {
+      type: seq.INTEGER,
       allowNull: false,
       unique: true
     }

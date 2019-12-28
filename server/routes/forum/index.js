@@ -7,10 +7,12 @@ module.exports = async fastify => {
         attributes: {
           exclude: ['createdAt', 'updatedAt']
         },
+        order: [['order', 'ASC']],
         include: [
           {
             model: fastify.models.forumThread,
             as: 'threads',
+            order: [['order', 'ASC']],
             include: {
               model: fastify.models.forumPost,
               as: 'latestPost',
@@ -30,7 +32,12 @@ module.exports = async fastify => {
 
   fastify.get('/forum/categories', (request, reply) => {
     fastify.models.forumCategory
-      .findAll()
+      .findAll({
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        },
+        order: [['order', 'ASC']]
+      })
       .then(categories => {
         reply.send(categories)
       })
@@ -42,7 +49,12 @@ module.exports = async fastify => {
 
   fastify.get('/forum/threads', (request, reply) => {
     fastify.models.forumThread
-      .findAll()
+      .findAll({
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        },
+        order: [['order', 'ASC']]
+      })
       .then(threads => {
         reply.send(threads)
       })
@@ -63,23 +75,46 @@ module.exports = async fastify => {
       // preHandler: [fastify.auth([fastify.verify.cookie])]
     },
     (request, reply) => {
-      request.body = request.body.map(item => {
-        if (!item.id) {
-          item.id = new fastify.mongoose.Types.ObjectId()
-        }
-        return item
-      })
-      // TODO: Fix loop updating
-      fastify.ForumCategory.updateMany({}, request.body, { upsert: true })
-        .then(() => reply.send(request.body))
-        .catch(err => {
-          fastify.log.error(err)
-          if (err.message) {
-            reply.badRequest(err.message)
-          } else {
-            reply.badRequest()
+      fastify.models.forumCategory.findAll().then(categories => {
+        const promises = []
+
+        // TODO: Fix loop updating
+        categories.forEach(category => {
+          // if cant find delete category
+          if (
+            !request.body.includes(
+              reqCategory => reqCategory.id && reqCategory.id === category.id
+            )
+          ) {
+            promises.push(
+              fastify.models.forumThread.destroy({
+                where: { categoryId: category.id }
+              })
+            )
+            promises.push(
+              fastify.models.forumCategory.destroy({
+                where: { id: category.id }
+              })
+            )
           }
         })
+
+        request.body.forEach(category => {
+          promises.push(
+            fastify.models.forumCategory.upsert(category, { returning: true })
+          )
+        })
+
+        Promise.all(promises)
+          .then(results => {
+            results = results.filter(result => isNaN(result) && result) // filter out results of delete
+            reply.send(results.map(result => result[0]))
+          })
+          .catch(err => {
+            fastify.log.error(err)
+            reply.internalServerError()
+          })
+      })
     }
   )
 
@@ -94,22 +129,38 @@ module.exports = async fastify => {
       // preHandler: [fastify.auth([fastify.verify.cookie])]
     },
     (request, reply) => {
-      console.log(request.body)
-      // TODO: Fix loop updating
+      fastify.models.forumThread.findAll().then(threads => {
+        const promises = []
 
-      fastify.ForumThread.updateMany({}, request.body, { upsert: true })
-        .then(res => {
-          console.log(res)
-          reply.send(request.body)
+        threads.forEach(thread => {
+          // if cant find delete thread
+          if (
+            !request.body.includes(
+              reqThread => reqThread.id && reqThread.id === thread.id
+            )
+          )
+            promises.push(
+              fastify.models.forumThread.destroy({ where: { id: thread.id } })
+            )
         })
-        .catch(err => {
-          fastify.log.error(err)
-          if (err.message) {
-            reply.badRequest(err.message)
-          } else {
-            reply.badRequest()
-          }
+
+        // TODO: Fix loop updating
+        request.body.forEach(thread => {
+          promises.push(
+            fastify.models.forumThread.upsert(thread, { returning: true })
+          )
         })
+
+        Promise.all(promises)
+          .then(results => {
+            results = results.filter(result => isNaN(result) && result) // filter out results of delete
+            reply.send(results.map(result => result[0]))
+          })
+          .catch(err => {
+            fastify.log.error(err)
+            reply.internalServerError()
+          })
+      })
     }
   )
 }
