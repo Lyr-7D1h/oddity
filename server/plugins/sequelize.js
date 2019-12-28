@@ -26,7 +26,7 @@ module.exports = fp(async instance => {
     instance.decorate('db', sequelize)
     instance.decorate('Sequelize', Sequelize)
     instance.addHook('onClose', (fastify, done) => {
-      fastify.sequelize
+      fastify.db
         .close()
         .then(done)
         .catch(done)
