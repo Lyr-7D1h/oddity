@@ -24,8 +24,6 @@ connect:
 build:
   image: node:latest
   stage: build
-  services:
-    - postgres:latest
   artifacts:
     untracked: true
   before_script:
@@ -37,6 +35,8 @@ build:
 test:
   image: node:latest
   stage: test
+  services:
+    - postgres:latest
   dependencies:
     - build
   script:
