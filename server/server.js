@@ -21,7 +21,6 @@ const server = Fastify({
 const envSchema = {
   type: 'object',
   required: [
-    'CONNECTION_STRING',
     'ADMIN_SECRET',
     'SESSION_SECRET',
     'DB_USERNAME',
@@ -29,7 +28,6 @@ const envSchema = {
     'DB_NAME'
   ],
   properties: {
-    CONNECTION_STRING: { type: 'string' },
     DB_NAME: { type: 'string' },
     DB_USERNAME: { type: 'string' },
     DB_PASSWORD: { type: 'string' },

@@ -1,7 +1,7 @@
 const fp = require('fastify-plugin')
 const Sequelize = require('sequelize')
 
-module.exports = fp(async instance => {
+module.exports = fp((instance, opts, done) => {
   const HOST = instance.config.DB_HOST || 'localhost'
   const DATABASE = instance.config.DB_NAME || 'oddity'
   const USERNAME = instance.config.DB_USERNAME || 'oddity'
@@ -21,21 +21,24 @@ module.exports = fp(async instance => {
   const sequelize = new Sequelize(DATABASE, USERNAME, PASSWORD, sequelizeOpts)
 
   // first check database by authenticating to it
-  try {
-    await sequelize.authenticate()
-    instance.decorate('db', sequelize)
-    instance.decorate('Sequelize', Sequelize)
-    instance.addHook('onClose', (fastify, done) => {
-      fastify.db
-        .close()
-        .then(done)
-        .catch(done)
+  sequelize
+    .authenticate()
+    .then(() => {
+      instance.decorate('db', sequelize)
+      instance.decorate('Sequelize', Sequelize)
+      instance.addHook('onClose', (fastify, done) => {
+        fastify.db
+          .close()
+          .then(done)
+          .catch(done)
+      })
+      instance.log.info(
+        `Connected to Postgres postgresql://${USERNAME}:{PASSWORD}@${HOST}/${DATABASE}`
+      )
+      done()
     })
-    instance.log.info(
-      `Connected to Postgres postgresql://${USERNAME}:{PASSWORD}@${HOST}/${DATABASE}`
-    )
-  } catch (err) {
-    instance.log.fatal(err)
-    process.exit(1)
-  }
+    .catch(err => {
+      instance.log.fatal(err)
+      process.exit(1)
+    })
 })

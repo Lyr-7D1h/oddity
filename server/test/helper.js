@@ -11,8 +11,9 @@ const Fastify = require('fastify')
 const config = () => {
   return {
     NODE_ENV: 'testing',
-    CONNECTION_STRING:
-      'mongodb+srv://oddityStaging:40vOCy06sago47Pk@staging-ausly.gcp.mongodb.net/testing?retryWrites=true&w=majority',
+    DB_NAME: 'testing',
+    DB_USERNAME: 'test',
+    DB_PASSWORD: 'test_pass',
     SESSION_SECRET: 'this_is_a_very_big_string_which_is_longer_than_32',
     ADMIN_SECRET: 'secret',
     dotenv: true
@@ -21,9 +22,18 @@ const config = () => {
 
 const envSchema = {
   type: 'object',
-  required: ['CONNECTION_STRING', 'ADMIN_SECRET'],
+  required: [
+    'ADMIN_SECRET',
+    'SESSION_SECRET',
+    'DB_USERNAME',
+    'DB_PASSWORD',
+    'DB_NAME'
+  ],
   properties: {
-    CONNECTION_STRING: { type: 'string' },
+    DB_NAME: { type: 'string' },
+    DB_USERNAME: { type: 'string' },
+    DB_PASSWORD: { type: 'string' },
+    DB_LOGGING_ENABLED: { type: 'boolean' },
     ADMIN_SECRET: { type: 'string' },
     SESSION_SECRET: { type: 'string' },
     PORT: { type: 'integer' },
