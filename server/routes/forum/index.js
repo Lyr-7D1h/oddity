@@ -71,8 +71,8 @@ module.exports = async fastify => {
         body: {
           type: 'array'
         }
-      }
-      // preHandler: [fastify.auth([fastify.verify.cookie])]
+      },
+      preHandler: [fastify.auth([fastify.verify.cookie])]
     },
     (request, reply) => {
       fastify.models.forumCategory.findAll().then(categories => {
@@ -125,8 +125,8 @@ module.exports = async fastify => {
         body: {
           type: 'array'
         }
-      }
-      // preHandler: [fastify.auth([fastify.verify.cookie])]
+      },
+      preHandler: [fastify.auth([fastify.verify.cookie])]
     },
     (request, reply) => {
       fastify.models.forumThread.findAll().then(threads => {
