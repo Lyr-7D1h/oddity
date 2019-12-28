@@ -38,7 +38,7 @@ module.exports = fp((instance, opts, done) => {
       done()
     })
     .catch(err => {
-      console.log(err)
+      console.error(err)
       instance.log.fatal(err)
       process.exit(1)
     })

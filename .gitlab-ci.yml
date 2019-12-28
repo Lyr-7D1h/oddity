@@ -31,7 +31,8 @@ test:
     - build
   script:
     - cd ./client && npm test
-    - cd ../server && DB_HOST=postgres npm test
+    - echo $POSTGRES_PASSWORD
+    - cd ../server && DB_HOST=postgres DB_PASS=$POSTGRES_PASSWORD npm test
 
 staging:
   image: docker:latest
