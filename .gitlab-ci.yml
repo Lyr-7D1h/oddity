@@ -13,6 +13,7 @@ connect:
     - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
 
 stages:
+  - connect
   - build
   - test
   - staging
