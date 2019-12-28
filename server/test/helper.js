@@ -16,8 +16,7 @@ const config = () => {
     DB_USERNAME: 'test',
     DB_PASSWORD: 'test_pass',
     SESSION_SECRET: 'this_is_a_very_big_string_which_is_longer_than_32',
-    ADMIN_SECRET: 'secret',
-    dotenv: true
+    ADMIN_SECRET: 'secret'
   }
 }
 
@@ -47,8 +46,6 @@ const envSchema = {
 // automatically build and tear down our instance
 const build = t => {
   const app = Fastify()
-
-  console.log(config())
 
   // Set Fastify Env with env variables defined here
   app.register(require('fastify-env'), { schema: envSchema, data: config() })
