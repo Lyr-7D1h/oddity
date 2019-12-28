@@ -25,7 +25,7 @@ test:
     POSTGRES_DB: testing
     POSTGRES_USER: test
     POSTGRES_PASSWORD: test_pass
-    DB_HOST: postgres
+    PGPASSWORD: test_pass
   dependencies:
     - build
   script:
