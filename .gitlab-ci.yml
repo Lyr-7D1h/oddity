@@ -23,13 +23,13 @@ test:
   variables:
     POSTGRES_DB: testing
     POSTGRES_USER: test
-    POSTGRES_PASSWORD: test_pass
+    # POSTGRES_PASSWORD: test_pass
     PGPASSWORD: test_pass
   dependencies:
     - build
   script:
     - cd ./client && npm test
-    - cd ../server && DB_HOST=postgres DB_PASS=$POSTGRES_PASSWORD npm test
+    - cd ../server && DB_HOST=postgres npm test
 
 staging:
   image: docker:latest

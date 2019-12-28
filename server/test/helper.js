@@ -14,7 +14,7 @@ const config = () => {
     DB_HOST: process.env.DB_HOST || 'localhost',
     DB_NAME: 'testing',
     DB_USERNAME: 'test',
-    DB_PASSWORD: process.env.DB_PASS || 'test_pass',
+    DB_PASSWORD: 'test_pass',
     SESSION_SECRET: 'this_is_a_very_big_string_which_is_longer_than_32',
     ADMIN_SECRET: 'secret'
   }
@@ -49,8 +49,6 @@ const build = t => {
 
   // Set Fastify Env with env variables defined here
   app.register(require('fastify-env'), { schema: envSchema, data: config() })
-
-  console.log(config())
 
   // fastify-plugin ensures that all decorators
   // are exposed for testing purposes, this is
