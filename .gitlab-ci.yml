@@ -36,7 +36,6 @@ test:
   dependencies:
     - build
   script:
-    - psql -h "localhost" -U "test" -d "testing" -c "SELECT 'OK' AS status;"
     - cd ./client && npm test
     - cd ../server && npm test
 
