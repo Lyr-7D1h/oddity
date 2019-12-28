@@ -29,9 +29,9 @@ test:
     - postgres:latest
   dependencies:
     - build
-  before_script:
-    - export PGPASSWORD=$POSTGRES_PASSWORD
-    - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
+  # before_script:
+  #   - export PGPASSWORD=$POSTGRES_PASSWORD
+  #   - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
   script:
     - cd ./client && npm test
     - cd ../server && DB_HOST=postgres npm test
