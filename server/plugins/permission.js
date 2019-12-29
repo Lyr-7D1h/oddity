@@ -10,7 +10,8 @@ module.exports = fp(async instance => {
   const ROUTES = {
     USERS: PERMISSIONS.ADMIN,
     ROLES: [PERMISSIONS.ADMIN, PERMISSIONS.MANAGE_ROLES],
-    CONFIGS: PERMISSIONS.ADMIN
+    CONFIGS: PERMISSIONS.ADMIN,
+    FORUM: PERMISSIONS.ADMIN
   }
 
   const getPathFromUrl = url => {

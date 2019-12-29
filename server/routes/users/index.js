@@ -1,9 +1,19 @@
 'use strict'
 
 module.exports = async fastify => {
-  const columns = '-password -ip -email'
+  const columns = {
+    exclude: [
+      'password',
+      'ip',
+      'email',
+      'createdAt',
+      'updatedAt',
+      'permissions'
+    ]
+  }
+
   const userRoute = {
-    model: fastify.User,
+    model: fastify.models.user,
     routes: [
       {
         method: 'get',

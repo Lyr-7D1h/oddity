@@ -9,11 +9,11 @@ module.exports = async fastify => {
     {
       schema: {
         params: 'id#'
-      },
-      preHandlers: [fastify.validation.Id]
+      }
     },
     (request, reply) => {
-      fastify.User.findById(request.params.id)
+      fastify.models.user
+        .findOne({ where: { id: request.params.id } })
         .then(user => {
           if (!user) {
             return reply.notFound('User not found')

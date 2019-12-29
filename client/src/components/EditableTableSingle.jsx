@@ -93,7 +93,7 @@ const EditableTable = ({
   onDelete,
   onCreate
 }) => {
-  rowKey = rowKey || '_id' // sets _id by default if nothing else specified
+  rowKey = rowKey || 'id' // sets id by default if nothing else specified
   const [editingKey, setEditingKey] = useState('')
   const data = dataSource
 

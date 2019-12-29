@@ -5,6 +5,6 @@ module.exports = fp(async instance => {
     $id: 'id',
     required: ['id'],
     type: 'object',
-    properties: { id: { type: 'string' } }
+    properties: { id: { type: 'number' } }
   })
 })

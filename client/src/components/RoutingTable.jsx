@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import EditableTable from './EditableTable'
 import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
 
-import { updateConfig } from '../redux/actions/configActions'
 import { Switch } from 'antd'
 
 const columns = [
@@ -32,19 +31,33 @@ const columns = [
     dataIndex: 'default',
     dataType: 'bool',
     render: isDefault => <Switch checked={isDefault} disabled></Switch>
+  },
+  {
+    title: 'Config ID',
+    dataIndex: 'configId',
+    render: () => <></>
   }
 ]
 
-const RoutingTable = ({ config, updateConfig }) => {
+const RoutingTable = ({ configId }) => {
+  const [routes, setRoutes] = useState([])
+
+  useEffect(() => {
+    requester
+      .get(`configs/${configId}/routes`)
+      .then(routes => {
+        setRoutes(routes)
+      })
+      .catch(err => {
+        notificationHandler.error('Could not fetch routes', err.message)
+      })
+  }, [configId])
+
   const handleSave = items => {
     requester
-      .post(`configs/${config._id}/routes`, items)
+      .put(`configs/${configId}/routes`, items)
       .then(routes => {
-        const newConfig = { ...config }
-
-        newConfig.routes = routes
-
-        updateConfig(newConfig)
+        setRoutes(routes)
         notificationHandler.success(`Updated Routes`)
       })
       .catch(err => {
@@ -55,12 +68,10 @@ const RoutingTable = ({ config, updateConfig }) => {
   return (
     <EditableTable
       columns={columns}
-      dataSource={config.routes}
+      dataSource={routes}
       onSave={handleSave}
     ></EditableTable>
   )
 }
 
-export default connect(state => ({ config: state.config }), {
-  updateConfig
-})(RoutingTable)
+export default connect(state => ({ configId: state.config.id }))(RoutingTable)

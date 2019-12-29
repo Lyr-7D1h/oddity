@@ -1,33 +1,37 @@
 'use strict'
 const fp = require('fastify-plugin')
 
-/**
- * Base Router for basic CRUD Routes
- *
- * Model: Mongoose Model
- *
- * columns: Columns to exclude to not send or only thing to send
- * Format is like "COLUMN1 COLUMN2" to only include these two or
- * "-COLUMN1" to return everything exept COLUMN1
- */
 module.exports = fp(async instance => {
+  /**
+   * Easily create routes for basic CRUD Routes
+   *
+   * @param {string} options.model - Sequelize Model
+   * @param {array} options.routes - Routes to use
+   * @param {string} options.routes.method - get || delete || post || put
+   * @param {boolean} options.routes.multiple - does this route have multiple (/tests) ? otherwise it uses an id in path (/tests/:id)
+   * @param {function|array} options.routes.auth - function for authentication preHandling
+   * @param {array} options.columns - columns to add or remove
+   * @param {array} options.columns.include - Array of strings with columns to include
+   * @param {array} options.columns.exclude - Array of strings with columns to exclude
+   */
   instance.decorate('routeGen', async options => {
     const { model, routes } = options
     if (!model || !routes || routes.length < 0) {
       throw Error('Invalid Route Options')
     }
+
     const globalAuthorization = options.auth
-    const collectionName = model.collection.collectionName
+    const tableName = model.getTableName()
 
     const getHandler = (route, method) => {
-      const columns = route.columns || ''
+      const columns = route.columns || {}
 
       switch (method) {
         case 'GET':
           if (route.multiple) {
             return async (request, reply) => {
               model
-                .find({}, columns)
+                .findAll({ attributes: columns })
                 .then(items => {
                   reply.send(items)
                 })
@@ -40,10 +44,12 @@ module.exports = fp(async instance => {
           } else {
             return async (request, reply) => {
               model
-                .findById(request.params.id, columns)
-                .then(items => {
-                  if (!items) reply.notFound()
-                  reply.send(items)
+                .findOne({
+                  where: { id: request.params.id, attributes: columns }
+                })
+                .then(item => {
+                  if (!item) reply.notFound()
+                  reply.send(item)
                 })
                 .catch(err => {
                   instance.log.error(err)
@@ -58,7 +64,7 @@ module.exports = fp(async instance => {
           }
           if (route.columns) {
             instance.log.warn(
-              `(${collectionName} Route) No need to specify columns for POST`
+              `(${tableName} Route) No need to specify columns for POST`
             )
           }
           return async (request, reply) => {
@@ -79,12 +85,12 @@ module.exports = fp(async instance => {
           }
           if (route.columns) {
             instance.log.warn(
-              `(${collectionName} Route) No need to specify columns for POST`
+              `(${tableName} Route) No need to specify columns for POST`
             )
           }
           return async (request, reply) => {
             model
-              .updateOne({ _id: request.params.id }, request.body)
+              .update(request.body)
               .then(response => {
                 if (response.nModified === 0) {
                   reply.noChange()
@@ -104,12 +110,12 @@ module.exports = fp(async instance => {
           }
           if (route.columns) {
             instance.log.warn(
-              `(${collectionName} Route) No need to specify columns for POST`
+              `(${tableName} Route) No need to specify columns for POST`
             )
           }
           return async (request, reply) => {
             model
-              .deleteOne({ _id: request.params.id })
+              .destroy({ where: { id: request.params.id } })
               .then(response => {
                 if (response.deletedCount === 0) {
                   return reply.notFound()
@@ -133,7 +139,6 @@ module.exports = fp(async instance => {
 
       if (!route.multiple && method !== 'POST') {
         idParam = '/:id'
-        preHandler.push(instance.validation.Id)
         schema = {
           params: 'id#'
         }
@@ -172,7 +177,7 @@ module.exports = fp(async instance => {
 
       return {
         method: method,
-        url: '/api/' + (route.route || collectionName + idParam),
+        url: '/api/' + (route.route || tableName + idParam),
         preHandler: preHandler,
         schema: schema,
         handler: getHandler(route, method)

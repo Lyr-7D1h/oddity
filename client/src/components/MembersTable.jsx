@@ -69,7 +69,7 @@ export default () => {
   let data = []
   if (members.length > 0 && roles.length > 0) {
     data = members.map(member => {
-      member.role = roles.find(role => role._id === member.roleId).name
+      member.role = roles.find(role => role.id === member.roleId).name
       member.avatar = member.username.slice(0, 1).toUpperCase()
       return member
     })
@@ -80,7 +80,7 @@ export default () => {
       columns={columns}
       rowClassName="oddity-row"
       dataSource={data}
-      rowKey="_id"
+      rowKey="id"
     />
   )
 }

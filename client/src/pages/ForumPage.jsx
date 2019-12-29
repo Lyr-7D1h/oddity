@@ -41,34 +41,6 @@ export default connect(state => ({ path: state.page.selected }))(
         })
     }, [])
 
-    // const categoryItems = [
-    //   {
-    //     title: 'category1',
-    //     items: [
-    //       {
-    //         title: 'Item1',
-    //         description: 'Description1',
-    //         lastArticle: {
-    //           date: new Date(),
-    //           author: {
-    //             username: 'Lyr',
-    //             identifier: 'lyr'
-    //           },
-    //           title: 'The almighty Exsite'
-    //         }
-    //       },
-    //       { title: 'Item2', description: 'Description2' }
-    //     ]
-    //   },
-    //   {
-    //     title: 'category2',
-    //     items: [
-    //       { title: 'Item1', description: 'Description1' },
-    //       { title: 'Item2', description: 'Description2' }
-    //     ]
-    //   }
-    // ]
-
     let Content
     if (thread && post) {
       Content = <Post />

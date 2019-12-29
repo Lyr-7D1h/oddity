@@ -18,11 +18,17 @@ build:
 test:
   image: node:latest
   stage: test
+  services:
+    - postgres:latest
+  variables:
+    POSTGRES_DB: testing
+    POSTGRES_USER: test
+    PGPASSWORD: test_pass
   dependencies:
     - build
   script:
     - cd ./client && npm test
-    - cd ../server && npm test
+    - cd ../server && DB_HOST=postgres npm test
 
 staging:
   image: docker:latest

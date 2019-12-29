@@ -2,7 +2,7 @@ const fp = require('fastify-plugin')
 
 const createAdminUser = instance => {
   return new Promise((resolve, reject) => {
-    instance.Role.findOne({ name: 'Admin' }, '_id').then(role => {
+    instance.models.role.findOne({ where: { name: 'Admin' } }).then(role => {
       if (role === null) {
         reject(
           new Error(
@@ -10,29 +10,25 @@ const createAdminUser = instance => {
           )
         )
       } else {
-        instance.User.findOne({ identifier: 'admin' }).then(adminUser => {
-          if (adminUser === null) {
-            instance.crypto
-              .hash('admin')
-              .then(hash => {
-                instance.User.create({
+        instance.crypto
+          .hash('admin')
+          .then(hash => {
+            instance.models.user
+              .findOrCreate({
+                where: { identifier: 'admin' },
+                defaults: {
                   username: 'Admin',
                   identifier: 'admin',
                   password: hash,
                   email: 'admin@admin.com',
                   ip: '0:0:0:0',
-                  roleId: role._id
-                })
-                  .then(() => {
-                    resolve(true)
-                  })
-                  .catch(err => reject(err))
+                  roleId: role.id
+                }
               })
+              .then(([user, created]) => resolve(created))
               .catch(err => reject(err))
-          } else {
-            resolve()
-          }
-        })
+          })
+          .catch(err => reject(err))
       }
     })
   })
@@ -40,12 +36,13 @@ const createAdminUser = instance => {
 
 const createAdminRole = instance => {
   return new Promise((resolve, reject) => {
-    instance.Role.findOne({ name: 'Admin' }).then(role => {
+    instance.models.role.findOne({ name: 'Admin' }).then(role => {
       if (role === null) {
-        instance.Role.create({
-          name: 'Admin',
-          permissions: 1
-        })
+        instance.models.role
+          .create({
+            name: 'Admin',
+            permissions: 1
+          })
           .then(() => {
             resolve(true)
           })
@@ -61,98 +58,17 @@ const createAdminRole = instance => {
 
 const createUserRole = instance => {
   return new Promise((resolve, reject) => {
-    instance.Role.findOne({ name: 'User' }).then(role => {
-      if (role === null) {
-        instance.Role.create({
+    instance.models.role
+      .findOrCreate({
+        where: { name: 'User' },
+        defaults: {
           name: 'User',
           isDefault: true,
           permissions: 0
-        })
-          .then(() => resolve(true))
-          .catch(err => reject(err))
-      } else {
-        resolve()
-      }
-    })
-  })
-}
-
-const createDefaultConfig = instance => {
-  return new Promise((resolve, reject) => {
-    instance.Config.find({}).then(configs => {
-      if (configs.length === 0) {
-        instance.Config.create({
-          name: 'default',
-          isActive: true,
-          title: 'Oddity',
-          routes: [
-            { name: 'Home', path: '', module: 'home', default: true },
-            { name: 'Forum', path: 'forum', module: 'forum' },
-            { name: 'Members', path: 'members', module: 'members' },
-            { name: 'Servers', path: 'servers', module: 'servers' }
-          ]
-        })
-          .then(() => resolve(true))
-          .catch(err => {
-            reject(err)
-          })
-      } else {
-        resolve()
-      }
-    })
-  })
-}
-
-const createAdminPortal = instance => {
-  return new Promise((resolve, reject) => {
-    const secret = instance.config.ADMIN_SECRET || 'exsiteisverycool'
-
-    instance.Portal.find({ name: 'admin' }, 'secretKey _id')
-      .then(portals => {
-        // create if does not exist
-        if (portals.length === 0) {
-          instance.crypto.hash(secret).then(hash => {
-            instance.Portal.create({
-              name: 'admin',
-              accessKey: instance.crypto.createKey(10),
-              secretKey: hash
-            })
-              .then(() => {
-                resolve(true)
-              })
-              .catch(err => {
-                reject(err)
-              })
-          })
-        } else {
-          // update if it does exist
-          instance.crypto
-            .validate(secret, portals[0].secretKey)
-            .then(isValid => {
-              // if pass is not secret make it secret
-              if (!isValid) {
-                instance.crypto.hash(secret).then(hash => {
-                  instance.Portal.updateOne(
-                    { _id: portals[0]._id },
-                    { secretKey: hash }
-                  )
-                    .then(response => {
-                      if (response.nModified !== 0) {
-                        resolve(true)
-                      }
-                    })
-                    .catch(err => {
-                      reject(err)
-                    })
-                })
-              } else {
-                resolve()
-              }
-            })
-            .catch(err => {
-              reject(err)
-            })
         }
+      })
+      .then(([role, created]) => {
+        resolve(created)
       })
       .catch(err => {
         reject(err)
@@ -160,28 +76,125 @@ const createAdminPortal = instance => {
   })
 }
 
-const createDefaultForumCategory = instance => {
+const createDefaultConfig = instance => {
+  const createRoutes = configId => {
+    const routes = [
+      {
+        name: 'Home',
+        path: '',
+        module: 'home',
+        default: true,
+        configId: configId
+      },
+      {
+        name: 'Forum',
+        path: 'forum',
+        module: 'forum',
+        default: false,
+        configId: configId
+      },
+      {
+        name: 'Members',
+        path: 'members',
+        module: 'members',
+        default: false,
+
+        configId: configId
+      },
+      {
+        name: 'Servers',
+        path: 'servers',
+        module: 'servers',
+        default: false,
+
+        configId: configId
+      }
+    ]
+
+    let routePromises = []
+    routes.forEach(route => {
+      routePromises.push(
+        instance.models.route.findOrCreate({
+          where: { name: route.name },
+          defaults: route
+        })
+      )
+    })
+
+    return new Promise((resolve, reject) => {
+      Promise.all(routePromises)
+        .then(createdArray => {
+          const created =
+            createdArray.filter(created => created === true).length > 0
+              ? true
+              : false
+          resolve(created)
+        })
+        .catch(err => reject(err))
+    })
+  }
+  const createConfig = () => {
+    return new Promise((resolve, reject) => {
+      instance.models.config
+        .findOrCreate({
+          where: { name: 'default' },
+          defaults: {
+            name: 'default',
+            isActive: true,
+            title: 'Oddity'
+          }
+        })
+        .then(res => resolve(res))
+        .catch(err => reject(err))
+    })
+  }
   return new Promise((resolve, reject) => {
-    instance.ForumCategory.findOne({ name: 'Uncategorized' })
-      .then(res => {
-        if (res === null) {
-          new instance.ForumCategory({
-            name: 'Uncategorized'
-          })
-            .save()
-            .then(() => {
-              resolve(true)
-            })
-            .catch(err => reject(err))
-        } else {
-          resolve()
-        }
+    createConfig()
+      .then(([config, created1]) => {
+        createRoutes(config.id).then(created2 => resolve(created1 || created2))
       })
       .catch(err => reject(err))
   })
 }
 
+const createAdminPortal = instance => {
+  return new Promise((resolve, reject) => {
+    const secret = instance.config.ADMIN_SECRET || 'exsiteisverycool'
+
+    instance.crypto
+      .hash(secret)
+      .then(hash => {
+        instance.models.portal
+          .upsert({
+            name: 'admin',
+            accessKey: instance.crypto.createKey(10),
+            secretKey: hash
+          })
+          .then(created => {
+            resolve(created)
+          })
+      })
+      .catch(err => reject(err))
+  })
+}
+
+const createDefaultForumCategory = instance => {
+  return new Promise((resolve, reject) => {
+    instance.models.forumCategory
+      .findOrCreate({
+        where: { title: 'Uncategorized' },
+        defaults: {
+          title: 'Uncategorized',
+          order: 0
+        }
+      })
+      .then(([forumCategory, created]) => resolve(created))
+      .catch(err => reject(err))
+  })
+}
+
 module.exports = fp(async instance => {
+  instance.log.info('Loading Default Config..')
   const errHandler = err => {
     instance.log.fatal(err)
     process.exit(1)
@@ -223,9 +236,11 @@ module.exports = fp(async instance => {
     })
     .catch(errHandler)
 
-  instance.Portal.find({ name: 'admin' }, 'accessKey').then(portals => {
-    if (portals[0]) {
-      instance.log.info(`Admin Portal AccessKey: ${portals[0].accessKey}`)
+  instance.models.portal.findOne({ where: { name: 'admin' } }).then(portal => {
+    if (portal) {
+      instance.log.info(`Admin Portal AccessKey: ${portal.accessKey}`)
+    } else {
+      instance.log.error('Could not find Admin Portal')
     }
   })
 })

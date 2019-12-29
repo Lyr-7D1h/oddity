@@ -1,5 +1,27 @@
 module.exports = async fastify => {
-  fastify.post(
+  fastify.get(
+    '/configs/:id/routes',
+    {
+      schema: {
+        params: 'id#'
+      }
+    },
+    (request, reply) => {
+      fastify.models.route
+        .findAll({
+          where: { configId: request.params.id }
+        })
+        .then(routes => {
+          reply.send(routes)
+        })
+        .catch(err => {
+          fastify.log.error(err)
+          fastify.internalServerError()
+        })
+    }
+  )
+
+  fastify.put(
     '/configs/:id/routes',
     {
       schema: {
@@ -25,51 +47,77 @@ module.exports = async fastify => {
         }
       },
       preHandler: [
-        fastify.validation.Id,
         fastify.auth([fastify.verify.cookie, fastify.verify.basic.user])
       ]
     },
     (request, reply) => {
-      fastify.Config.findById(request.params.id).then(config => {
-        if (config === null) {
-          return reply.notFound('Could not find config')
-        }
-
-        const routes = request.body
-
-        // only 1 default
-        if (routes.filter(route => route.default).length !== 1) {
-          return reply.badRequest('There should always be one path default')
-        }
-
-        const checkRoutes = []
-        for (const i in routes) {
-          // path cannot be empty if not default
-          if (routes[i].path == '' && !routes[i].default) {
-            return reply.badRequest('Only default path can have a empty path')
+      fastify.models.config
+        .findOne({
+          where: { id: request.params.id },
+          include: [{ model: fastify.models.route }]
+        })
+        .then(config => {
+          if (config === null) {
+            return reply.notFound('Could not find config')
           }
 
-          for (const j in checkRoutes) {
-            if (checkRoutes[j].path == routes[i].path) {
-              return reply.badRequest('Path should be unique')
+          const routes = request.body
+
+          // only 1 default
+          if (routes.filter(route => route.default).length !== 1) {
+            return reply.badRequest('There should always be one path default')
+          }
+
+          const checkRoutes = []
+          for (const i in routes) {
+            // path cannot be empty if not default
+            if (routes[i].path == '' && !routes[i].default) {
+              return reply.badRequest('Only default path can have a empty path')
             }
+
+            for (const j in checkRoutes) {
+              if (checkRoutes[j].path == routes[i].path) {
+                return reply.badRequest('Path should be unique')
+              }
+            }
+
+            checkRoutes.push(routes[i])
           }
 
-          checkRoutes.push(routes[i])
-        }
+          const promises = []
 
-        config.routes = routes
+          // TODO: Fix loop updating
+          config.routes.forEach(route => {
+            // if cant find delete category
+            if (
+              !routes.includes(
+                reqRoute => reqRoute.id && reqRoute.id === route.id
+              )
+            ) {
+              promises.push(
+                fastify.models.route.destroy({
+                  where: { id: route.id }
+                })
+              )
+            }
+          })
 
-        config
-          .save()
-          .then(config => {
-            reply.send(config.routes)
+          request.body.forEach(category => {
+            promises.push(
+              fastify.models.route.upsert(category, { returning: true })
+            )
           })
-          .catch(err => {
-            fastify.log.error(err)
-            reply.badRequest()
-          })
-      })
+
+          Promise.all(promises)
+            .then(results => {
+              results = results.filter(result => isNaN(result) && result) // filter out results of delete
+              reply.send(results.map(result => result[0]))
+            })
+            .catch(err => {
+              fastify.log.error(err)
+              reply.internalServerError()
+            })
+        })
     }
   )
 }
