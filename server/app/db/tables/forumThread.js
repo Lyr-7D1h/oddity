@@ -4,6 +4,7 @@ module.exports = async fastify => {
   const model = fastify.db.define('forumThread', {
     title: {
       type: seq.STRING,
+      unique: true,
       allowNull: false
     },
     order: {

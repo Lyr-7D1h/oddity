@@ -64,6 +64,29 @@ module.exports = async fastify => {
       })
   })
 
+  fastify.get(
+    '/forum/threads/:id/posts',
+    {
+      params: 'id#'
+    },
+    (request, reply) => {
+      fastify.models.forumPost
+        .findAll({
+          where: {
+            threadId: request.params.id
+          },
+          order: [['createdAt', 'DESC']]
+        })
+        .then(threads => {
+          reply.send(threads)
+        })
+        .catch(err => {
+          fastify.log.error(err)
+          reply.internalServerError()
+        })
+    }
+  )
+
   fastify.put(
     '/forum/categories',
     {

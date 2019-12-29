@@ -14,26 +14,37 @@ export default connect(state => ({ path: state.page.selected }))(
     const [forumItems, setForumItems] = useState([])
     const routes = [
       {
-        path: ``,
+        path: `/${path[0]}`,
         breadcrumbName: 'home'
       }
     ]
 
+    category &&
+      routes.push({
+        path: `/${path[0]}/${category}`,
+        breadcrumbName: category
+      })
     thread &&
       routes.push({
-        path: `${path[0]}/${category}/${thread}`,
+        path: `/${path[0]}/${category}/${thread}`,
         breadcrumbName: thread
       })
     post &&
       routes.push({
-        path: `${path[0]}/${thread}/${post}`,
+        path: `/${path[0]}/${thread}/${post}`,
         breadcrumbName: post
       })
+
+    const currentPath = routes[routes.length - 1].path
 
     useEffect(() => {
       requester
         .get('forum')
         .then(forum => {
+          forum = forum.filter(
+            item =>
+              !(item.title === 'Uncategorized' && item.threads.length === 0)
+          )
           setForumItems(forum)
         })
         .catch(err => {
@@ -42,13 +53,46 @@ export default connect(state => ({ path: state.page.selected }))(
     }, [])
 
     let Content
-    if (thread && post) {
-      Content = <Post />
-    } else if (thread) {
-      Content = <Thread />
+    if (category && thread && post) {
+      Content = <Post currentPath={currentPath} />
+    } else if (category && thread) {
+      let threadId
+      forumItems.forEach(categoryItem => {
+        if (categoryItem.title === category) {
+          categoryItem.threads.forEach(threadItem => {
+            if (threadItem.title === thread) {
+              threadId = threadItem.id
+            }
+          })
+        }
+      })
+      if (!threadId) {
+        Content = <Card>Could not find thread</Card>
+      } else {
+        Content = <Thread currentPath={currentPath} threadId={threadId} />
+      }
+    } else if (category) {
+      // TODO: only get for this category url
+      const currentCategory = forumItems.find(item => item.title === category)
+      if (currentCategory) {
+        Content = (
+          <Category
+            currentPath={currentPath}
+            title={currentCategory.title}
+            items={currentCategory.threads}
+          />
+        )
+      } else {
+        Content = <Card>Could not find category</Card>
+      }
     } else {
       Content = forumItems.map((item, i) => (
-        <Category key={i} title={item.title} items={item.threads} />
+        <Category
+          key={i}
+          currentPath={currentPath + '/' + item.title}
+          title={item.title}
+          items={item.threads}
+        />
       ))
     }
 
@@ -59,7 +103,7 @@ export default connect(state => ({ path: state.page.selected }))(
             <Breadcrumb routes={routes} />
           </Card>
           <div style={{ paddingLeft: '10vw', paddingRight: '10vw' }}>
-            {Content}
+            {forumItems.length > 0 && Content}
           </div>
         </div>
       </Page>

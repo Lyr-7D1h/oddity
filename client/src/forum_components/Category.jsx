@@ -4,7 +4,8 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 export default connect(state => ({ path: state.page.selected }))(
-  ({ title, items, path }) => {
+  ({ title, items, path, currentPath }) => {
+    console.log(currentPath)
     return (
       <Card title={title} bordered={true} style={{ marginBottom: 50 }}>
         {items.map((item, i) => (
@@ -24,7 +25,7 @@ export default connect(state => ({ path: state.page.selected }))(
               <div className="oddity-category-item-description">
                 <Row>
                   <Col span={20}>
-                    <Link to={`${path[0]}/${title}/${item.title}`}>
+                    <Link to={`${currentPath}/${item.title}`}>
                       <Typography.Title level={4}>
                         {item.title}
                       </Typography.Title>
@@ -36,7 +37,7 @@ export default connect(state => ({ path: state.page.selected }))(
                     <Col span={4}>
                       <div>
                         <Link
-                          to={`${path[0]}/${title}/${item.title}/${item.lastArticle.title}`}
+                          to={`${currentPath}/${item.title}/${item.lastArticle.title}`}
                         >
                           <Typography.Text strong={true}>
                             {item.lastArticle.title}
