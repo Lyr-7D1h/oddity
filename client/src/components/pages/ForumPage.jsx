@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import Page from '../containers/Page'
 import Breadcrumb from '../components/Breadcrumb'
-import Category from '../forum_components/Category'
+import Category from '../components/forum/Category'
 import { Card } from 'antd'
 import { connect } from 'react-redux'
-import Thread from '../forum_components/Thread'
-import Post from '../forum_components/Post'
+import Thread from '../components/forum/Thread'
+import Post from '../components/forum/Post'
 import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
+import CreatePost from '../components/forum/CreatePost'
 
 /**
  * ForumPage
@@ -58,7 +59,11 @@ export default connect(state => ({ path: state.page.selected }))(
 
     let Content
     if (category && thread && post) {
-      Content = <Post currentPath={currentPath} />
+      if (post === 'create') {
+        Content = <CreatePost />
+      } else {
+        Content = <Post currentPath={currentPath} />
+      }
     } else if (category && thread) {
       let threadId
       forumItems.forEach(categoryItem => {

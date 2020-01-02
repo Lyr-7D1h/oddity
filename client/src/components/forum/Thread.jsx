@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Card, Button, Col, Row } from 'antd'
 import { Link } from 'react-router-dom'
-import requester from '../helpers/requester'
+import requester from '../../helpers/requester'
 
 export default ({ currentPath, threadId }) => {
   const [posts, setPosts] = useState([])

@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 
 export default connect(state => ({ path: state.page.selected }))(
   ({ title, items, path, currentPath }) => {
-    console.log(currentPath)
     return (
       <Card title={title} bordered={true} style={{ marginBottom: 50 }}>
         {items.map((item, i) => (
