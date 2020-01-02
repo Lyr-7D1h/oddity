@@ -29,7 +29,9 @@ export default ({ currentPath, threadId }) => {
           </Row>
         }
       >
-        Posts
+        {posts.map(post => (
+          <p>{post}</p>
+        ))}
       </Card>
     </>
   )
