@@ -1,6 +1,6 @@
 import React from 'react'
 import Page from '../containers/Page'
-import MembersTable from '../components/MembersTable'
+import MembersTable from '../MembersTable'
 import Centered from '../containers/Centered'
 import { Card } from 'antd'
 

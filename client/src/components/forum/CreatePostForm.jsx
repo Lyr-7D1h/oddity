@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useEffect } from 'react'
 import requester from '../../helpers/requester'
 import { Form, Card, Input } from 'antd'
+import TextArea from 'antd/lib/input/TextArea'
+import ReactQuill from 'react-quill'
 
 export default Form.create({ name: 'create_post_form' })(
   ({ threadId, form }) => {
@@ -25,6 +27,11 @@ export default Form.create({ name: 'create_post_form' })(
             {getFieldDecorator('title', {
               rules: [{ required: true }]
             })(<Input />)}
+          </Form.Item>
+          <Form.Item label="Article">
+            {getFieldDecorator('Article', {
+              rules: [{ required: true }]
+            })(<ReactQuill />)}
           </Form.Item>
         </Form>
       </Card>

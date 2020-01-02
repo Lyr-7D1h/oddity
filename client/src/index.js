@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import * as serviceWorker from './serviceWorker'
 import App from './App.jsx'
 
+import 'react-quill/dist/quill.snow.css'
 import './styling/app.less'
 
 import { Initializer } from './redux/Initializer'

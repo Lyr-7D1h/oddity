@@ -1,6 +1,6 @@
 import React from 'react'
 import { Layout } from 'antd'
-import Nav from '../components/Nav'
+import Nav from '../Nav'
 
 export default ({ children, selected }) => {
   return (

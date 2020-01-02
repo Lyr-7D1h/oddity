@@ -3,10 +3,10 @@ import { Card } from 'antd'
 import Page from '../containers/Page'
 import Title from 'antd/lib/typography/Title'
 import Centered from '../containers/Centered'
-import RoutingTable from '../components/RoutingTable'
+import RoutingTable from '../RoutingTable'
 import AdminRedirect from '../containers/AdminRedirect'
-import SubNav from '../components/SubNav'
-import ForumTable from '../components/ForumTable'
+import SubNav from '../SubNav'
+import ForumTable from '../ForumTable'
 
 export default ({ page }) => {
   const nav = ['Routing', 'Forum']

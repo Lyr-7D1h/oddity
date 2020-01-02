@@ -14,8 +14,8 @@ import {
   Typography,
   Layout
 } from 'antd'
-import notificationHandler from '../helpers/notificationHandler'
-import { updateUser } from '../redux/actions/userActions'
+import notificationHandler from '../../helpers/notificationHandler'
+import { updateUser } from '../../redux/actions/userActions'
 
 const { Step } = Steps
 
