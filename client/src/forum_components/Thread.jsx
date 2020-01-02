@@ -6,7 +6,7 @@ import requester from '../helpers/requester'
 export default ({ currentPath, threadId }) => {
   const [posts, setPosts] = useState([])
 
-  const postRoute = useEffect(() => {
+  useEffect(() => {
     requester.get(`forum/threads/${threadId}/posts`).then(posts => {
       setPosts(posts)
     })
@@ -19,10 +19,11 @@ export default ({ currentPath, threadId }) => {
           <Row>
             <Col span={6} />
             <Col span={12}>
-              <Link to={`${currentPath}/New Post`} />
-              <Button type="primary" block>
-                Create Post
-              </Button>
+              <Link to={`${currentPath}/create`}>
+                <Button type="primary" block>
+                  Create Post
+                </Button>
+              </Link>
             </Col>
             <Col span={6} />
           </Row>

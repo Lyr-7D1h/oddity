@@ -5,7 +5,7 @@ module.exports = fp((instance, opts, done) => {
   const HOST = instance.config.DB_HOST || 'localhost'
   const DATABASE = instance.config.DB_NAME || 'oddity'
   const USERNAME = instance.config.DB_USERNAME || 'oddity'
-  const PASSWORD = instance.config.DB_PASS
+  const PASSWORD = instance.config.DB_PASSWORD
 
   const sequelizeOpts = {
     host: HOST,
@@ -15,8 +15,9 @@ module.exports = fp((instance, opts, done) => {
   if (
     instance.config.DB_LOGGING_ENABLED === false ||
     instance.config.DB_LOGGING_ENABLED === undefined
-  )
+  ) {
     sequelizeOpts.logging = false
+  }
 
   const sequelize = new Sequelize(DATABASE, USERNAME, PASSWORD, sequelizeOpts)
 

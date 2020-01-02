@@ -211,6 +211,17 @@ module.exports = fp(async instance => {
       if (created) instance.log.info('Admin Portal Updated/Created')
     })
     .catch(errHandler)
+    .finally(() => {
+      instance.models.portal
+        .findOne({ where: { name: 'admin' } })
+        .then(portal => {
+          if (portal) {
+            instance.log.info(`Admin Portal AccessKey: ${portal.accessKey}`)
+          } else {
+            instance.log.error('Could not find Admin Portal')
+          }
+        })
+    })
 
   createDefaultConfig(instance)
     .then(created => {
@@ -235,12 +246,4 @@ module.exports = fp(async instance => {
         .catch(errHandler)
     })
     .catch(errHandler)
-
-  instance.models.portal.findOne({ where: { name: 'admin' } }).then(portal => {
-    if (portal) {
-      instance.log.info(`Admin Portal AccessKey: ${portal.accessKey}`)
-    } else {
-      instance.log.error('Could not find Admin Portal')
-    }
-  })
 })

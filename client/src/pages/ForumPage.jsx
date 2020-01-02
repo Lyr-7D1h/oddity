@@ -9,6 +9,10 @@ import Post from '../forum_components/Post'
 import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
 
+/**
+ * ForumPage
+ * @param {string} post - Either title of post or action ("create")
+ */
 export default connect(state => ({ path: state.page.selected }))(
   ({ path, category, thread, post }) => {
     const [forumItems, setForumItems] = useState([])
