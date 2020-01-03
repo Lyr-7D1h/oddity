@@ -122,7 +122,7 @@ export default connect(state => ({ path: state.page.selected }))(
           key={i}
           currentPath={currentPath + '/' + item.title}
           title={item.title}
-          items={item.threads}
+          threads={item.threads}
         />
       ))
     }

@@ -7,7 +7,7 @@ export default connect(state => ({ path: state.page.selected }))(
   ({ title, threads, path, currentPath }) => {
     return (
       <Card title={title} bordered={true} style={{ marginBottom: 50 }}>
-        {threads.map((item, i) => (
+        {threads.map((thread, i) => (
           <Row type="flex" key={i} className="oddity-category-item">
             <Col
               span={2}
@@ -24,30 +24,30 @@ export default connect(state => ({ path: state.page.selected }))(
               <div className="oddity-category-item-description">
                 <Row>
                   <Col span={20}>
-                    <Link to={`${currentPath}/${item.title}`}>
+                    <Link to={`${currentPath}/${thread.title}`}>
                       <Typography.Title level={4}>
-                        {item.title}
+                        {thread.title}
                       </Typography.Title>
                     </Link>
 
-                    {item.description}
+                    {thread.description}
                   </Col>
-                  {item.lastArticle && (
+                  {thread.lastArticle && (
                     <Col span={4}>
                       <div>
                         <Link
-                          to={`${currentPath}/${item.title}/${item.lastArticle.title}`}
+                          to={`${currentPath}/${thread.title}/${thread.lastArticle.title}`}
                         >
                           <Typography.Text strong={true}>
-                            {item.lastArticle.title}
+                            {thread.lastArticle.title}
                           </Typography.Text>
                         </Link>
                       </div>
                       <div>
-                        <Link to={'/u/' + item.lastArticle.author.identifier}>
-                          {item.lastArticle.author.username}
+                        <Link to={'/u/' + thread.lastArticle.author.identifier}>
+                          {thread.lastArticle.author.username}
                         </Link>
-                        , {item.lastArticle.date.toLocaleDateString()}
+                        , {thread.lastArticle.date.toLocaleDateString()}
                       </div>
                     </Col>
                   )}

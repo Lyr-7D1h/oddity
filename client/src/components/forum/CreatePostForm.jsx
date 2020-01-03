@@ -26,9 +26,14 @@ export default Form.create({ name: 'create_post_form' })(
             }
             console.log(values)
 
-            requester.post(`forum/posts`, values).then(() => {
-              return <Redirect to={currentPath + `../${values.title}`} />
-            })
+            requester
+              .post(`forum/posts`, values)
+              .then(() => {
+                return <Redirect to={currentPath + `../${values.title}`} />
+              })
+              .catch(err => {
+                notificationHandler.error('Could not send post', err.message)
+              })
           } else {
             notificationHandler.error('Invalid Input')
           }
