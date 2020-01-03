@@ -51,10 +51,10 @@ const RoutingTable = ({ config, updateConfig }) => {
     }
 
     requester
-      .put(`forum/categories`, categories)
+      .post(`forum/categories-collection`, categories)
       .then(categories => {
         requester
-          .put('forum/threads', threads)
+          .post('forum/threads-collection', threads)
           .then(threads => {
             setItems(
               categories.map(category => {

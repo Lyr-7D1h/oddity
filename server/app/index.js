@@ -67,7 +67,7 @@ module.exports = async (fastify, opts) => {
     })
 
     // Autoload database
-    .register(require('./db'))
+    .register(require('../db'))
 
     // Autoload Routes
     .register(fastifyAutoload, {

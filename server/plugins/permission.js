@@ -20,10 +20,15 @@ module.exports = fp(async instance => {
 
   const validateRouteAuth = (url, perms) => {
     const route = getPathFromUrl(url)
+
+    // get permissions for the base route (/forum/test would be forum)
     const routePerm = ROUTES[route.toUpperCase()]
+
     if (routePerm === null) {
       return false
     }
+
+    // check for all permissions set on route
     if (Array.isArray(routePerm)) {
       for (let i in routePerm) {
         if (perms & routePerm[i]) {
@@ -31,9 +36,12 @@ module.exports = fp(async instance => {
         }
       }
     }
+
+    // check single permission set on route
     if (perms & routePerm) {
       return true
     }
+
     return false
   }
 

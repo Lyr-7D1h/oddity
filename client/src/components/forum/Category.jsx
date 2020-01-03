@@ -4,10 +4,10 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 export default connect(state => ({ path: state.page.selected }))(
-  ({ title, items, path, currentPath }) => {
+  ({ title, threads, path, currentPath }) => {
     return (
       <Card title={title} bordered={true} style={{ marginBottom: 50 }}>
-        {items.map((item, i) => (
+        {threads.map((item, i) => (
           <Row type="flex" key={i} className="oddity-category-item">
             <Col
               span={2}

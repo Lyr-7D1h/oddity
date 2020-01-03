@@ -20,4 +20,11 @@ const success = (message, description) => {
   })
 }
 
-export default { error, success }
+const info = (message, description) => {
+  notification['info']({
+    message: message,
+    description: description
+  })
+}
+
+export default { error, success, info }

@@ -60,8 +60,30 @@ export default connect(state => ({ path: state.page.selected }))(
     let Content
     if (category && thread && post) {
       if (post === 'create') {
-        Content = <CreatePostForm />
+        let threadId
+        forumItems.forEach(categoryItem => {
+          if (categoryItem.title === category) {
+            categoryItem.threads.forEach(threadItem => {
+              if (threadItem.title === thread) {
+                threadId = threadItem.id
+              }
+            })
+          }
+        })
+        Content = (
+          <CreatePostForm currentPath={currentPath} threadId={threadId} />
+        )
       } else {
+        // let postId = null
+        forumItems.forEach(categoryItem => {
+          if (categoryItem.title === category) {
+            categoryItem.threads.forEach(threadItem => {
+              if (threadItem.title === thread) {
+                // get postid
+              }
+            })
+          }
+        })
         Content = <Post currentPath={currentPath} />
       }
     } else if (category && thread) {
@@ -88,7 +110,7 @@ export default connect(state => ({ path: state.page.selected }))(
           <Category
             currentPath={currentPath}
             title={currentCategory.title}
-            items={currentCategory.threads}
+            threads={currentCategory.threads}
           />
         )
       } else {

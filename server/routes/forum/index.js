@@ -87,8 +87,8 @@ module.exports = async fastify => {
     }
   )
 
-  fastify.put(
-    '/forum/categories',
+  fastify.post(
+    '/forum/categories-collection',
     {
       schema: {
         body: {
@@ -141,8 +141,8 @@ module.exports = async fastify => {
     }
   )
 
-  fastify.put(
-    '/forum/threads',
+  fastify.post(
+    '/forum/threads-collection',
     {
       schema: {
         body: {
@@ -184,6 +184,28 @@ module.exports = async fastify => {
             reply.internalServerError()
           })
       })
+    }
+  )
+  fastify.post(
+    '/forum/posts',
+    {
+      schema: {
+        body: {
+          type: 'object'
+        }
+      }
+      // preHandler: [fastify.auth([fastify.verify.cookie])]
+    },
+    (request, reply) => {
+      fastify.models.forumPost
+        .create(request.body)
+        .then(post => {
+          reply.send(post)
+        })
+        .catch(err => {
+          fastify.log.error(err)
+          reply.badRequest(err.message)
+        })
     }
   )
 }
