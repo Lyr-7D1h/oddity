@@ -1,6 +1,8 @@
 'use strict'
 
 module.exports = async fastify => {
+  require('./find')(fastify)
+
   fastify.get('/forum', (request, reply) => {
     fastify.models.forumCategory
       .findAll({
@@ -79,6 +81,28 @@ module.exports = async fastify => {
         })
         .then(threads => {
           reply.send(threads)
+        })
+        .catch(err => {
+          fastify.log.error(err)
+          reply.internalServerError()
+        })
+    }
+  )
+
+  fastify.get(
+    '/forum/posts/:id',
+    {
+      params: 'id#'
+    },
+    (request, reply) => {
+      fastify.models.forumPost
+        .findOne({
+          where: {
+            id: request.params.id
+          }
+        })
+        .then(posts => {
+          reply.send(posts)
         })
         .catch(err => {
           fastify.log.error(err)
@@ -186,6 +210,7 @@ module.exports = async fastify => {
       })
     }
   )
+
   fastify.post(
     '/forum/posts',
     {

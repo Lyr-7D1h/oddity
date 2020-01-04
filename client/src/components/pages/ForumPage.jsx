@@ -55,6 +55,21 @@ export default connect(state => ({ path: state.page.selected }))(
         .catch(err => {
           notificationHandler.error('Could not fetch forum data')
         })
+
+      if (category) {
+        let findUrl = `/${category}`
+        if (thread) findUrl += `/${thread}`
+        if (post) findUrl += `/${post}`
+
+        requester
+          .get(`forum/find${findUrl}`)
+          .then(id => {
+            console.log(id)
+          })
+          .catch(err => {
+            notificationHandler.error('Current page not found')
+          })
+      }
     }, [])
 
     let Content
