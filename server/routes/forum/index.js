@@ -15,9 +15,20 @@ module.exports = async fastify => {
             model: fastify.models.forumThread,
             as: 'threads',
             order: [['order', 'ASC']],
+            attributes: {
+              exclude: ['createdAt', 'updatedAt']
+            },
             include: {
               model: fastify.models.forumPost,
               as: 'latestPost',
+              order: [['createdAt', 'ASC']],
+              include: [
+                {
+                  model: fastify.models.user,
+                  as: 'author',
+                  attributes: ['identifier', 'username', 'roleId']
+                }
+              ],
               limit: 1
             }
           }
@@ -67,17 +78,80 @@ module.exports = async fastify => {
   })
 
   fastify.get(
-    '/forum/threads/:id/posts',
+    '/forum/categories/:id',
     {
-      params: 'id#'
+      schema: {
+        params: 'id#'
+      }
     },
     (request, reply) => {
-      fastify.models.forumPost
-        .findAll({
-          where: {
-            threadId: request.params.id
+      fastify.models.forumCategory
+        .findOne({
+          where: { id: request.params.id },
+          attributes: {
+            exclude: ['createdAt', 'updatedAt']
           },
-          order: [['createdAt', 'DESC']]
+          order: [['order', 'ASC']],
+          include: [
+            {
+              model: fastify.models.forumThread,
+              attributes: {
+                exclude: ['createdAt', 'updatedAt']
+              },
+              as: 'threads',
+              include: {
+                model: fastify.models.forumPost,
+                as: 'latestPost',
+                order: [['createdAt', 'ASC']],
+                include: [
+                  {
+                    model: fastify.models.user,
+                    as: 'author',
+                    attributes: ['identifier', 'username', 'roleId']
+                  }
+                ],
+                limit: 1
+              }
+            }
+          ]
+        })
+        .then(category => {
+          reply.send(category)
+        })
+        .catch(err => {
+          fastify.log.error(err)
+          reply.internalServerError()
+        })
+    }
+  )
+
+  fastify.get(
+    '/forum/threads/:id',
+    {
+      schema: {
+        params: 'id#'
+      }
+    },
+    (request, reply) => {
+      fastify.models.forumThread
+        .findOne({
+          where: { id: request.params.id },
+          attributes: {
+            exclude: ['createdAt', 'updatedAt']
+          },
+          order: [['order', 'ASC']],
+          include: {
+            model: fastify.models.forumPost,
+            as: 'posts',
+            order: [['createdAt', 'ASC']],
+            include: [
+              {
+                model: fastify.models.user,
+                as: 'author',
+                attributes: ['identifier', 'username', 'roleId']
+              }
+            ]
+          }
         })
         .then(threads => {
           reply.send(threads)
@@ -99,7 +173,14 @@ module.exports = async fastify => {
         .findOne({
           where: {
             id: request.params.id
-          }
+          },
+          include: [
+            {
+              model: fastify.models.user,
+              as: 'author',
+              attributes: ['identifier', 'username', 'roleId']
+            }
+          ]
         })
         .then(posts => {
           reply.send(posts)
@@ -179,6 +260,23 @@ module.exports = async fastify => {
       fastify.models.forumThread.findAll().then(threads => {
         const promises = []
 
+        // check if same title in same category
+        const temp = []
+        request.body.forEach(thread => {
+          temp.forEach(tempThread => {
+            if (
+              thread.title === tempThread.title &&
+              tempThread.categoryId === thread.categoryId
+            ) {
+              return reply.badRequest(
+                'Cannot have the same Thread Title for the same Category'
+              )
+            }
+          })
+          temp.push(thread)
+        })
+
+        // check if it needs to be deleted
         threads.forEach(thread => {
           // if cant find delete thread
           if (
@@ -191,6 +289,7 @@ module.exports = async fastify => {
             )
         })
 
+        // update or create if not exists
         // TODO: Fix loop updating
         request.body.forEach(thread => {
           promises.push(

@@ -1,4 +1,11 @@
 module.exports = models => {
+  // User
+  models.user.hasMany(models.forumPost, {
+    as: 'posts',
+    foreignKey: 'authorId'
+  })
+
+  // Thread
   models.forumThread.belongsTo(models.forumCategory, {
     as: 'category',
     foreignKey: 'categoryId'
@@ -12,11 +19,17 @@ module.exports = models => {
     foreignKey: 'threadId'
   })
 
+  // Post
   models.forumPost.belongsTo(models.forumThread, {
     as: 'posts',
     foreignKey: 'threadId'
   })
+  models.forumPost.belongsTo(models.user, {
+    as: 'author',
+    foreignKey: 'authorId'
+  })
 
+  // Category
   models.forumCategory.hasMany(models.forumThread, {
     as: 'threads',
     foreignKey: 'categoryId'
