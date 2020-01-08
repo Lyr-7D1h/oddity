@@ -4,6 +4,7 @@ module.exports = models => {
     as: 'posts',
     foreignKey: 'authorId'
   })
+  models.user.belongsTo(models.role)
 
   // Thread
   models.forumThread.belongsTo(models.forumCategory, {

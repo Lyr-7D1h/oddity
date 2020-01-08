@@ -107,7 +107,7 @@ module.exports = async fastify => {
                   {
                     model: fastify.models.user,
                     as: 'author',
-                    attributes: ['identifier', 'username', 'roleId']
+                    attributes: ['identifier', 'username']
                   }
                 ],
                 limit: 1
@@ -148,7 +148,8 @@ module.exports = async fastify => {
               {
                 model: fastify.models.user,
                 as: 'author',
-                attributes: ['identifier', 'username', 'roleId']
+                attributes: ['identifier', 'username', 'avatar'],
+                include: { model: fastify.models.role, attributes: ['name'] }
               }
             ]
           }

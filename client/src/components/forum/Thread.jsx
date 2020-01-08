@@ -6,13 +6,10 @@ import { connect } from 'react-redux'
 
 export default connect(state => ({ selected: state.page.selected }))(
   ({ selected, threadId }) => {
-    console.log(threadId)
-
     const [thread, setThread] = useState(null)
 
     useEffect(() => {
       requester.get(`forum/threads/${threadId}`).then(thread => {
-        console.log(thread)
         setThread(thread)
       })
     }, [threadId])
@@ -50,8 +47,7 @@ export default connect(state => ({ selected: state.page.selected }))(
                   justifyContent: 'center'
                 }}
               >
-                <Avatar shape="square" size={80} icon="read" />
-                {/* <Icon type="read" style={{ fontSize: '100%' }}></Icon> */}
+                <Avatar shape="circle" src={post.author.avatar} size={50} />
               </Col>
               <Col span={20}>
                 <div className="oddity-category-item-description">
@@ -62,25 +58,14 @@ export default connect(state => ({ selected: state.page.selected }))(
                           {post.title}
                         </Typography.Title>
                       </Link>
-
-                      {post.description}
                     </Col>
-                    {post.lastArticle && (
+                    {post && (
                       <Col span={4}>
                         <div>
-                          <Link
-                            to={`${basePath}/${post.title}/${post.lastArticle.title}`}
-                          >
-                            <Typography.Text strong={true}>
-                              {post.lastArticle.title}
-                            </Typography.Text>
+                          <Link to={'/u/' + post.author.identifier}>
+                            {post.author.username} ({post.author.role.name})
                           </Link>
-                        </div>
-                        <div>
-                          <Link to={'/u/' + post.lastArticle.author.identifier}>
-                            {post.lastArticle.author.username}
-                          </Link>
-                          , {post.lastArticle.date.toLocaleDateString()}
+                          , {new Date(post.updatedAt).toLocaleDateString()}
                         </div>
                       </Col>
                     )}
