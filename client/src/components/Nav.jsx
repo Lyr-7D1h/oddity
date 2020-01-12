@@ -45,7 +45,7 @@ const Nav = ({ selected, config, user, updateUser }) => {
           <Menu
             mode="horizontal"
             defaultSelectedKeys={[selected]}
-            style={{ lineHeight: '64px', marginRight: '20px' }}
+            style={{ lineHeight: '64px', marginRight: '20px', border: 'none' }}
             className="oddity-nav"
           >
             {routes.map((mod, i) => (

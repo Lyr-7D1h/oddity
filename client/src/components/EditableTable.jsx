@@ -16,7 +16,9 @@ const EditableContext = React.createContext()
 
 const getInput = (dataType, placeHolder) => {
   dataType = dataType || 'text'
-  if (dataType === 'text') {
+  if (dataType === 'hidden') {
+    return <Input placeholder={placeHolder} hidden />
+  } else if (dataType === 'text') {
     return <Input placeholder={placeHolder} />
   } else if (dataType === 'number') {
     return <InputNumber />
@@ -24,7 +26,7 @@ const getInput = (dataType, placeHolder) => {
     return <Switch />
   } else if (Array.isArray(dataType)) {
     return (
-      <Select>
+      <Select style={{ width: 120 }}>
         {dataType.map((dt, i) => (
           <Select.Option key={i} value={dt}>
             {dt}
@@ -236,19 +238,19 @@ const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
   const CreateForm = Form.create()(({ form }) => {
     const colSize = Math.floor(24 / (editableColumns.length + 1))
     return (
-      <Row gutter={16}>
-        <Form>
+      <Form>
+        <Row gutter={16} type="flex">
           {editableColumns.map((col, i) => {
             if (col.dataIndex === 'operation') {
               return ''
             }
             return (
-              <Col key={i} span={colSize}>
+              <Col key={i}>
                 <Form.Item style={{ margin: 0 }}>
                   {form.getFieldDecorator(col.dataIndex, {
                     rules: [
                       {
-                        required: true,
+                        required: col.required,
                         message: `Please Input ${col.title}`
                       }
                     ],
@@ -260,13 +262,13 @@ const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
               </Col>
             )
           })}
-          <Col span={colSize}>
+          <Col>
             <Button onClick={() => create(form)} block>
               Create
             </Button>
           </Col>
-        </Form>
-      </Row>
+        </Row>
+      </Form>
     )
   })
 
@@ -289,6 +291,7 @@ const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
         components={components}
         dataSource={data}
         columns={editableColumns}
+        pagination={false}
         rowClassName="oddity-row"
         footer={() => <CreateForm />}
       />

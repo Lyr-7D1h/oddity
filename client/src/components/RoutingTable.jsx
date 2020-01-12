@@ -17,8 +17,7 @@ const columns = [
     title: 'Path',
     dataIndex: 'path',
     dataType: 'text',
-    required: true,
-    render: route => '/' + route
+    required: false
   },
   {
     title: 'Module',
@@ -29,13 +28,7 @@ const columns = [
   {
     title: 'Is Home',
     dataIndex: 'default',
-    dataType: 'bool',
-    render: isDefault => <Switch checked={isDefault} disabled></Switch>
-  },
-  {
-    title: 'Config ID',
-    dataIndex: 'configId',
-    render: () => <></>
+    dataType: 'bool'
   }
 ]
 
@@ -54,6 +47,10 @@ const RoutingTable = ({ configId }) => {
   }, [configId])
 
   const handleSave = items => {
+    items.map(item => (item.configId = configId))
+
+    console.log(items)
+
     requester
       .put(`configs/${configId}/routes`, items)
       .then(routes => {
