@@ -194,6 +194,47 @@ module.exports = async fastify => {
   )
 
   fastify.post(
+    '/forum/categories',
+    {
+      schema: {
+        type: 'object'
+      },
+      preHandler: [fastify.auth([fastify.authentication.cookie])]
+    },
+    (request, reply) => {
+      fastify.models.forumCategory
+        .create(request.body)
+        .then(category => {
+          reply.send(category)
+        })
+        .catch(err => {
+          fastify.log.error(err)
+          reply.internalServerError()
+        })
+    }
+  )
+  fastify.post(
+    '/forum/threads',
+    {
+      schema: {
+        type: 'object'
+      },
+      preHandler: [fastify.auth([fastify.authentication.cookie])]
+    },
+    (request, reply) => {
+      fastify.models.forumThread
+        .create(request.body)
+        .then(thread => {
+          reply.send(thread)
+        })
+        .catch(err => {
+          fastify.log.error(err)
+          reply.internalServerError()
+        })
+    }
+  )
+
+  fastify.post(
     '/forum/categories-collection',
     {
       schema: {

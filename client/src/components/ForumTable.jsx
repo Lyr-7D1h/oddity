@@ -89,6 +89,7 @@ const RoutingTable = ({ config, updateConfig }) => {
 
   const handleCreateThread = () => {
     if (!forumInput.current.state.value) return
+
     const newItems = [...items]
     newItems.map(item => {
       if (item.title === 'Uncategorized') {
@@ -99,18 +100,34 @@ const RoutingTable = ({ config, updateConfig }) => {
 
       return item
     })
+    forumInput.current.state.value = ''
     setItems(newItems)
     setHasChanges(true)
   }
   const handleCreateCategory = () => {
     if (!forumInput.current.state.value) return
-    const newItems = [...items]
-    newItems.push({
-      title: forumInput.current.state.value,
-      threads: []
-    })
-    setItems(newItems)
-    setHasChanges(true)
+
+    requester
+      .post('forum/categories', {
+        title: forumInput.current.state.value,
+        order: items.length + 1,
+        threads: []
+      })
+      .then(category => {
+        const newItems = [...items]
+        newItems.push({
+          id: category.id,
+          title: forumInput.current.state.value,
+          order: items.length + 1,
+          threads: []
+        })
+        forumInput.current.state.value = ''
+        setItems(newItems)
+      })
+      .catch(err => {
+        console.error(err)
+        notificationHandler.error('Could not create category', err.message)
+      })
   }
 
   const Thread = ({
