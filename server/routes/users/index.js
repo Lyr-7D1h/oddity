@@ -24,18 +24,6 @@ module.exports = async fastify => {
         method: 'get',
         columns: columns
       }
-      // {
-      //   method: 'post',
-      //   auth: [fastify.verify.cookie, fastify.verify.basic.portal]
-      // },
-      // {
-      //   method: 'delete',
-      //   auth: fastify.verify.cookie
-      // },
-      // {
-      //   method: 'put',
-      //   auth: fastify.verify.cookie
-      // }
     ]
   }
   fastify.routeGen(userRoute)

@@ -201,7 +201,7 @@ module.exports = async fastify => {
           type: 'array'
         }
       },
-      preHandler: [fastify.auth([fastify.verify.cookie])]
+      preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
     (request, reply) => {
       fastify.models.forumCategory.findAll().then(categories => {
@@ -255,7 +255,7 @@ module.exports = async fastify => {
           type: 'array'
         }
       },
-      preHandler: [fastify.auth([fastify.verify.cookie])]
+      preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
     (request, reply) => {
       fastify.models.forumThread.findAll().then(threads => {
@@ -318,8 +318,8 @@ module.exports = async fastify => {
         body: {
           type: 'object'
         }
-      }
-      // preHandler: [fastify.auth([fastify.verify.cookie])]
+      },
+      preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
     (request, reply) => {
       fastify.models.forumPost

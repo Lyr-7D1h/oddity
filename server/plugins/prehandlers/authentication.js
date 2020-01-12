@@ -4,55 +4,18 @@ const { Unauthorized, InternalServerError } = require('http-errors')
 
 module.exports = fp(async instance => {
   instance.decorateRequest('credentials', {
-    id: null,
-    isPortal: false
+    id: null
   })
 
-  const portalAuth = (request, reply, done) => {
-    console.log('PORTAL AUTH')
-    const basicCredentials = auth(request)
-    if (basicCredentials && basicCredentials.name && basicCredentials.pass) {
-      instance.models.portal
-        .findOne({
-          where: { accessKey: basicCredentials.name }
-        })
-        .then(portal => {
-          if (portal) {
-            instance.crypto
-              .validate(basicCredentials.pass, portal.secretKey)
-              .then(isValid => {
-                if (isValid) {
-                  request.credentials.id = portal.id
-                  request.credentials.isPortal = true
-                  done()
-                }
-              })
-              .catch(err => {
-                instance.log.error(err)
-                done(new InternalServerError())
-              })
-          } else {
-            // if none found unauthorized
-            done(new Unauthorized())
-          }
-        })
-        .catch(err => {
-          instance.log.error(err)
-          done(new InternalServerError())
-        })
-    } else {
-      done(new Unauthorized())
-    }
-  }
-
-  const userAuth = (request, reply, done) => {
-    console.log('USER AUTH')
+  const basicAuth = (request, reply, done) => {
     // get credentials from request
     const basicCredentials = auth(request)
 
     if (basicCredentials && basicCredentials.name && basicCredentials.pass) {
+      instance.log.info(`Basic Authentication attempt ${basicCredentials.name}`)
+
       instance.models.user
-        .findAll({
+        .findOne({
           where: {
             [instance.Sequelize.Op.or]: [
               { identifier: basicCredentials.name },
@@ -60,14 +23,13 @@ module.exports = fp(async instance => {
             ]
           }
         })
-        .then(users => {
-          console.log(users)
-          if (users.length === 1) {
+        .then(user => {
+          if (user) {
             instance.crypto
-              .validate(basicCredentials.pass, users[0].password)
+              .validate(basicCredentials.pass, user.password)
               .then(isValid => {
                 if (isValid) {
-                  request.credentials.id = users[0].id
+                  request.credentials.id = user.id
                   done()
                 } else {
                   done(new Unauthorized())
@@ -77,19 +39,10 @@ module.exports = fp(async instance => {
                 instance.log.error(err)
                 done(new InternalServerError())
               })
-          } else if (users.length > 1) {
-            instance.log.error(
-              `Multiple users found for id or email with name: ${basicCredentials.name}`
-            )
-            done(new Unauthorized())
           } else {
             // if none found unauthorized
             done(new Unauthorized())
           }
-        })
-        .catch(err => {
-          instance.log.error(err)
-          done(new InternalServerError())
         })
     } else {
       done(new Unauthorized())
@@ -153,12 +106,7 @@ module.exports = fp(async instance => {
     }
   }
 
-  const basicAuth = {
-    portal: portalAuth,
-    user: userAuth
-  }
-
-  instance.decorate('verify', {
+  instance.decorate('authentication', {
     basic: basicAuth,
     cookie: cookieAuth
   })

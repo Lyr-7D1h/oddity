@@ -6,20 +6,6 @@
 const fp = require('fastify-plugin')
 const Fastify = require('fastify')
 
-// Fill in this config with all the configurations
-// needed for testing the application
-const config = () => {
-  return {
-    NODE_ENV: 'testing',
-    DB_HOST: process.env.DB_HOST || 'localhost',
-    DB_NAME: 'testing',
-    DB_USERNAME: 'test',
-    DB_PASSWORD: 'test_pass',
-    SESSION_SECRET: 'this_is_a_very_big_string_which_is_longer_than_32',
-    ADMIN_SECRET: 'secret'
-  }
-}
-
 const envSchema = {
   type: 'object',
   required: [
@@ -44,11 +30,14 @@ const envSchema = {
 }
 
 // automatically build and tear down our instance
-const build = t => {
+module.exports = t => {
   const app = Fastify()
 
   // Set Fastify Env with env variables defined here
-  app.register(require('fastify-env'), { schema: envSchema, data: config() })
+  app.register(require('fastify-env'), {
+    schema: envSchema,
+    data: require('./config.helper')()
+  })
 
   // fastify-plugin ensures that all decorators
   // are exposed for testing purposes, this is
@@ -69,9 +58,4 @@ const build = t => {
   })
 
   return app
-}
-
-module.exports = {
-  config,
-  build
 }

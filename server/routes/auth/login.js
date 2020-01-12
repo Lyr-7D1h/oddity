@@ -5,10 +5,7 @@ module.exports = async fastify => {
       schema: {
         hide: true // hide from docs
       },
-      preHandler: fastify.auth([
-        fastify.verify.basic.portal,
-        fastify.verify.basic.user
-      ])
+      preHandler: fastify.auth([fastify.authentication.basic])
     },
     (request, reply) => {
       fastify.models.user
