@@ -1,7 +1,7 @@
 const t = require('tap')
 const test = t.test
 
-const { build } = require('../helper')
+const build = require('../helper')
 
 test('fastify.db and fastify.Sequelize should exist', t => {
   t.plan(3)
