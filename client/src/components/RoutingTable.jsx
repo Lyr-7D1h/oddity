@@ -4,8 +4,6 @@ import EditableTable from './EditableTable'
 import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
 
-import { Switch } from 'antd'
-
 const columns = [
   {
     title: 'Title',

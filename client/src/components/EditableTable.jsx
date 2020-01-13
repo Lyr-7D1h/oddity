@@ -236,7 +236,7 @@ const EditableTable = ({ rowKey, columns, dataSource, form, onSave }) => {
   }
 
   const CreateForm = Form.create()(({ form }) => {
-    const colSize = Math.floor(24 / (editableColumns.length + 1))
+    // const colSize = Math.floor(24 / (editableColumns.length + 1))
     return (
       <Form>
         <Row gutter={16} type="flex">
