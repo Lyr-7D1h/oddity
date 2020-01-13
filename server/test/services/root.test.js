@@ -1,7 +1,7 @@
 'use strict'
 
 const { test } = require('tap')
-const { build } = require('../helper')
+const build = require('../helper')
 
 test('API: default root route', t => {
   t.plan(3)
