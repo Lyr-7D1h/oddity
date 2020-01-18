@@ -18,7 +18,6 @@ module.exports = fp((fastify, opts, done) => {
       let syncModels = []
 
       modelsArray.forEach(model => {
-        console.log(model)
         models[model.name] = model
         syncModels.push(model.sync())
       })

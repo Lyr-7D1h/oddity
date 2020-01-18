@@ -3,6 +3,10 @@
 // Read the .env file.
 require('dotenv').config()
 
+require('@sentry/node').init({
+  dsn: 'https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726'
+})
+
 // installs an 'unhandledRejection' handler
 require('make-promises-safe')
 
