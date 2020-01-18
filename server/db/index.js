@@ -2,12 +2,15 @@ const fp = require('fastify-plugin')
 const fs = require('fs')
 const path = require('path')
 
-const TABLES_PATH = path.join(__dirname, 'tables')
+const MODELS_PATH = path.join(__dirname, 'models')
 
 module.exports = fp((fastify, opts, done) => {
   const decorateModels = files => {
+    // filter out index.js (needed for sequelize-cli) for models folder
+    files = files.filter(file => file !== 'index.js')
+
     const modelsAsyncArray = files.map(file => {
-      return require(path.join(TABLES_PATH, file))(fastify)
+      return require(path.join(MODELS_PATH, file))(fastify)
     })
 
     Promise.all(modelsAsyncArray).then(modelsArray => {
@@ -15,6 +18,7 @@ module.exports = fp((fastify, opts, done) => {
       let syncModels = []
 
       modelsArray.forEach(model => {
+        console.log(model)
         models[model.name] = model
         syncModels.push(model.sync())
       })
@@ -33,7 +37,7 @@ module.exports = fp((fastify, opts, done) => {
     })
   }
 
-  fs.readdir(TABLES_PATH, (err, files) => {
+  fs.readdir(MODELS_PATH, (err, files) => {
     if (err) {
       fastify.log.fatal('Could not load tables')
       process.exit(1)
