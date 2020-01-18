@@ -2,12 +2,26 @@ image: docker:latest
 
 services:
   - docker:dind
+ 
+stages:
+  - build
+  - test
+  - deploy_staging
+  - deploy_production
+
+# Cache modules in between jobs
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - /var/lib/docker
 
 build:
+  stage: build
   script:
     - docker build -t $CI_DOCKER_USERNAME/oddity:latest .
 
 test:
+  stage: test
   services:
     - postgres:latest
   variables:
@@ -18,7 +32,8 @@ test:
     - cd ./client && npm test
     - cd ../server && DB_HOST=postgres npm test
 
-deploy:
+staging:
+  stage: deploy_staging
   before_script:
     - docker info
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
@@ -27,6 +42,7 @@ deploy:
     - docker push $CI_DOCKER_USERNAME/oddity:staging
 
 production:
+  stage: deploy_production
   when: manual
   services:
     - docker:dind
