@@ -18,7 +18,6 @@ module.exports = async fastify => {
     title: {
       type: seq.STRING,
       allowNull: false,
-      unique: true,
       len: [3, 40]
     },
     content: {

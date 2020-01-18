@@ -1,62 +1,35 @@
 image: docker:latest
 
-services:
-  - docker:dind
-
 before_script:
-  - docker --version
+  - pwd
+  - docker info
 
 stages:
-  - build
-  - test
   - deploy_staging
   - deploy_production
 
-# Cache images inbetween jobs
-# cache:
-#   key: ${CI_COMMIT_REF_SLUG}
-#   paths:
-#     - /var/lib/docker
-
-build:
-  stage: build
-  script:
-    - docker build -t $CI_DOCKER_USERNAME/oddity:latest .
-    - ls -al /var/lib/docker
-  artifacts:
-    paths:
-      - /var/lib/docker
-
-test:
-  stage: test
-  services:
-    - docker:dind
-    - postgres:latest
-  variables:
-    POSTGRES_DB: testing
-    POSTGRES_USER: test
-    PGPASSWORD: test_pass
-  script:
-    - docker images
-    - echo $CI_DOCKER_USERNAME/oddity:latest
-    # MISSING CLIENT SIDE TESTING
-    - docker run --rm --env DB_HOST=postgres --name oddity-test $CI_DOCKER_USERNAME/oddity:latest npm test
-
 staging:
   stage: deploy_staging
+  services:
+    - docker:dind
   before_script:
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
   script:
-    - docker build -t $CI_DOCKER_USERNAME/oddity:staging .
+    - docker build -t $CI_DOCKER_USERNAME/oddity .
     - docker push $CI_DOCKER_USERNAME/oddity:staging
+    - mkdir image && cd image
+    - docker export $CI_DOCKER_USERNAME/oddity > oddity.tar
+  artifacts:
+    path: ~/image/
 
 production:
   stage: deploy_production
-  when: manual
   services:
     - docker:dind
+  when: manual
   before_script:
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
   script:
+    - docker load --input image/oddity.tar
     - docker build -t $CI_DOCKER_USERNAME/oddity:production .
     - docker push $CI_DOCKER_USERNAME/oddity:production

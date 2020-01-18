@@ -52,7 +52,6 @@ module.exports = fp(async instance => {
   // TODO: Make more efficient and make improve permissions checking
   const cookieAuth = (request, reply, done) => {
     console.log('COOKIE AUTH')
-    console.log(reply.store)
 
     if (request.session && request.session.user) {
       if (request.session.user.id) {
