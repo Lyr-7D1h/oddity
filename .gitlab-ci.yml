@@ -2,7 +2,10 @@ image: docker:latest
 
 services:
   - docker:dind
- 
+
+before_script:
+  - docker --version
+
 stages:
   - build
   - test
@@ -10,15 +13,19 @@ stages:
   - deploy_production
 
 # Cache images inbetween jobs
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-  - /var/lib/docker
+# cache:
+#   key: ${CI_COMMIT_REF_SLUG}
+#   paths:
+#     - /var/lib/docker
 
 build:
   stage: build
   script:
     - docker build -t $CI_DOCKER_USERNAME/oddity:latest .
+    - ls -al /var/lib/docker
+  artifacts:
+    paths:
+      - /var/lib/docker
 
 test:
   stage: test
@@ -38,7 +45,6 @@ test:
 staging:
   stage: deploy_staging
   before_script:
-    - docker info
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
   script:
     - docker build -t $CI_DOCKER_USERNAME/oddity:staging .
@@ -50,7 +56,6 @@ production:
   services:
     - docker:dind
   before_script:
-    - docker info
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
   script:
     - docker build -t $CI_DOCKER_USERNAME/oddity:production .
