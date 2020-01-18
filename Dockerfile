@@ -11,10 +11,11 @@ WORKDIR /usr/src/app/client
 RUN npm ci
 RUN npm run build
 
-# Start Server
+# Build Server
 WORKDIR /usr/src/app/server
 RUN cd ../server/
 RUN npm ci
-CMD npm start
 
+# Start App
+CMD npm start
 EXPOSE 5000
