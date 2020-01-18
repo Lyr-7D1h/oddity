@@ -1,14 +1,23 @@
-image: docker:latest
-
-services:
-  - docker:dind
+stages:
+  - build
+  - test
+  - staging
+  - production
 
 build:
+  image: node:latest
+  stage: build
+  artifacts:
+    untracked: true
+  before_script:
+    - cd ./client && npm ci
+    - cd ../server && npm ci
   script:
-    - docker build -t $CI_DOCKER_USERNAME/oddity:latest .
+    - cd ../client && npm run build
 
-testing:
-  stage: testing
+test:
+  image: node:latest
+  stage: test
   services:
     - postgres:latest
   variables:
@@ -22,6 +31,10 @@ testing:
     - cd ../server && DB_HOST=postgres npm test
 
 staging:
+  image: docker:latest
+  stage: staging
+  services:
+    - docker:dind
   before_script:
     - docker info
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
@@ -30,9 +43,11 @@ staging:
     - docker push $CI_DOCKER_USERNAME/oddity:staging
 
 production:
-  when: manual
+  image: docker:latest
+  stage: production
   services:
     - docker:dind
+  when: manual
   before_script:
     - docker info
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
