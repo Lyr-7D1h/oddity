@@ -7,8 +7,7 @@ build:
   script:
     - docker build -t $CI_DOCKER_USERNAME/oddity:latest .
 
-testing:
-  stage: testing
+test:
   services:
     - postgres:latest
   variables:
@@ -21,7 +20,7 @@ testing:
     - cd ./client && npm test
     - cd ../server && DB_HOST=postgres npm test
 
-staging:
+deploy:
   before_script:
     - docker info
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
