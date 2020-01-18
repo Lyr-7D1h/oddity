@@ -9,7 +9,7 @@ stages:
   - deploy_staging
   - deploy_production
 
-# Cache modules in between jobs
+# Cache images inbetween jobs
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
@@ -29,6 +29,7 @@ test:
     POSTGRES_USER: test
     PGPASSWORD: test_pass
   script:
+    # MISSING CLIENT SIDE TESTING
     - docker run --rm --env DB_HOST=postgres --name oddity-test $CI_DOCKER_USERNAME/oddity:latest npm test
 
 staging:
