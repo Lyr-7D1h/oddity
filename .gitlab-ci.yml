@@ -20,7 +20,7 @@ staging:
     - mkdir image && cd image
     - docker export $CI_DOCKER_USERNAME/oddity > oddity.tar
   artifacts:
-    path: ~/image/
+    paths: ~/image/
 
 production:
   stage: deploy_production
