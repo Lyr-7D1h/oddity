@@ -29,6 +29,8 @@ test:
     POSTGRES_USER: test
     PGPASSWORD: test_pass
   script:
+    - docker images
+    - echo $CI_DOCKER_USERNAME/oddity:latest
     # MISSING CLIENT SIDE TESTING
     - docker run --rm --env DB_HOST=postgres --name oddity-test $CI_DOCKER_USERNAME/oddity:latest npm test
 
