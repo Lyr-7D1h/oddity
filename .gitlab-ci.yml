@@ -29,8 +29,7 @@ test:
     POSTGRES_USER: test
     PGPASSWORD: test_pass
   script:
-    - cd ./client && npm test
-    - cd ../server && DB_HOST=postgres npm test
+    - docker run --rm --env DB_HOST=postgres --name oddity-test $CI_DOCKER_USERNAME/oddity:latest npm test
 
 staging:
   stage: deploy_staging
