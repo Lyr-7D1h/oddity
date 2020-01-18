@@ -2,26 +2,41 @@ image: docker:latest
 
 services:
   - docker:dind
+ 
+stages:
+  - build
+  - test
+  - deploy_staging
+  - deploy_production
+
+# Cache images inbetween jobs
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - /var/lib/docker
 
 build:
+  stage: build
   script:
     - docker build -t $CI_DOCKER_USERNAME/oddity:latest .
 
-testing:
-  stage: testing
+test:
+  stage: test
   services:
+    - docker:dind
     - postgres:latest
   variables:
     POSTGRES_DB: testing
     POSTGRES_USER: test
     PGPASSWORD: test_pass
-  dependencies:
-    - build
   script:
-    - cd ./client && npm test
-    - cd ../server && DB_HOST=postgres npm test
+    - docker images
+    - echo $CI_DOCKER_USERNAME/oddity:latest
+    # MISSING CLIENT SIDE TESTING
+    - docker run --rm --env DB_HOST=postgres --name oddity-test $CI_DOCKER_USERNAME/oddity:latest npm test
 
 staging:
+  stage: deploy_staging
   before_script:
     - docker info
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
@@ -30,6 +45,7 @@ staging:
     - docker push $CI_DOCKER_USERNAME/oddity:staging
 
 production:
+  stage: deploy_production
   when: manual
   services:
     - docker:dind
