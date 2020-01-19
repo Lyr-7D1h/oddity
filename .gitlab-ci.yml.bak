@@ -1,56 +1,35 @@
+image: docker:latest
+
+before_script:
+  - pwd
+  - docker info
+
 stages:
-  - build
-  - test
-  - staging
-  - production
-
-build:
-  image: node:latest
-  stage: build
-  artifacts:
-    untracked: true
-  before_script:
-    - cd ./client && npm ci
-    - cd ../server && npm ci
-  script:
-    - cd ../client && npm run build
-
-test:
-  image: node:latest
-  stage: test
-  services:
-    - postgres:latest
-  variables:
-    POSTGRES_DB: testing
-    POSTGRES_USER: test
-    PGPASSWORD: test_pass
-  dependencies:
-    - build
-  script:
-    - cd ./client && npm test
-    - cd ../server && DB_HOST=postgres npm test
+  - deploy_staging
+  - deploy_production
 
 staging:
-  image: docker:latest
-  stage: staging
+  stage: deploy_staging
   services:
     - docker:dind
   before_script:
-    - docker info
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
   script:
-    - docker build -t $CI_DOCKER_USERNAME/oddity:staging .
+    - docker build -t $CI_DOCKER_USERNAME/oddity .
     - docker push $CI_DOCKER_USERNAME/oddity:staging
+    - mkdir image && cd image
+    - docker export $CI_DOCKER_USERNAME/oddity > oddity.tar
+  artifacts:
+    path: ~/image/
 
 production:
-  image: docker:latest
-  stage: production
+  stage: deploy_production
   services:
     - docker:dind
   when: manual
   before_script:
-    - docker info
     - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASS
   script:
+    - docker load --input image/oddity.tar
     - docker build -t $CI_DOCKER_USERNAME/oddity:production .
     - docker push $CI_DOCKER_USERNAME/oddity:production
