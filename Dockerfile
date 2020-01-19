@@ -10,15 +10,11 @@ COPY . /usr/src/app
 WORKDIR /usr/src/app/client
 RUN npm ci
 RUN npm run build
-# Test Client
-RUN npm test
 
 # Build Server
 WORKDIR /usr/src/app/server
 RUN cd ../server/
 RUN npm ci
-# Test Server
-RUN DB_HOST=postgres npm test
 
 # Start App
 CMD npm start
