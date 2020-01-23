@@ -39,6 +39,7 @@ module.exports = async fastify => {
       })
       .catch(err => {
         fastify.log.error(err)
+        fastify.sentry.captureException(err)
         reply.internalServerError()
       })
   })
@@ -56,6 +57,7 @@ module.exports = async fastify => {
       })
       .catch(err => {
         fastify.log.error(err)
+        fastify.sentry.captureException(err)
         reply.internalServerError()
       })
   })
@@ -73,6 +75,7 @@ module.exports = async fastify => {
       })
       .catch(err => {
         fastify.log.error(err)
+        fastify.sentry.captureException(err)
         reply.internalServerError()
       })
   })
@@ -120,6 +123,7 @@ module.exports = async fastify => {
         })
         .catch(err => {
           fastify.log.error(err)
+          fastify.sentry.captureException(err)
           reply.internalServerError()
         })
     }
@@ -159,6 +163,7 @@ module.exports = async fastify => {
         })
         .catch(err => {
           fastify.log.error(err)
+          fastify.sentry.captureException(err)
           reply.internalServerError()
         })
     }
@@ -188,6 +193,7 @@ module.exports = async fastify => {
         })
         .catch(err => {
           fastify.log.error(err)
+          fastify.sentry.captureException(err)
           reply.internalServerError()
         })
     }
@@ -209,6 +215,7 @@ module.exports = async fastify => {
         })
         .catch(err => {
           fastify.log.error(err)
+          fastify.sentry.captureException(err)
           reply.internalServerError()
         })
     }
@@ -229,6 +236,7 @@ module.exports = async fastify => {
         })
         .catch(err => {
           fastify.log.error(err)
+          fastify.sentry.captureException(err)
           reply.internalServerError()
         })
     }
@@ -282,6 +290,7 @@ module.exports = async fastify => {
           })
           .catch(err => {
             fastify.log.error(err)
+            fastify.sentry.captureException(err)
             reply.internalServerError()
           })
       })
@@ -346,6 +355,7 @@ module.exports = async fastify => {
           })
           .catch(err => {
             fastify.log.error(err)
+            fastify.sentry.captureException(err)
             reply.internalServerError()
           })
       })
@@ -370,6 +380,7 @@ module.exports = async fastify => {
         })
         .catch(err => {
           fastify.log.error(err)
+          fastify.sentry.captureException(err)
           reply.badRequest(err.message)
         })
     }

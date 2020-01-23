@@ -41,6 +41,7 @@ module.exports = async fastify => {
             if (!reply.sent) {
               if (err) {
                 fastify.log.error(err)
+                fastify.sentry.captureException(err)
                 return reply.internalServerError()
               }
               const avatar = '/resources/users/' + request.params.id
@@ -54,6 +55,7 @@ module.exports = async fastify => {
                 })
                 .catch(err => {
                   fastify.log.error(err)
+                  fastify.sentry.captureException(err)
                   return reply.internalServerError()
                 })
             }
@@ -75,6 +77,7 @@ module.exports = async fastify => {
         })
         .catch(err => {
           fastify.log.error(err)
+          fastify.sentry.captureException(err)
           reply.internalServerError()
         })
     }

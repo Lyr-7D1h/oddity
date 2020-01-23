@@ -10,6 +10,7 @@ module.exports = fastify => {
       request.destroySession(err => {
         if (err) {
           fastify.log.error(err)
+          fastify.sentry.captureException(err)
           reply.send(fastify.httpErrors.internalServerError())
         }
         reply.clearCookie('user', { path: '/' })

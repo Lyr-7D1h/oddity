@@ -13,33 +13,35 @@ module.exports = fp((fastify, opts, done) => {
       return require(path.join(MODELS_PATH, file))(fastify)
     })
 
-    Promise.all(modelsAsyncArray).then(modelsArray => {
-      let models = {}
-      let syncModels = []
+    Promise.all(modelsAsyncArray)
+      .then(modelsArray => {
+        let models = {}
+        let syncModels = []
 
-      modelsArray.forEach(model => {
-        models[model.name] = model
-        syncModels.push(model.sync())
-      })
-
-      // Sync all models
-      Promise.all(syncModels)
-        .then(() => {
-          fastify.log.info('[DB] Synchronized models')
-          require('./associations')(models)
-          fastify.log.info('[DB] Associations setup')
-
-          fastify.decorate('models', models)
-          done()
+        modelsArray.forEach(model => {
+          models[model.name] = model
+          syncModels.push(model.sync())
         })
-        .catch(err => fastify.log.error(err))
-    })
+
+        // Sync all models
+        Promise.all(syncModels)
+          .then(() => {
+            fastify.log.info('[DB] Synchronized models')
+            require('./associations')(models)
+            fastify.log.info('[DB] Associations setup')
+
+            fastify.decorate('models', models)
+            done()
+          })
+          .catch(err => fastify.log.error(err))
+      })
+      .catch(err => fastify.log.error(err))
   }
 
   fs.readdir(MODELS_PATH, (err, files) => {
     if (err) {
       fastify.log.fatal('Could not load tables')
-      process.exit(1)
+      throw err
     }
     decorateModels(files)
   })

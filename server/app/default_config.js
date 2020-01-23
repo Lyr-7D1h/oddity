@@ -195,9 +195,10 @@ const createDefaultForumCategory = instance => {
 
 module.exports = fp(async instance => {
   instance.log.info('Loading Default Config..')
+
   const errHandler = err => {
     instance.log.fatal(err)
-    process.exit(1)
+    throw err
   }
 
   createDefaultForumCategory(instance)

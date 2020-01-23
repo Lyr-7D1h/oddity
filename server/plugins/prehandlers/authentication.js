@@ -37,6 +37,7 @@ module.exports = fp(async instance => {
               })
               .catch(err => {
                 instance.log.error(err)
+                instance.sentry.captureException(err)
                 done(new InternalServerError())
               })
           } else {
@@ -95,6 +96,7 @@ module.exports = fp(async instance => {
           })
           .catch(err => {
             instance.log.error(err)
+            instance.sentry.captureException(err)
             done(new InternalServerError())
           })
       } else {

@@ -41,6 +41,6 @@ module.exports = fp((instance, opts, done) => {
     .catch(err => {
       console.error(err)
       instance.log.fatal(err)
-      process.exit(1)
+      throw err
     })
 })

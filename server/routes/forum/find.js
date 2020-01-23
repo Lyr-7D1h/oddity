@@ -38,6 +38,7 @@ module.exports = fastify => {
       })
       .catch(err => {
         fastify.log.error(err)
+        fastify.sentry.captureException(err)
         reply.internalServerError()
       })
   }

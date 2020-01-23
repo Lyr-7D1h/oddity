@@ -37,6 +37,7 @@ module.exports = fp(async instance => {
                 })
                 .catch(err => {
                   instance.log.error(err)
+                  instance.sentry.captureException(err)
                   reply.internalServerError()
                 })
               await reply
@@ -53,6 +54,7 @@ module.exports = fp(async instance => {
                 })
                 .catch(err => {
                   instance.log.error(err)
+                  instance.sentry.captureException(err)
                   reply.internalServerError()
                 })
               await reply
@@ -75,6 +77,7 @@ module.exports = fp(async instance => {
               })
               .catch(err => {
                 instance.log.error(err)
+                instance.sentry.captureException(err)
                 reply.badRequest()
               })
             await reply
@@ -100,6 +103,7 @@ module.exports = fp(async instance => {
               })
               .catch(err => {
                 instance.log.error(err)
+                instance.sentry.captureException(err)
                 reply.badRequest()
               })
             await reply
@@ -124,6 +128,7 @@ module.exports = fp(async instance => {
               })
               .catch(err => {
                 instance.log.error(err)
+                instance.sentry.captureException(err)
                 return reply.badRequest()
               })
             await reply

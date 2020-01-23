@@ -39,16 +39,19 @@ module.exports = fastify => {
                 .then(() => reply.success())
                 .catch(err => {
                   fastify.log.error(err)
+                  fastify.sentry.captureException(err)
                   return reply.send(fastify.httpErrors.internalServerError())
                 })
             })
           } else {
+            fastify.sentry.captureException(new Error('No Default Role'))
             fastify.log.fatal('No Default Role')
             reply.internalServerError()
           }
         })
         .catch(err => {
           fastify.log.error(err)
+          fastify.sentry.captureException(err)
           reply.internalServerError()
         })
     }
