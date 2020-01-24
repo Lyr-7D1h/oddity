@@ -9,6 +9,8 @@ build:
   stage: build
   artifacts:
     untracked: true
+    paths:
+      - /root/.cache/Cypress
   before_script:
     - cd ./client && npm ci
     - cd ../server && npm ci
