@@ -30,7 +30,7 @@ test:
     DB_USERNAME: test
     DB_PASSWORD: test_pass
     ADMIN_SECRET: test
-    SESSION_SECRET: 38MnoTdxf3u*VBXbMBa$@yvuw%!6voAjN
+    SESSION_SECRET: kN&6Jj5#dKtF!z#*rH@u48hm22NEz&bdFJ&JzwhYVF
     SENTRY_DSN: https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726
   dependencies:
     - build
