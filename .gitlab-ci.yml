@@ -24,6 +24,14 @@ test:
     POSTGRES_DB: testing
     POSTGRES_USER: test
     PGPASSWORD: test_pass
+
+    DB_HOST: postgres
+    DB_NAME: testing
+    DB_USERNAME: test
+    DB_PASSWORD: test_pass
+    ADMIN_SECRET: test
+    SESSION_SECRET: c$io$vTHZvp@1pSHDYeAtgqP!yUs9^56p
+    SENTRY_DSN: https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726
   dependencies:
     - build
   script:
