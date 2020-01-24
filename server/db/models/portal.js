@@ -1,5 +1,3 @@
-const fp = require('fastify-plugin')
-
 module.exports = async fastify => {
   const seq = fastify.Sequelize
 
