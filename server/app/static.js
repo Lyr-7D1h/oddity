@@ -129,6 +129,9 @@ function fastifyStatic(fastify, opts, next) {
       fastify.get(prefix + '*', schema, function(req, reply) {
         pumpSendToReply(req, reply, '/' + req.params['*'])
       })
+      fastify.head(prefix + '*', schema, function(req, reply) {
+        reply.send() // TODO: should return content-length
+      })
       //   fastify.get(prefix, schema, function(req, reply) {
       //     pumpSendToReply(req, reply, '/' + req.params['*'])
       //   })

@@ -26,7 +26,7 @@
   "scripts": {
     "start": "BROWSER=none react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "react-app-rewired test --passWithNoTests",
+    "test": "npm run build && cd ../server && npm start & wait-on http://localhost:5000 && cypress run",
     "eject": "react-app-rewired eject"
   },
   "eslintConfig": {
@@ -45,6 +45,7 @@
     ]
   },
   "devDependencies": {
+    "cypress": "^3.8.2",
     "eslint": "^6.6.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
@@ -52,6 +53,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.16.0",
     "eslint-plugin-standard": "^4.0.1",
-    "less-loader": "^5.0.0"
+    "less-loader": "^5.0.0",
+    "wait-on": "^4.0.0"
   }
 }
