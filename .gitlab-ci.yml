@@ -7,6 +7,9 @@ stages:
 build:
   image: node:latest
   stage: build
+  cache: 
+    paths:
+    - /root/.cache/Cypress
   artifacts:
     untracked: true
     paths:
