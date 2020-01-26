@@ -4,16 +4,15 @@ stages:
   - staging
   - production
 
+cache: 
+    paths:
+      - /root/.cache/Cypress
+
 build:
   image: node:latest
   stage: build
-  cache: 
-    paths:
-    - /root/.cache/Cypress
   artifacts:
     untracked: true
-    paths:
-      - /root/.cache/Cypress
   before_script:
     - cd ./client && npm ci
     - cd ../server && npm ci
