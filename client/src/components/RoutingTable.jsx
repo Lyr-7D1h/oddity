@@ -50,7 +50,7 @@ const RoutingTable = ({ configId }) => {
     console.log(items)
 
     requester
-      .put(`configs/${configId}/routes`, items)
+      .patch(`configs/${configId}/routes`, items)
       .then(routes => {
         setRoutes(routes)
         notificationHandler.success(`Updated Routes`)

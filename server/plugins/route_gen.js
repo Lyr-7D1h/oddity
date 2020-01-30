@@ -84,6 +84,33 @@ module.exports = fp(async instance => {
                 })
               await reply
             }
+          case 'PATCH':
+            if (route.multiple) {
+              throw Error(`Cannot set multiple on a PUT Route`)
+            }
+            if (route.columns) {
+              instance.log.warn(
+                `(${tableName} Route) No need to specify columns for POST`
+              )
+            }
+            return async (request, reply) => {
+              model
+                .patch(request.body)
+                .then(response => {
+                  if (response.nModified === 0) {
+                    reply.noChange()
+                  } else {
+                    reply.success()
+                  }
+                })
+                .catch(err => {
+                  instance.log.error(err)
+                  instance.sentry.captureException(err)
+                  reply.badRequest()
+                })
+              await reply
+            }
+
           case 'PUT':
             if (route.multiple) {
               throw Error(`Cannot set multiple on a PUT Route`)

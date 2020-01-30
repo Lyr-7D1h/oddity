@@ -22,7 +22,7 @@ module.exports = async fastify => {
     }
   )
 
-  fastify.put(
+  fastify.patch(
     '/configs/:id/routes',
     {
       schema: {

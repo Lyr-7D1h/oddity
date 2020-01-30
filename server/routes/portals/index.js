@@ -21,7 +21,7 @@ module.exports = async fastify => {
         method: 'delete'
       },
       {
-        method: 'put'
+        method: 'patch'
       }
     ]
   }

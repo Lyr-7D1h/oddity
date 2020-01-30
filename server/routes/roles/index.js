@@ -20,7 +20,7 @@ module.exports = async fastify => {
         auth: fastify.authentication.cookie
       },
       {
-        method: 'put',
+        method: 'patch',
         auth: fastify.authentication.cookie
       }
     ]
