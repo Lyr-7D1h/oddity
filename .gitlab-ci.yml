@@ -3,15 +3,22 @@ stages:
   - test
   - staging
   - production
-    
+
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - client/.npm
+    - client/cache/Cypress
+    - client/build
+    - client/node_modules
+    - server/.npm
+    - server/node_modules
+
 
 build:
   image: node:latest
   stage: build
-  artifacts:
-    untracked: true
-    paths:
-      - /root/.cache/Cypress
   before_script:
     - cd ./client && npm ci
     - cd ../server && npm ci
