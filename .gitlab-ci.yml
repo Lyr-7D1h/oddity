@@ -4,15 +4,15 @@ stages:
   - staging
   - production
 
+variables:
+  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/client/cache/Cypress"
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - client/.npm
-    - client/cache/Cypress
     - client/build
+    - client/cache/Cypress
     - client/node_modules
-    - server/.npm
     - server/node_modules
 
 
@@ -21,6 +21,7 @@ build:
   stage: build
   before_script:
     - cd ./client && npm ci
+    - $(npm bin)/cypress cache path
     - cd ../server && npm ci
   script:
     - cd ../client && npm run build
