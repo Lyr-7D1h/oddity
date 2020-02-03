@@ -27,4 +27,4 @@ resources/users/*
 server/.env
 
 # to ignore videos (from cypress)
-*.mp4
+videos
