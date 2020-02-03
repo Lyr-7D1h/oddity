@@ -1,21 +1,21 @@
 stages:
-  - build
+  # - build
   - test
   - staging
   - production
 
-build:
-  image: node:latest
-  stage: build
-  artifacts:
-    untracked: true
-    paths:
-      - /root/.cache/Cypress
-  before_script:
-    - cd ./client && npm ci
-    - cd ../server && npm ci
-  script:
-    - cd ../client && npm run build
+# build:
+#   image: node:latest
+#   stage: build
+#   artifacts:
+#     untracked: true
+#     paths:
+#       - /root/.cache/Cypress
+#   before_script:
+#     - cd ./client && npm ci
+#     - cd ../server && npm ci
+#   script:
+#     - cd ../client && npm run build
 
 test:
   image: node:latest
@@ -34,8 +34,9 @@ test:
     ADMIN_SECRET: test
     SESSION_SECRET: kN&6Jj5#dKtF!z#*rH@u48hm22NEz&bdFJ&JzwhYVF
     SENTRY_DSN: https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726
-  dependencies:
-    - build
+  before_script:
+    - cd ./client && npm ci && npm run build
+    - cd ../server && npm ci
   script:
     - cd ./client && npm test
     - cd ../server && DB_HOST=postgres npm test
