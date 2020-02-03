@@ -26,7 +26,7 @@ stages:
 #     - cd ../client && npm run build
 
 test:
-  image: node:latest
+  image: cypress/base:latest
   stage: test
   services:
     - postgres:latest
@@ -43,11 +43,10 @@ test:
     SESSION_SECRET: kN&6Jj5#dKtF!z#*rH@u48hm22NEz&bdFJ&JzwhYVF
     SENTRY_DSN: https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726
   before_script:
-    - cd ./client && npm ci && npm run build
+    - cd ./client && npm ci
     - cd ../server && npm ci
   script:
-    - pwd #TEST
-    - cd ../server && DB_HOST=postgres npm test
+    - cd ../server DB_HOST=postgres npm test
     - cd ../client && npm test
 
 staging:
