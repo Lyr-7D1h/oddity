@@ -25,3 +25,6 @@ resources/users/*
 *code-workspace
 
 server/.env
+
+# to ignore videos (from cypress)
+*.mp4
