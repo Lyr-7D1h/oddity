@@ -26,7 +26,7 @@ stages:
 #     - cd ../client && npm run build
 
 test:
-  image: cypress/base:latest
+  image: cypress/base:13.6.0
   stage: test
   services:
     - postgres:latest
