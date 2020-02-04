@@ -370,7 +370,8 @@ const RoutingTable = ({ config, updateConfig }) => {
           </Button>
         </Col>
       </Row>
-      {items.length === 0 ? (
+      {items.length === 0 ||
+      (items.length === 1 && items[0].title === 'Uncategorized') ? (
         <Empty />
       ) : (
         <DndProvider backend={HTML5Backend}>
