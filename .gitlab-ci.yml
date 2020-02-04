@@ -45,7 +45,7 @@ test:
   before_script:
     - node --version
     - npm --version
-    - cd ./client && npm ci && npm build
+    - cd ./client && npm ci && npm run build
     - cd ../server && npm ci
   script:
     - cd ../server && DB_HOST=postgres npm test
