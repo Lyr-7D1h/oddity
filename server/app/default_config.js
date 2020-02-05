@@ -157,27 +157,6 @@ const createDefaultConfig = instance => {
   })
 }
 
-const createAdminPortal = instance => {
-  return new Promise((resolve, reject) => {
-    const secret = instance.config.ADMIN_SECRET || 'exsiteisverycool'
-
-    instance.crypto
-      .hash(secret)
-      .then(hash => {
-        instance.models.portal
-          .upsert({
-            name: 'admin',
-            accessKey: instance.crypto.createKey(10),
-            secretKey: hash
-          })
-          .then(created => {
-            resolve(created)
-          })
-      })
-      .catch(err => reject(err))
-  })
-}
-
 const createDefaultForumCategory = instance => {
   return new Promise((resolve, reject) => {
     instance.models.forumCategory
@@ -206,23 +185,6 @@ module.exports = fp(async instance => {
       if (created) instance.log.info('Created Uncategorized Forum Category')
     })
     .catch(errHandler)
-
-  createAdminPortal(instance)
-    .then(created => {
-      if (created) instance.log.info('Admin Portal Updated/Created')
-    })
-    .catch(errHandler)
-    .finally(() => {
-      instance.models.portal
-        .findOne({ where: { name: 'admin' } })
-        .then(portal => {
-          if (portal) {
-            instance.log.info(`Admin Portal AccessKey: ${portal.accessKey}`)
-          } else {
-            instance.log.error('Could not find Admin Portal')
-          }
-        })
-    })
 
   createDefaultConfig(instance)
     .then(created => {

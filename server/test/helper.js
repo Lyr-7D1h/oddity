@@ -1,8 +1,5 @@
 'use strict'
 
-// This file contains code that we reuse
-// between our tests.
-
 const fp = require('fastify-plugin')
 const Fastify = require('fastify')
 
@@ -44,7 +41,10 @@ module.exports = t => {
   // different from the production setup
   app.register(fp(require('../app')), { disableConfig: true })
 
-  process.on('uncaughtException', err => t.error(err))
+  process.on('uncaughtException', err => () => {
+    console.log('UNCAUGHT ERROR')
+    t.error(err)
+  })
 
   // tear down our app after we are done
   t.tearDown(() => {

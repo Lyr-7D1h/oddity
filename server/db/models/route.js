@@ -1,54 +1,33 @@
-// let routeSchema = new instance.mongoose.Schema({
-//   name: {
-//     required: true,
-//     type: String
-//   },
-//   // Should be unique within document
-//   path: {
-//     required: true,
-//     type: instance.mongoose.Types.EmptyString,
-//     lowercase: true
-//   },
-//   // should only be one default
-//   default: {
-//     type: Boolean
-//   },
-//   module: {
-//     type: String,
-//     lowercase: true,
-//     enum: ['servers', 'members', 'forum', 'home']
-//   }
-// })
-
-module.exports = async fastify => {
-  const seq = fastify.Sequelize
-
-  const Route = fastify.db.define('route', {
+module.exports = (sequelize, DataTypes) => {
+  const route = sequelize.define('route', {
     name: {
-      type: seq.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true
     },
     // TODO: Should be unique within foreach categoryId
     path: {
-      type: seq.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true
     },
     default: {
-      type: seq.BOOLEAN,
+      type: DataTypes.BOOLEAN,
       allowNull: false
     },
     module: {
-      type: seq.ENUM('servers', 'members', 'forum', 'home'),
+      type: DataTypes.ENUM('servers', 'members', 'forum', 'home'),
       allowNull: false,
       isLowerCase: true
     },
     configId: {
-      type: seq.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   })
+  route.associate = models => {
+    route.belongsTo(models.config)
+  }
 
-  return Route
+  return route
 }

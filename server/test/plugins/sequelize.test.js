@@ -1,6 +1,9 @@
 const t = require('tap')
 const test = t.test
 
+// clear all tables
+require('../db.helper')()
+
 const build = require('../helper')
 
 test('fastify.db and fastify.Sequelize should exist', t => {

@@ -1,49 +1,53 @@
-module.exports = async fastify => {
-  const seq = fastify.Sequelize
-
-  const User = fastify.db.define('user', {
+module.exports = (sequelize, DataTypes) => {
+  const user = sequelize.define('user', {
     username: {
-      type: seq.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true,
       len: [3, 30]
     },
     identifier: {
-      type: seq.STRING,
+      type: DataTypes.STRING,
       allowNull: true,
       unique: true,
       len: [3, 30],
       isLowercase: true
     },
     password: {
-      type: seq.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
       len: [3, 30]
     },
     email: {
-      type: seq.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true,
       isLowercase: true
     },
     avatar: {
-      type: seq.STRING,
+      type: DataTypes.STRING,
       unique: true
     },
     ip: {
-      type: seq.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
       isLowercase: true,
       isIP: true
     },
     permissions: {
-      type: seq.INTEGER
+      type: DataTypes.INTEGER
     },
     roleId: {
-      type: seq.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   })
-
-  return User
+  user.associate = models => {
+    user.hasMany(models.forumPost, {
+      as: 'posts',
+      foreignKey: 'authorId'
+    })
+    user.belongsTo(models.role)
+  }
+  return user
 }

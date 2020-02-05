@@ -7,9 +7,10 @@ import RoutingTable from '../RoutingTable'
 import AdminRedirect from '../containers/AdminRedirect'
 import SubNav from '../SubNav'
 import ForumTable from '../ForumTable'
+import ModulesTable from '../ModulesTable'
 
 export default ({ page }) => {
-  const nav = ['Routing', 'Forum']
+  const nav = ['Routing', 'Forum', 'Modules']
 
   let Content
   switch (page) {
@@ -20,6 +21,15 @@ export default ({ page }) => {
           <RoutingTable />
         </>
       )
+      break
+    case 'modules':
+      Content = (
+        <>
+          <Title>Modules</Title>
+          <ModulesTable />
+        </>
+      )
+
       break
     case 'forum':
       Content = (

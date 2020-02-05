@@ -1,18 +1,22 @@
-module.exports = async fastify => {
-  const seq = fastify.Sequelize
-
-  const forumCategory = fastify.db.define('forumCategory', {
+module.exports = (sequelize, DataTypes) => {
+  const forumCategory = sequelize.define('forumCategory', {
     title: {
-      type: seq.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true
     },
     order: {
-      type: seq.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false,
       unique: true
     }
   })
+  forumCategory.associate = models => {
+    forumCategory.hasMany(models.forumThread, {
+      as: 'threads',
+      foreignKey: 'categoryId'
+    })
+  }
 
   return forumCategory
 }

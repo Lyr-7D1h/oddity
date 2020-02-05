@@ -1,43 +1,50 @@
 'use strict'
-
+const fp = require('fastify-plugin')
 const fs = require('fs')
 const path = require('path')
-const Sequelize = require('sequelize')
-const basename = path.basename(__filename)
-const env = process.env.NODE_ENV || 'development'
-const config = require(__dirname + '/../config/config.json')[env]
-const db = {}
 
-let sequelize
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config)
-} else {
-  sequelize = new Sequelize(
-    config.database,
-    config.username,
-    config.password,
-    config
-  )
-}
+module.exports = fp((fastify, _, done) => {
+  const basename = path.basename(__filename)
+  const models = {}
 
-fs.readdirSync(__dirname)
-  .filter(file => {
-    return (
-      file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js'
-    )
+  fs.readdir(__dirname, (err, files) => {
+    if (err) {
+      fastify.log.fatal('Could not load tables')
+      throw err
+    }
+
+    const syncModelsPromises = []
+
+    files
+      .filter(
+        // FILTER: Only js files and not this file
+        file =>
+          file.indexOf('.') !== 0 &&
+          file !== basename &&
+          file.slice(-3) === '.js'
+      )
+      .forEach(file => {
+        const model = fastify.db['import'](path.join(__dirname, file))
+        models[model.name] = model
+
+        syncModelsPromises.push(model.sync())
+      })
+
+    Promise.all(syncModelsPromises)
+      .then(() => {
+        // Setup associations
+        Object.keys(models).forEach(modelName => {
+          // models[modelName].sync()
+          if (models[modelName].associate) {
+            models[modelName].associate(models)
+          }
+        })
+
+        fastify.decorate('models', models)
+        done()
+      })
+      .catch(err => {
+        fastify.log.error(err)
+      })
   })
-  .forEach(file => {
-    const model = sequelize['import'](path.join(__dirname, file))
-    db[model.name] = model
-  })
-
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db)
-  }
 })
-
-db.sequelize = sequelize
-db.Sequelize = Sequelize
-
-module.exports = db

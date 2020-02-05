@@ -1,5 +1,4 @@
 const t = require('tap')
-const auth = require('basic-auth')
 const bcrypt = require('bcrypt')
 
 const test = t.test

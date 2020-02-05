@@ -19,7 +19,14 @@ module.exports = fp(async instance => {
     async options => {
       const { model, routes } = options
       if (!model || !routes || routes.length < 0) {
-        throw Error('Invalid Route Options')
+        const err = new Error(
+          `Invalid Routes Options for model: ${JSON.stringify(
+            model
+          )} and routes ${JSON.stringify(routes)}`
+        )
+        instance.log.error(err)
+        instance.sentry.captureException(err)
+        return
       }
 
       const globalAuthorization = options.auth

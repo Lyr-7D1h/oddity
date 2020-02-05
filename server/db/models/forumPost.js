@@ -1,39 +1,33 @@
-// const commentSchema = new instance.mongoose.Schema({
-//   author: {
-//     type: instance.mongoose.Types.ObjectId,
-//     required: true
-//   },
-//   content: {
-//     type: String,
-//     required: true,
-//     min: 3,
-//     max: 1000
-//   }
-// })
-
-module.exports = async fastify => {
-  const seq = fastify.Sequelize
-
-  const forumPost = fastify.db.define('forumPost', {
+module.exports = (sequelize, DataTypes) => {
+  const forumPost = sequelize.define('forumPost', {
     title: {
-      type: seq.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
       len: [3, 40]
     },
     content: {
-      type: seq.JSON,
+      type: DataTypes.JSON,
       allowNull: false,
       len: [3, 5000]
     },
     authorId: {
-      type: seq.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     threadId: {
-      type: seq.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   })
-
+  forumPost.associate = models => {
+    forumPost.belongsTo(models.forumThread, {
+      as: 'posts',
+      foreignKey: 'threadId'
+    })
+    forumPost.belongsTo(models.user, {
+      as: 'author',
+      foreignKey: 'authorId'
+    })
+  }
   return forumPost
 }

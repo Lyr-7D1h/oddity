@@ -10,31 +10,10 @@ import {
   Col,
   Switch
 } from 'antd'
+import getInput from '../helpers/getInput'
 
 const EditableContext = React.createContext()
 
-const getInput = (dataType, placeHolder) => {
-  dataType = dataType || 'text'
-  if (dataType === 'text') {
-    return <Input placeholder={placeHolder} />
-  } else if (dataType === 'number') {
-    return <InputNumber />
-  } else if (dataType === 'bool') {
-    return <Switch />
-  } else if (Array.isArray(dataType)) {
-    return (
-      <Select>
-        {dataType.map((dt, i) => (
-          <Select.Option key={i} value={dt}>
-            {dt}
-          </Select.Option>
-        ))}
-      </Select>
-    )
-  } else {
-    console.error('Invalid DataType')
-  }
-}
 class EditableCell extends React.Component {
   renderCell = ({ getFieldDecorator }) => {
     const {
