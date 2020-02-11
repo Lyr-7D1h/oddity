@@ -52,6 +52,8 @@ module.exports = t => {
       process.exitCode = 0
     })
 
+    // require('./db.helper')(); // Clear tables
+
     app.close()
   })
 

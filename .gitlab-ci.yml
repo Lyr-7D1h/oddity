@@ -47,8 +47,8 @@ test:
     - cd ./client && npm ci && npm run build
     - cd ../server && npm ci
   script:
-    - cd ../server && DB_HOST=postgres npm test
     - cd ../client && npm test
+    - cd ../server && DB_HOST=postgres npm test
 
 staging:
   image: docker:latest
