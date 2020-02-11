@@ -12,7 +12,7 @@ Sentry.init({
 })
 
 // installs an 'unhandledRejection' handler
-// require('make-promises-safe')
+require('make-promises-safe')
 
 // Require the framework
 const Fastify = require('fastify')
@@ -29,7 +29,6 @@ const server = Fastify({
 const envSchema = {
   type: 'object',
   required: [
-    'ADMIN_SECRET',
     'SESSION_SECRET',
     'DB_USERNAME',
     'DB_PASSWORD',
@@ -41,7 +40,6 @@ const envSchema = {
     DB_USERNAME: { type: 'string' },
     DB_PASSWORD: { type: 'string' },
     DB_LOGGING_ENABLED: { type: 'boolean' },
-    ADMIN_SECRET: { type: 'string' },
     SESSION_SECRET: { type: 'string' },
     PORT: { type: 'integer' },
     NODE_ENV: { type: 'string' }
