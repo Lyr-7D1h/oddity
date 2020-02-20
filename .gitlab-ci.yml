@@ -44,6 +44,10 @@ test:
   before_script:
     - node --version
     - npm --version
+    # Audit server & client
+    - cd ./client && npm audit
+    - cd ../server && npm audit
+    # Build server & client
     - cd ./client && npm ci && npm run build
     - cd ../server && npm ci
   script:
