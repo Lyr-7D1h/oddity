@@ -92,11 +92,6 @@ module.exports = async (fastify, opts) => {
   }
 
   /**
-   * Load modules
-   */
-  require('./module_loader').init(fastify)
-
-  /**
    * Load Client
    * In Dev: Proxy server for fast page rerendering
    * In Production: Render static files from the react build folder
@@ -113,6 +108,12 @@ module.exports = async (fastify, opts) => {
     })
   }
 
-  // Load documentation
-  fastify.ready(() => fastify.oas())
+  // Run code when ready
+  fastify.ready(() => {
+    // Load Modules
+    require('./module_loader').init(fastify)
+
+    // Load Documentation
+    fastify.oas()
+  })
 }

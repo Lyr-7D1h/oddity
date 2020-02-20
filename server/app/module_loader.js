@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const fp = require('fastify-plugin')
 
 const MODULE_DIR = path.join(__dirname, '..', '..', 'modules')
 
@@ -32,15 +31,29 @@ const errHandler = err => {
  * Load all files and check if they are okay
  */
 const init = fastify => {
+  console.log(fastify.models)
   const loadConfig = path => {
     const config = require(path)
 
     const { name, version } = config
 
-    console.log('CONFIG: ', {
+    console.log('CONFIG', {
       name,
       version
     })
+
+    fastify.models.module
+      .upsert(
+        { name },
+        {
+          name,
+          version
+        }
+      )
+      .then(() => {})
+      .catch(err => {
+        errHandler(err)
+      })
   }
 
   console.log(MODULE_DIR)
