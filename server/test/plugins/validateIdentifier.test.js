@@ -23,6 +23,8 @@ const falseyIds = [
   'with_symbol!',
   '?wow',
   '22',
+  'ϠϡϢ', // Utf-8 only
+  '€‹pŒ', // Extended Ascii
   null,
   undefined
 ]
