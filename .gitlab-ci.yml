@@ -29,11 +29,11 @@ test:
   image: cypress/base:13.6.0 # Node + tools needed for running cypress
   stage: test
   services:
-    - postgres:9.6
+    - postgres:latest
   variables:
     POSTGRES_DB: testing
     POSTGRES_USER: test
-    PGPASSWORD: test_pass
+    POSTGRES_PASSWORD: test_pass
 
     DB_HOST: postgres
     DB_NAME: testing
