@@ -29,7 +29,7 @@ test:
   image: cypress/base:13.6.0 # Node + tools needed for running cypress
   stage: test
   services:
-    - postgres:latest
+    - postgres:9.3
   variables:
     POSTGRES_DB: testing
     POSTGRES_USER: test
