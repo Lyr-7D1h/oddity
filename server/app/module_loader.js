@@ -3,20 +3,20 @@ const path = require('path')
 
 const fastifyAutoload = require('fastify-autoload')
 
-const MODULE_DIR = path.join(__dirname, '..', '..', 'modules')
-
-const errHandler = err => {
-  if (err) {
-    console.error('LOADING MODULES FAILED \n', err)
-    process.exit(1)
-  }
-}
+const MODULES_DIR = path.join(__dirname, '..', '..', 'modules')
 
 /**
  * Load all files and check if they are okay
  */
 module.exports = (fastify, _, done) => {
   fastify.log.debug('==== MODULE LOADER START ====')
+
+  const errHandler = err => {
+    if (err) {
+      fastify.log.fatal('Could not load modules \n', err)
+      process.exit(1)
+    }
+  }
 
   /**
    * update or create module in database
@@ -82,6 +82,14 @@ module.exports = (fastify, _, done) => {
         })
       }
 
+      const loadPlugins = pluginPath => {
+        fastify.log.debug(`Loading Plugin ${pluginPath}`)
+        fastify.register(fastifyAutoload, {
+          dir: pluginPath,
+          options: Object.assign({})
+        })
+      }
+
       fs.readdir(serverPath, (err, folders) => {
         if (err) reject(err)
 
@@ -92,6 +100,7 @@ module.exports = (fastify, _, done) => {
               loadRoutes(path.join(serverPath, folder))
               break
             case 'plugins':
+              loadPlugins(path.join(serverPath, folder))
               break
             default:
               console.error(`COULD NOT LOAD ${serverPath}/${folder}`)
@@ -102,52 +111,57 @@ module.exports = (fastify, _, done) => {
     })
   }
 
-  fs.readdir(MODULE_DIR, (err, module_dirs) => {
-    errHandler(err)
+  const loadModule = modulePath => {
+    fastify.log.info(`Loading module ${path.basename(modulePath)}`)
+    return new Promise((resolve, reject) => {
+      fs.readdir(modulePath, (err, module_files) => {
+        if (err) reject(err)
 
-    module_dirs.forEach(module_dir => {
-      const MODULE_SRC_DIR = path.join(MODULE_DIR, module_dir)
-      fs.readdir(MODULE_SRC_DIR, (err, module_files) => {
-        errHandler(err)
-
-        const module_loaders = []
-        module_files.forEach(module_file => {
-          switch (module_file.toLowerCase()) {
+        const srcLoaders = []
+        module_files.forEach(moduleFile => {
+          const moduleSrcPath = path.join(modulePath, moduleFile)
+          switch (moduleFile.toLowerCase()) {
             case 'config.js':
-              module_loaders.push(
-                loadConfig(path.join(MODULE_SRC_DIR, module_file))
-              )
+              srcLoaders.push(loadConfig(moduleSrcPath))
               break
             case 'config.json':
-              module_loaders.push(
-                loadConfig(path.join(MODULE_SRC_DIR, module_file))
-              )
+              srcLoaders.push(loadConfig(moduleSrcPath))
               break
             case 'client':
-              module_loaders.push(
-                loadClient(path.join(MODULE_SRC_DIR, module_file))
-              )
+              srcLoaders.push(loadClient(moduleSrcPath))
               break
             case 'server':
-              module_loaders.push(
-                loadServer(path.join(MODULE_SRC_DIR, module_file))
-              )
+              srcLoaders.push(loadServer(moduleSrcPath))
               break
             default:
-              console.error(`COULD NOT LOAD FILE ${module_file}`)
+              console.error(`COULD NOT LOAD FILE ${moduleFile}`)
               break
           }
         })
-        Promise.all(module_loaders)
-          .then(() => {
-            fastify.log.debug('==== MODULE LOADER FINISH ====')
-            fastify.log.info('Modules loaded')
-            done()
-          })
-          .catch(err => {
-            errHandler(err)
-          })
+        Promise.all(srcLoaders).then(() => {
+          resolve()
+        })
       })
     })
+  }
+
+  fs.readdir(MODULES_DIR, (err, moduleDirs) => {
+    errHandler(err)
+
+    const moduleLoaders = []
+
+    moduleDirs.forEach(moduleDir => {
+      moduleLoaders.push(loadModule(path.join(MODULES_DIR, moduleDir)))
+    })
+
+    Promise.all(moduleLoaders)
+      .then(() => {
+        fastify.log.debug('==== MODULE LOADER FINISH ====')
+        fastify.log.info('Modules loaded')
+        done()
+      })
+      .catch(err => {
+        errHandler(err)
+      })
   })
 }

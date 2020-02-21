@@ -27,7 +27,7 @@
     "start": "BROWSER=none react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "npm run build && cd ../server && npm start & wait-on http://localhost:5000 && cypress run",
-    "eject": "react-app-rewired eject"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

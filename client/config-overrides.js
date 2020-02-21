@@ -1,4 +1,8 @@
-const { override, fixBabelImports, addLessLoader } = require("customize-cra");
+const {
+  override,
+  removeModuleScopePlugin,
+  addLessLoader
+} = require('customize-cra')
 
 module.exports = override(
   //   fixBabelImports("import", {
@@ -11,5 +15,7 @@ module.exports = override(
     // modifyVars: {
     //   "@primary-color": "#FFFFFF"
     // }
-  })
-);
+  }),
+
+  removeModuleScopePlugin()
+)
