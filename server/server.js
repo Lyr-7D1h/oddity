@@ -21,6 +21,7 @@ const Fastify = require('fastify')
 const server = Fastify({
   // ignoreTrailingSlash: true,
   logger: {
+    level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
     prettyPrint: process.env.NODE_ENV === 'development'
   },
   dotenv: true
@@ -28,12 +29,7 @@ const server = Fastify({
 
 const envSchema = {
   type: 'object',
-  required: [
-    'SESSION_SECRET',
-    'DB_USERNAME',
-    'DB_PASSWORD',
-    'DB_NAME'
-  ],
+  required: ['SESSION_SECRET', 'DB_USERNAME', 'DB_PASSWORD', 'DB_NAME'],
   properties: {
     DB_HOST: { type: 'string' },
     DB_NAME: { type: 'string' },

@@ -11,11 +11,15 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
         unique: true,
-        allowNull: false
+        allowNull: false,
+        isAlphanumeric: true,
+        isLowercase: true
       },
       version: {
-        type: Sequelize.INTEGER,
-        allowNull: false
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false,
+        is: /^(\d+\.)?(\d+\.)?(\*|\d+)$/i
       },
       createdAt: {
         allowNull: false,
@@ -27,7 +31,7 @@ module.exports = {
       }
     })
   },
-  down: (queryInterface, Sequelize) => {
+  down: queryInterface => {
     return queryInterface.dropTable('modules')
   }
 }

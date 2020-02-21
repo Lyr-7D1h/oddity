@@ -6,12 +6,15 @@ module.exports = (sequelize, DataTypes) => {
       name: {
         type: DataTypes.STRING,
         unique: true,
-        allowNull: false
+        allowNull: false,
+        isAlphanumeric: true,
+        isLowercase: true
       },
       version: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         unique: true,
-        allowNull: false
+        allowNull: false,
+        is: /^(\d+\.)?(\d+\.)?(\*|\d+)$/i
       }
     },
     {}

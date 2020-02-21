@@ -20,6 +20,8 @@ import NoHomePage from './components/pages/NoHomePage'
 import AccountPage from './components/pages/AccountPage'
 import FinishAccountPage from './components/pages/FinishAccountPage'
 
+import ModulePage from './modules_bin/Example'
+
 const App = ({ routes, userNeedsSetup, dispatch }) => {
   let noHomeSet = true
 
@@ -33,6 +35,9 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
         const path = route.default ? '/' : '/' + route.path
 
         switch (route.module) {
+          case 'example':
+            component = ModulePage
+            break
           case 'servers':
             component = ServersPage
             break
