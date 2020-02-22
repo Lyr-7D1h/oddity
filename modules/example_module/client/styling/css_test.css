@@ -1,12 +1,14 @@
 /*
-  EXAMPLE LESS FILE
+  EXAMPLE CSS FILE
   Does not matter where this file is placed only imported in module scope file
   STRONGLY RECOMMENDED TO NOT USE TARGET GLOBAL ELEMENTS AS IT MIGHT BREAK OTHER COMPONENTS
 */
-
-.module-example-page {
-  h1 {
-    font-size: 20px;
-    color: red;
-  }
+/*
+SO DON'T DO THIS
+body {
+  padding: 50px;
+}
+*/
+div.module-example-page {
+  padding: 50px;
 }

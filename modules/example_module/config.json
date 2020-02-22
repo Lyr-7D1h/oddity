@@ -1,4 +1,14 @@
 {
   "name": "Example Module",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "routes": [
+    {
+      "path": "/sub-example",
+      "component": "/client/components/Example"
+    },
+    {
+      "path": "/sub-example/:param",
+      "component": "/client/components/Example"
+    }
+  ]
 }

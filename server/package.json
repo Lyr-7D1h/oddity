@@ -33,6 +33,7 @@
     "fastify-sensible": "^2.1.1",
     "fastify-session": "^3.0.0",
     "fastify-static": "^2.5.0",
+    "glob": "^7.1.6",
     "make-promises-safe": "^5.1.0",
     "pg": "^7.15.2",
     "pg-native": "^3.0.0",

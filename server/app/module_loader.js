@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const glob = require('glob')
 
 const fastifyAutoload = require('fastify-autoload')
 
@@ -13,7 +14,7 @@ module.exports = (fastify, _, done) => {
 
   const errHandler = err => {
     if (err) {
-      fastify.log.fatal('Could not load modules \n', err)
+      fastify.log.error(err)
       process.exit(1)
     }
   }
@@ -22,14 +23,88 @@ module.exports = (fastify, _, done) => {
    * update or create module in database
    * @param {string} path
    */
-  const loadConfig = path => {
-    const config = require(path)
+  const loadConfig = configPath => {
+    const config = require(configPath)
 
     const { name, version } = config
 
-    fastify.log.debug('Loading config ', { name, version })
+    fastify.log.debug('Loading config ', {
+      name,
+      version
+    })
 
-    return fastify.models.module.upsert({ name, version })
+    return new Promise((resolve, reject) => {
+      fastify.models.module
+        .upsert({ name, version }, { returning: true })
+        .then(([upsertedModule]) => {
+          if (config.routes) {
+            const moduleRoutesPromises = []
+            config.routes.forEach(route => {
+              fastify.log.debug(
+                `Found Route "${route.path}" for Component "${route.component}"`
+              )
+
+              const moduleDir = path.dirname(configPath)
+              const componentDir = path.dirname(route.component)
+
+              const fileName = path.basename(route.component)
+              const directory = path.join(moduleDir, componentDir)
+
+              // TEST: check if component file exists otherwise give error
+              glob(
+                `?(${fileName}.js|${fileName}.jsx|${fileName})`,
+                { cwd: directory },
+                (err, matches) => {
+                  errHandler(err)
+
+                  if (matches.length === 1) {
+                    route.moduleId = upsertedModule.id
+
+                    // make sure path is in the format of /this/is/an/example/path
+                    route.path = route.path.startsWith('/')
+                      ? route.path
+                      : '/' + route.path
+                    route.path = route.path.endsWith('/')
+                      ? route.path.substring(0, route.path.length - 1)
+                      : route.path
+
+                    moduleRoutesPromises.push(
+                      fastify.models.moduleRoute.upsert(route)
+                    )
+                  } else {
+                    // check in default /client/components folder in not found in specified componentsPath
+                    glob(
+                      `?(${fileName}.js|${fileName}.jsx|${fileName})`,
+                      {
+                        cwd: path.join(moduleDir, 'client', 'components')
+                      },
+                      (err, matches) => {
+                        errHandler(err)
+                        if (matches.length === 1) {
+                          moduleRoutesPromises.push(
+                            fastify.models.moduleRoute.upsert(route)
+                          )
+                        } else {
+                          errHandler(
+                            new Error(
+                              `Client Routing: "${path.join(
+                                directory,
+                                fileName
+                              )}" not found`
+                            )
+                          )
+                        }
+                      }
+                    )
+                  }
+                }
+              )
+            })
+            resolve(moduleRoutesPromises)
+          }
+        })
+        .catch(err => reject(err))
+    })
   }
 
   const loadClient = clientPath => {
@@ -39,6 +114,7 @@ module.exports = (fastify, _, done) => {
 
         const loadComponents = componentsPath => {
           return new Promise((resolve, reject) => {
+            // TEST: check if index.jsx exists
             fs.access(path.join(componentsPath, 'index.jsx'), err => {
               if (err) {
                 console.error(
@@ -120,7 +196,6 @@ module.exports = (fastify, _, done) => {
         const srcLoaders = []
         moduleFiles.forEach(moduleFile => {
           const moduleSrcPath = path.join(modulePath, moduleFile)
-          console.log(moduleSrcPath)
           switch (moduleFile.toLowerCase()) {
             case 'config.js':
               srcLoaders.push(loadConfig(moduleSrcPath))
