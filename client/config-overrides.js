@@ -1,8 +1,11 @@
 const {
+  babelInclude,
   override,
   removeModuleScopePlugin,
   addLessLoader
 } = require('customize-cra')
+
+const path = require('path')
 
 module.exports = override(
   //   fixBabelImports("import", {
@@ -17,5 +20,21 @@ module.exports = override(
     // }
   }),
 
-  removeModuleScopePlugin()
+  // addWebpackModuleRule({
+  //   test: /\.js?$/,
+  //   // include: path.resolve(__dirname, '../modules'),
+  //   exclude: /node_modules/,
+  //   use: [
+  //     {
+  //       loader: 'babel-loader',
+  //       options: {
+  //         presets: ['react']
+  //       }
+  //     }
+  //   ]
+  // }),
+
+  // Remove import scope & add modules to babel-loader scope
+  removeModuleScopePlugin(),
+  babelInclude([path.resolve('src'), path.resolve('../modules')])
 )

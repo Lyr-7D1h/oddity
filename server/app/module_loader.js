@@ -114,12 +114,13 @@ module.exports = (fastify, _, done) => {
   const loadModule = modulePath => {
     fastify.log.info(`Loading module ${path.basename(modulePath)}`)
     return new Promise((resolve, reject) => {
-      fs.readdir(modulePath, (err, module_files) => {
+      fs.readdir(modulePath, (err, moduleFiles) => {
         if (err) reject(err)
 
         const srcLoaders = []
-        module_files.forEach(moduleFile => {
+        moduleFiles.forEach(moduleFile => {
           const moduleSrcPath = path.join(modulePath, moduleFile)
+          console.log(moduleSrcPath)
           switch (moduleFile.toLowerCase()) {
             case 'config.js':
               srcLoaders.push(loadConfig(moduleSrcPath))
@@ -151,7 +152,12 @@ module.exports = (fastify, _, done) => {
     const moduleLoaders = []
 
     moduleDirs.forEach(moduleDir => {
-      moduleLoaders.push(loadModule(path.join(MODULES_DIR, moduleDir)))
+      if (
+        moduleDir !== 'node_modules' &&
+        moduleDir !== 'package.json' &&
+        moduleDir !== 'package-lock.json'
+      )
+        moduleLoaders.push(loadModule(path.join(MODULES_DIR, moduleDir)))
     })
 
     Promise.all(moduleLoaders)

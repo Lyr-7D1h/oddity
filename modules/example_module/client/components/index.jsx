@@ -1,11 +1,10 @@
-const React = require("react");
+import React from "react";
+import Example from "./Example";
 
-module.exports = () => {
+export default () => {
   return (
     <h1>
       Example Page <Example />
     </h1>
   );
 };
-
-exports.route = "example";

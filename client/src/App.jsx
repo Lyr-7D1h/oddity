@@ -20,13 +20,21 @@ import NoHomePage from './components/pages/NoHomePage'
 import AccountPage from './components/pages/AccountPage'
 import FinishAccountPage from './components/pages/FinishAccountPage'
 
-import ModulePage from './modules_bin/Example'
+import ModulePage from '/home/ivo/p/oddity/modules/example_module/client/components'
 
 const App = ({ routes, userNeedsSetup, dispatch }) => {
   let noHomeSet = true
 
   const getModuleRoutes = () => {
     if (routes) {
+      console.log(routes)
+      routes.push({
+        name: 'Example',
+        path: 'example',
+        default: false,
+        module: 'example',
+        configId: 1
+      })
       let moduleRoutes = []
       for (let i in routes) {
         const route = routes[i]
