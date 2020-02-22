@@ -1,7 +1,7 @@
 module.exports = async fastify => {
   require('./routes')(fastify)
 
-  // Get Default Config
+  // Get Default Config (NOT USED)
   fastify.get('/config', (request, reply) => {
     fastify.models.config
       .findOne({ where: { isActive: true }, include: [fastify.models.route] })
