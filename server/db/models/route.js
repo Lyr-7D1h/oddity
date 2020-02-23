@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
-    // TODO: Should be unique within foreach categoryId
+    // TODO: Should be unique within foreach configId
     path: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -15,10 +15,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false
     },
-    module: {
-      type: DataTypes.ENUM('servers', 'members', 'forum', 'home'),
-      allowNull: false,
-      isLowerCase: true
+    moduleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     },
     configId: {
       type: DataTypes.INTEGER,

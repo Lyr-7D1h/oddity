@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   module.associate = function(models) {
     // associations can be defined here
     module.hasMany(models.moduleRoute)
+    module.hasMany(models.route)
   }
   return module
 }

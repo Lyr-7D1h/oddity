@@ -77,62 +77,62 @@ const createUserRole = instance => {
 }
 
 const createDefaultConfig = instance => {
-  const createRoutes = configId => {
-    const routes = [
-      {
-        name: 'Home',
-        path: '',
-        module: 'home',
-        default: true,
-        configId: configId
-      },
-      {
-        name: 'Forum',
-        path: 'forum',
-        module: 'forum',
-        default: false,
-        configId: configId
-      },
-      {
-        name: 'Members',
-        path: 'members',
-        module: 'members',
-        default: false,
+  // const createRoutes = configId => {
+  //   const routes = [
+  //     {
+  //       name: 'Home',
+  //       path: '',
+  //       moduleId: 1,
+  //       default: true,
+  //       configId: configId
+  //     },
+  //     {
+  //       name: 'Forum',
+  //       path: 'forum',
+  //       moduleId: 2,
+  //       default: false,
+  //       configId: configId
+  //     },
+  //     {
+  //       name: 'Members',
+  //       path: 'members',
+  //       moduleId: 'members',
+  //       default: false,
 
-        configId: configId
-      },
-      {
-        name: 'Servers',
-        path: 'servers',
-        module: 'servers',
-        default: false,
+  //       configId: configId
+  //     },
+  //     {
+  //       name: 'Servers',
+  //       path: 'servers',
+  //       module: 'servers',
+  //       default: false,
 
-        configId: configId
-      }
-    ]
+  //       configId: configId
+  //     }
+  //   ]
 
-    let routePromises = []
-    routes.forEach(route => {
-      routePromises.push(
-        instance.models.route.findOrCreate({
-          where: { name: route.name },
-          defaults: route
-        })
-      )
-    })
+  //   let routePromises = []
+  //   routes.forEach(route => {
+  //     routePromises.push(
+  //       instance.models.route.findOrCreate({
+  //         where: { name: route.name },
+  //         defaults: route
+  //       })
+  //     )
+  //   })
 
-    return new Promise((resolve, reject) => {
-      Promise.all(routePromises)
-        .then(createdArray => {
-          const created =
-            createdArray.filter(created => created === true).length > 0
-              ? true
-              : false
-          resolve(created)
-        })
-        .catch(err => reject(err))
-    })
-  }
+  //   return new Promise((resolve, reject) => {
+  //     Promise.all(routePromises)
+  //       .then(createdArray => {
+  //         const created =
+  //           createdArray.filter(created => created === true).length > 0
+  //             ? true
+  //             : false
+  //         resolve(created)
+  //       })
+  //       .catch(err => reject(err))
+  //   })
+  // }
   const createConfig = () => {
     return new Promise((resolve, reject) => {
       instance.models.config
@@ -151,7 +151,7 @@ const createDefaultConfig = instance => {
   return new Promise((resolve, reject) => {
     createConfig()
       .then(([config, created1]) => {
-        createRoutes(config.id).then(created2 => resolve(created1 || created2))
+        resolve(created1) // createRoutes(config.id).then(created2 => resolve(created1 || created2))
       })
       .catch(err => reject(err))
   })
