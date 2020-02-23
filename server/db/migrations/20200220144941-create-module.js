@@ -12,12 +12,10 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true,
         allowNull: false,
-        isAlphanumeric: true,
-        isLowercase: true
+        isAlphanumeric: true
       },
       version: {
         type: Sequelize.STRING,
-        unique: true,
         allowNull: false,
         is: /^(\d+\.)?(\d+\.)?(\*|\d+)$/i
       },

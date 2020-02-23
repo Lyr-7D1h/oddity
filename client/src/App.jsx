@@ -22,7 +22,7 @@ import FinishAccountPage from './components/pages/FinishAccountPage'
 
 import ModulePage from '/home/ivo/p/oddity/modules/example_module/client/components'
 
-const App = ({ routes, userNeedsSetup, dispatch }) => {
+const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
   let noHomeSet = true
 
   const getModuleRoutes = () => {
@@ -203,6 +203,7 @@ export default connect(state => {
   }
   return {
     routes: state.config.routes,
+    modules: state.modules,
     userNeedsSetup: userNeedsSetup
   }
 })(App)

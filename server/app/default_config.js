@@ -1,38 +1,38 @@
 const fp = require('fastify-plugin')
 
-const createAdminUser = instance => {
-  return new Promise((resolve, reject) => {
-    instance.models.role.findOne({ where: { name: 'Admin' } }).then(role => {
-      if (role === null) {
-        reject(
-          new Error(
-            'Default Admin Role does not exist \nNot creating Admin User'
-          )
-        )
-      } else {
-        instance.crypto
-          .hash('admin')
-          .then(hash => {
-            instance.models.user
-              .findOrCreate({
-                where: { identifier: 'admin' },
-                defaults: {
-                  username: 'Admin',
-                  identifier: 'admin',
-                  password: hash,
-                  email: 'admin@admin.com',
-                  ip: '0:0:0:0',
-                  roleId: role.id
-                }
-              })
-              .then(([user, created]) => resolve(created))
-              .catch(err => reject(err))
-          })
-          .catch(err => reject(err))
-      }
-    })
-  })
-}
+// const createAdminUser = instance => {
+//   return new Promise((resolve, reject) => {
+//     instance.models.role.findOne({ where: { name: 'Admin' } }).then(role => {
+//       if (role === null) {
+//         reject(
+//           new Error(
+//             'Default Admin Role does not exist \nNot creating Admin User'
+//           )
+//         )
+//       } else {
+//         instance.crypto
+//           .hash('admin')
+//           .then(hash => {
+//             instance.models.user
+//               .findOrCreate({
+//                 where: { identifier: 'admin' },
+//                 defaults: {
+//                   username: 'Admin',
+//                   identifier: 'admin',
+//                   password: hash,
+//                   email: 'admin@admin.com',
+//                   ip: '0:0:0:0',
+//                   roleId: role.id
+//                 }
+//               })
+//               .then(([user, created]) => resolve(created))
+//               .catch(err => reject(err))
+//           })
+//           .catch(err => reject(err))
+//       }
+//     })
+//   })
+// }
 
 const createAdminRole = instance => {
   return new Promise((resolve, reject) => {
@@ -202,11 +202,11 @@ module.exports = fp(async instance => {
     .then(created => {
       if (created) instance.log.info('Created Default Admin Role')
 
-      createAdminUser(instance)
-        .then(created => {
-          if (created) instance.log.info('Created Default Admin User')
-        })
-        .catch(errHandler)
+      // createAdminUser(instance)
+      //   .then(created => {
+      //     if (created) instance.log.info('Created Default Admin User')
+      //   })
+      //   .catch(errHandler)
     })
     .catch(errHandler)
 })
