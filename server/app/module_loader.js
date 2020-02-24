@@ -33,6 +33,13 @@ module.exports = (fastify, _, done) => {
       version
     })
 
+    // make sure path is in the format of /this/is/an/example/path
+    const pathCheck = path => {
+      path = path.startsWith('/') ? path : '/' + path
+      path = path.endsWith('/') ? path.substring(0, path.length - 1) : path
+      return path
+    }
+
     return new Promise((resolve, reject) => {
       fastify.models.module
         .upsert({ name, version }, { returning: true })
@@ -60,13 +67,13 @@ module.exports = (fastify, _, done) => {
                   if (matches.length === 1) {
                     route.moduleId = upsertedModule.id
 
-                    // make sure path is in the format of /this/is/an/example/path
-                    route.path = route.path.startsWith('/')
-                      ? route.path
-                      : '/' + route.path
-                    route.path = route.path.endsWith('/')
-                      ? route.path.substring(0, route.path.length - 1)
-                      : route.path
+                    pathCheck(route.path)
+
+                    route.component = path.join(
+                      path.basename(moduleDir),
+                      componentDir,
+                      fileName
+                    )
 
                     moduleRoutesPromises.push(
                       fastify.models.moduleRoute.upsert(route)
@@ -81,6 +88,14 @@ module.exports = (fastify, _, done) => {
                       (err, matches) => {
                         errHandler(err)
                         if (matches.length === 1) {
+                          route.component = path.join(
+                            path.basename(moduleDir),
+                            'client',
+                            'components',
+                            fileName
+                          )
+                          pathCheck(route.path)
+
                           moduleRoutesPromises.push(
                             fastify.models.moduleRoute.upsert(route)
                           )

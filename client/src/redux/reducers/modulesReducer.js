@@ -1,4 +1,4 @@
-import { UPDATE_MODULES, FETCH_MODULES } from '../actions/modulesActions'
+import { UPDATE_MODULES, FETCH_MODULES } from '../actions/moduleActions'
 
 export default (state = {}, { type, payload }) => {
   switch (type) {

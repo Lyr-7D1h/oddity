@@ -40,10 +40,10 @@ module.exports = async fastify => {
             properties: {
               name: { type: 'string' },
               path: { type: 'string' },
-              module: { type: 'string' },
+              moduleId: { type: 'integer' },
               default: { type: 'boolean' }
             },
-            required: ['name', 'path', 'module']
+            required: ['name', 'path', 'moduleId']
           }
         }
       },

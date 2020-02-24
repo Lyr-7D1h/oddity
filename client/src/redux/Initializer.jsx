@@ -8,6 +8,7 @@ import getUser from '../helpers/getUser'
 import configReducer from './reducers/configReducer'
 import userReducer from './reducers/userReducer'
 import pageReducer from './reducers/pageReducer'
+import moduleReducer from './reducers/modulesReducer'
 
 import { updateUser } from './actions/userActions'
 import { updateConfig, fetchConfig } from './actions/configActions'
@@ -17,7 +18,8 @@ const store = createStore(
   combineReducers({
     config: configReducer,
     user: userReducer,
-    page: pageReducer
+    page: pageReducer,
+    modules: moduleReducer
   }),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
@@ -36,6 +38,6 @@ if (user.username !== undefined) {
 store.dispatch(fetchConfig())
 store.dispatch(fetchModules())
 requester.get('init').then(init => {
-  store.dispatch(updateConfig(init.config))
   store.dispatch(updateModules(init.modules))
+  store.dispatch(updateConfig(init.config))
 })

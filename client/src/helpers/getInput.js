@@ -14,11 +14,15 @@ export default (dataType, placeHolder) => {
   } else if (Array.isArray(dataType)) {
     return (
       <Select style={{ width: 120 }}>
-        {dataType.map((dt, i) => (
-          <Select.Option key={i} value={dt}>
-            {dt}
-          </Select.Option>
-        ))}
+        {dataType.map((dt, i) => {
+          const value = dt.value ? dt.value : dt
+          const name = dt.name ? dt.name : dt
+          return (
+            <Select.Option key={i} value={value}>
+              {name}
+            </Select.Option>
+          )
+        })}
       </Select>
     )
   } else {

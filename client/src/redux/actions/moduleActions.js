@@ -1,11 +1,11 @@
-export const UPDATE_MODULES = 'config:updateModules'
-export const FETCH_MODULES = 'config:fetchModules'
+export const UPDATE_MODULES = 'modules:updateModules'
+export const FETCH_MODULES = 'modules:fetchModules'
 
 export const updateModules = modules => {
   return {
     type: UPDATE_MODULES,
     payload: {
-      config: modules
+      modules: modules
     }
   }
 }
