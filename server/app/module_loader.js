@@ -5,6 +5,7 @@ const glob = require('glob')
 const fastifyAutoload = require('fastify-autoload')
 
 const MODULES_DIR = path.join(__dirname, '..', '..', 'modules')
+let moduleComponentsData = `export default {\n`
 
 /**
  * Load all files and check if they are okay
@@ -19,149 +20,109 @@ module.exports = (fastify, _, done) => {
     }
   }
 
-  /**
-   * update or create module in database
-   * @param {string} path
-   */
-  const loadConfig = configPath => {
-    const config = require(configPath)
-
-    const { name, version } = config
-
-    fastify.log.debug('Loading config ', {
-      name,
-      version
-    })
-
-    // make sure path is in the format of /this/is/an/example/path
-    const pathCheck = path => {
-      path = path.startsWith('/') ? path : '/' + path
-      path = path.endsWith('/') ? path.substring(0, path.length - 1) : path
-      return path
-    }
-
+  const loadClient = (config, modulePath) => {
     return new Promise((resolve, reject) => {
-      fastify.models.module
-        .upsert({ name, version }, { returning: true })
-        .then(([upsertedModule]) => {
-          if (config.routes) {
-            const moduleRoutesPromises = []
-            config.routes.forEach(route => {
-              fastify.log.debug(
-                `Found Route "${route.path}" for Component "${route.component}"`
-              )
-
-              const moduleDir = path.dirname(configPath)
-              const componentDir = path.dirname(route.component)
-
-              const fileName = path.basename(route.component)
-              const directory = path.join(moduleDir, componentDir)
-
-              // TEST: check if component file exists otherwise give error
-              glob(
-                `?(${fileName}.js|${fileName}.jsx|${fileName})`,
-                { cwd: directory },
-                (err, matches) => {
-                  errHandler(err)
-
-                  if (matches.length === 1) {
-                    route.moduleId = upsertedModule.id
-
-                    pathCheck(route.path)
-
-                    route.component = path.join(
-                      path.basename(moduleDir),
-                      componentDir,
-                      fileName
-                    )
-
-                    moduleRoutesPromises.push(
-                      fastify.models.moduleRoute.upsert(route)
-                    )
-                  } else {
-                    // check in default /client/components folder in not found in specified componentsPath
-                    glob(
-                      `?(${fileName}.js|${fileName}.jsx|${fileName})`,
-                      {
-                        cwd: path.join(moduleDir, 'client', 'components')
-                      },
-                      (err, matches) => {
-                        errHandler(err)
-                        if (matches.length === 1) {
-                          route.component = path.join(
-                            path.basename(moduleDir),
-                            'client',
-                            'components',
-                            fileName
-                          )
-                          pathCheck(route.path)
-
-                          moduleRoutesPromises.push(
-                            fastify.models.moduleRoute.upsert(route)
-                          )
-                        } else {
-                          errHandler(
-                            new Error(
-                              `Client Routing: "${path.join(
-                                directory,
-                                fileName
-                              )}" not found`
-                            )
-                          )
-                        }
-                      }
-                    )
-                  }
-                }
-              )
-            })
-            resolve(moduleRoutesPromises)
-          }
-        })
-        .catch(err => reject(err))
-    })
-  }
-
-  const loadClient = clientPath => {
-    return new Promise((resolve, reject) => {
-      fs.readdir(clientPath, (err, clientFiles) => {
+      // check if components folder exists
+      fs.access(path.join(modulePath, 'client', 'components'), err => {
         if (err) reject(err)
 
-        const loadComponents = componentsPath => {
+        /**
+         *  Check if /client/component/index.js or /client/component/index.jsx exists and then adds it
+         *
+         *  */
+        const addBaseComponent = () => {
           return new Promise((resolve, reject) => {
-            // TEST: check if index.jsx exists
-            fs.access(path.join(componentsPath, 'index.jsx'), err => {
-              if (err) {
-                console.error(
-                  `${path.join(componentsPath, 'index.jsx')} not found`
-                )
-                process.exit(1)
-                reject(err)
+            const componentPath = path.join(modulePath, 'client', 'components')
+            glob(
+              '?(index.js|index.jsx)',
+              { cwd: componentPath },
+              (err, matches) => {
+                if (err) reject(err)
+
+                console.log(componentPath)
+
+                if (matches.length === 1) {
+                  moduleComponentsData += `\t\t{\n\t\t\tpath:"/",\n\t\t\tcomponent:"/${path.join(
+                    'client',
+                    'components',
+                    matches[0]
+                  )}"\n\t\t},\n`
+                  resolve(true)
+                } else {
+                  resolve(false)
+                }
               }
-              resolve()
-            })
+            )
           })
         }
 
-        const clientModuleLoaders = []
-        clientFiles.forEach(clientFile => {
-          switch (clientFile) {
-            case 'components':
-              clientModuleLoaders.push(
-                loadComponents(path.join(clientPath, clientFile))
-              )
-              break
-            case 'redux':
-              break
-          }
-        })
+        if (config.routes) {
+          let hasBasePath = false
 
-        resolve(clientModuleLoaders)
+          const routesPromises = []
+          // Read defined routes if no "/" or "" defined use /client/components
+          config.routes.forEach(route => {
+            if (route.path === '' || route.path === '/') {
+              hasBasePath = true
+            }
+
+            const filename = path.basename(route.component)
+            const componentPath = path.join(
+              modulePath,
+              path.dirname(route.component)
+            )
+
+            routesPromises.push(
+              new Promise((resolve, reject) => {
+                // check if component exists
+                glob(
+                  `?(${filename}.js|${filename}.jsx)`,
+                  { cwd: componentPath },
+                  (err, matches) => {
+                    if (err) reject(err)
+
+                    if (matches.length === 1) {
+                      moduleComponentsData += `\t\t{\n\t\t\tpath:"${route.path}",\n\t\t\tcomponent:"${route.component}"\n\t\t},\n`
+
+                      resolve()
+                    } else {
+                      reject(new Error(`Component ${componentPath} not found`))
+                    }
+                  }
+                )
+              })
+            )
+          })
+          Promise.all(routesPromises).then(() => {
+            if (!hasBasePath) {
+              addBaseComponent()
+                .then(() => {
+                  resolve()
+                })
+                .catch(err => reject(err))
+            } else {
+              resolve()
+            }
+          })
+        } else {
+          // Read /client/components
+          addBaseComponent()
+            .then(created => {
+              if (created) {
+                resolve()
+              } else {
+                fastify.log.debug(
+                  `No clientside routes found for ${config.name}`
+                )
+              }
+            })
+            .catch(err => reject(err))
+        }
       })
     })
   }
 
-  const loadServer = serverPath => {
+  const loadServer = (_, serverPath) => {
     return new Promise((resolve, reject) => {
       const loadRoutes = routePath => {
         fastify.log.debug(`Loading Routes ${routePath}`)
@@ -204,47 +165,47 @@ module.exports = (fastify, _, done) => {
 
   const loadModule = modulePath => {
     return new Promise((resolve, reject) => {
-      glob('?(config.js|config.json)', {cwd: modulePath}, (err, matches) => {
+      glob('?(config.js|config.json)', { cwd: modulePath }, (err, matches) => {
         errHandler(err)
 
         let config = matches[0]
         if (config && matches.length === 1) {
           config = require(path.join(modulePath, config))
-          const {name, version} = config 
+          const { name, version } = config
           fastify.log.info(`Loading module ${name} (${version})`)
-          
+          moduleComponentsData += `\t"${name}":[\n`
+
+          // Load Module Directory
+          fs.readdir(modulePath, (err, moduleFiles) => {
+            if (err) reject(err)
+
+            const srcLoaders = []
+            moduleFiles.forEach(moduleFile => {
+              const moduleSrcPath = path.join(modulePath, moduleFile)
+              switch (moduleFile.toLowerCase()) {
+                case 'config.js':
+                  break
+                case 'config.json':
+                  break
+                case 'client':
+                  srcLoaders.push(loadClient(config, modulePath))
+                  break
+                case 'server':
+                  srcLoaders.push(loadServer(config, moduleSrcPath))
+                  break
+                default:
+                  console.error(`COULD NOT LOAD FILE ${moduleFile}`)
+                  break
+              }
+            })
+            Promise.all(srcLoaders).then(() => {
+              moduleComponentsData += '\t]\n'
+              resolve()
+            })
+          })
         } else {
-          fastify.log.error(`Config File not found in ${modulepath}`)
+          reject(new Error(`Config File not found in ${modulePath}`))
         }
-      })
-
-      fs.readdir(modulePath, (err, moduleFiles) => {
-        if (err) reject(err)
-
-        const srcLoaders = []
-        moduleFiles.forEach(moduleFile => {
-          const moduleSrcPath = path.join(modulePath, moduleFile)
-          switch (moduleFile.toLowerCase()) {
-            case 'config.js':
-              srcLoaders.push(loadConfig(moduleSrcPath))
-              break
-            case 'config.json':
-              srcLoaders.push(loadConfig(moduleSrcPath))
-              break
-            case 'client':
-              srcLoaders.push(loadClient(moduleSrcPath))
-              break
-            case 'server':
-              srcLoaders.push(loadServer(moduleSrcPath))
-              break
-            default:
-              console.error(`COULD NOT LOAD FILE ${moduleFile}`)
-              break
-          }
-        })
-        Promise.all(srcLoaders).then(() => {
-          resolve()
-        })
       })
     })
   }
@@ -265,9 +226,23 @@ module.exports = (fastify, _, done) => {
 
     Promise.all(moduleLoaders)
       .then(() => {
-        fastify.log.debug('==== MODULE LOADER FINISH ====')
-        fastify.log.info('Modules loaded')
-        done()
+        moduleComponentsData += '}'
+        fs.writeFile(
+          path.join(
+            __dirname,
+            '..',
+            '..',
+            'client',
+            'src',
+            'moduleComponents.js'
+          ),
+          moduleComponentsData,
+          () => {
+            fastify.log.debug('==== MODULE LOADER FINISH ====')
+            fastify.log.info('Modules loaded')
+            done()
+          }
+        )
       })
       .catch(err => {
         errHandler(err)
