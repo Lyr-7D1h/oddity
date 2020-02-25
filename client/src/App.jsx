@@ -39,6 +39,9 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
 
         const module = modules.find(module => module.id === route.moduleId)
 
+        if (route.default) noHomeSet = false
+        console.log(module)
+
         if (module) {
           const routes = moduleComponents[module.name]
           if (routes) {
@@ -51,9 +54,7 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
                   render={props => {
                     dispatch(setSelected(props.location.pathname))
 
-                    const comp = moduleRoute.component.default
-                    console.log(React.createElement(comp, {}))
-                    return React.createElement(comp, {})
+                    return React.createElement(moduleRoute.component, props)
                   }}
                 />
               )
@@ -133,8 +134,6 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
         //     break
         //   default:
         // }
-
-        // if (route.default) noHomeSet = false
 
         // moduleRoutes.push(
         //   <Route

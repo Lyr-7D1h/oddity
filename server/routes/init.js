@@ -16,13 +16,7 @@ module.exports = async fastify => {
 
     initPromises.push(
       fastify.models.module.findAll({
-        attributes: { exclude: ['createdAt', 'updatedAt'] },
-        include: [
-          {
-            model: fastify.models.moduleRoute,
-            attributes: { exclude: ['createdAt', 'updatedAt'] }
-          }
-        ]
+        attributes: { exclude: ['createdAt', 'updatedAt'] }
       })
     )
 

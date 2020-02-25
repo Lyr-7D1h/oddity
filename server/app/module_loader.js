@@ -41,11 +41,13 @@ module.exports = (fastify, _, done) => {
                 if (err) reject(err)
 
                 if (matches.length === 1) {
-                  moduleComponentsData += `\t\t{\n\t\t\tpath:"/",\n\t\t\tcomponent:"/${path.join(
+                  moduleComponentsData += `\t\t{\n\t\t\tpath: "/",\n\t\t\tcomponent: require("${path.join(
+                    '../../modules',
+                    path.basename(modulePath),
                     'client',
                     'components',
                     matches[0]
-                  )}"\n\t\t},\n`
+                  )}").default\n\t\t},\n`
                   resolve(true)
                 } else {
                   resolve(false)
@@ -81,7 +83,13 @@ module.exports = (fastify, _, done) => {
                     if (err) reject(err)
 
                     if (matches.length === 1) {
-                      moduleComponentsData += `\t\t{\n\t\t\tpath:"${route.path}",\n\t\t\tcomponent:"${route.component}"\n\t\t},\n`
+                      moduleComponentsData += `\t\t{\n\t\t\tpath: "${
+                        route.path
+                      }",\n\t\t\tcomponent: require("${path.join(
+                        '../../modules',
+                        path.basename(modulePath),
+                        route.component
+                      )}").default\n\t\t},\n`
 
                       resolve()
                     } else {
