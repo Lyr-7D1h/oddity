@@ -20,6 +20,7 @@ module.exports = (fastify, _, done) => {
     }
   }
 
+  // Only loads components
   const loadClient = (config, modulePath) => {
     return new Promise((resolve, reject) => {
       // check if components folder exists
@@ -38,8 +39,6 @@ module.exports = (fastify, _, done) => {
               { cwd: componentPath },
               (err, matches) => {
                 if (err) reject(err)
-
-                console.log(componentPath)
 
                 if (matches.length === 1) {
                   moduleComponentsData += `\t\t{\n\t\t\tpath:"/",\n\t\t\tcomponent:"/${path.join(
