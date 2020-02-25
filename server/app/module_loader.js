@@ -203,8 +203,21 @@ module.exports = (fastify, _, done) => {
   }
 
   const loadModule = modulePath => {
-    fastify.log.info(`Loading module ${path.basename(modulePath)}`)
     return new Promise((resolve, reject) => {
+      glob('?(config.js|config.json)', {cwd: modulePath}, (err, matches) => {
+        errHandler(err)
+
+        let config = matches[0]
+        if (config && matches.length === 1) {
+          config = require(path.join(modulePath, config))
+          const {name, version} = config 
+          fastify.log.info(`Loading module ${name} (${version})`)
+          
+        } else {
+          fastify.log.error(`Config File not found in ${modulepath}`)
+        }
+      })
+
       fs.readdir(modulePath, (err, moduleFiles) => {
         if (err) reject(err)
 
