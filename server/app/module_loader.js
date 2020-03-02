@@ -69,7 +69,7 @@ module.exports = (fastify, _, done) => {
               hasBasePath = true
             }
 
-            const filename = path.basename(route.component)
+            const filename = path.basename(route.component).split('.')[0]
             const componentPath = path.join(
               modulePath,
               path.dirname(route.component)

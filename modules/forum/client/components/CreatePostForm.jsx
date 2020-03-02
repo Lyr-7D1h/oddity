@@ -1,21 +1,21 @@
-import React, { useState } from 'react'
-import requester from '../../helpers/requester'
-import { Form, Card, Input, Button } from 'antd'
-import ReactQuill from 'react-quill'
-import notificationHandler from '../../helpers/notificationHandler'
-import { connect } from 'react-redux'
-import { Redirect } from 'react-router-dom'
+import React, { useState } from "react";
+import requester from "../../../../client/src/helpers/requester";
+import { Form, Card, Input, Button } from "antd";
+import ReactQuill from "react-quill";
+import notificationHandler from "../../../../client/src/helpers/notificationHandler";
+import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
-export default Form.create({ name: 'create_post_form' })(
+export default Form.create({ name: "create_post_form" })(
   connect(state => ({ userId: state.user.id }))(
     ({ threadId, userId, form, currentPath }) => {
-      const loggedIn = !isNaN(userId)
+      const loggedIn = !isNaN(userId);
 
-      const [postHtml, setPostHtml] = useState([])
-      const { getFieldDecorator, validateFields } = form
+      const [postHtml, setPostHtml] = useState([]);
+      const { getFieldDecorator, validateFields } = form;
 
       const handleSubmit = e => {
-        e.preventDefault()
+        e.preventDefault();
         validateFields((err, values) => {
           if (!err) {
             values = {
@@ -23,26 +23,26 @@ export default Form.create({ name: 'create_post_form' })(
               content: postHtml,
               threadId: threadId,
               authorId: userId
-            }
-            console.log(values)
+            };
+            console.log(values);
 
             requester
               .post(`forum/posts`, values)
               .then(() => {
-                return <Redirect to={currentPath + `../${values.title}`} />
+                return <Redirect to={currentPath + `../${values.title}`} />;
               })
               .catch(err => {
-                notificationHandler.error('Could not send post', err.message)
-              })
+                notificationHandler.error("Could not send post", err.message);
+              });
           } else {
-            notificationHandler.error('Invalid Input')
+            notificationHandler.error("Invalid Input");
           }
-        })
-      }
+        });
+      };
 
       const handlePostChange = (html, change, source, editor) => {
-        setPostHtml(editor.getContents())
-      }
+        setPostHtml(editor.getContents());
+      };
 
       const formItemLayout = {
         labelCol: {
@@ -53,7 +53,7 @@ export default Form.create({ name: 'create_post_form' })(
           xs: { span: 24 },
           sm: { span: 16 }
         }
-      }
+      };
       const tailFormItemLayout = {
         wrapperCol: {
           xs: {
@@ -65,26 +65,26 @@ export default Form.create({ name: 'create_post_form' })(
             offset: 0
           }
         }
-      }
+      };
 
       if (loggedIn) {
         return (
-          <Card title={'Create new post'} onSubmit={handleSubmit}>
+          <Card title={"Create new post"} onSubmit={handleSubmit}>
             <Form {...formItemLayout}>
               <Form.Item label="Title">
-                {getFieldDecorator('title', {
+                {getFieldDecorator("title", {
                   rules: [{ required: true }]
                 })(<Input />)}
               </Form.Item>
               <ReactQuill
                 placeholder="Write something..."
                 onChange={handlePostChange}
-                style={{ marginBottom: '24px' }}
+                style={{ marginBottom: "24px" }}
               />
               <Form.Item
                 {...tailFormItemLayout}
                 className="ant-col-lg-5"
-                style={{ margin: 0, float: 'right' }}
+                style={{ margin: 0, float: "right" }}
               >
                 <Button
                   type="primary"
@@ -98,17 +98,19 @@ export default Form.create({ name: 'create_post_form' })(
               <Form.Item
                 {...tailFormItemLayout}
                 className="ant-col-lg-5"
-                style={{ margin: 0, float: 'right' }}
+                style={{ margin: 0, float: "right" }}
               >
                 <Button block>Save as draft</Button>
               </Form.Item>
             </Form>
           </Card>
-        )
+        );
       } else {
-        notificationHandler.info('You need to be logged in to write a new post')
-        return <Redirect to="/login" />
+        notificationHandler.info(
+          "You need to be logged in to write a new post"
+        );
+        return <Redirect to="/login" />;
       }
     }
   )
-)
+);

@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react'
-import { Card, Button, Col, Row, Avatar, Typography, Empty } from 'antd'
-import { Link } from 'react-router-dom'
-import requester from '../../helpers/requester'
-import { connect } from 'react-redux'
+import React, { useState, useEffect } from "react";
+import { Card, Button, Col, Row, Avatar, Typography, Empty } from "antd";
+import { Link } from "react-router-dom";
+import requester from "../../../../client/src/helpers/requester";
+import { connect } from "react-redux";
 
 export default connect(state => ({ selected: state.page.selected }))(
   ({ selected, threadId }) => {
-    const [thread, setThread] = useState(null)
+    const [thread, setThread] = useState(null);
 
     useEffect(() => {
       requester.get(`forum/threads/${threadId}`).then(thread => {
-        setThread(thread)
-      })
-    }, [threadId])
+        setThread(thread);
+      });
+    }, [threadId]);
 
     if (!thread) {
-      return <Empty />
+      return <Empty />;
     }
 
-    const basePath = '/' + selected.join('/')
+    const basePath = "/" + selected.join("/");
 
     return (
       <>
@@ -42,9 +42,9 @@ export default connect(state => ({ selected: state.page.selected }))(
               <Col
                 span={2}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
                 }}
               >
                 <Avatar shape="circle" src={post.author.avatar} size={50} />
@@ -62,7 +62,7 @@ export default connect(state => ({ selected: state.page.selected }))(
                     {post && (
                       <Col span={4}>
                         <div>
-                          <Link to={'/u/' + post.author.identifier}>
+                          <Link to={"/u/" + post.author.identifier}>
                             {post.author.username} ({post.author.role.name})
                           </Link>
                           , {new Date(post.updatedAt).toLocaleDateString()}
@@ -76,6 +76,6 @@ export default connect(state => ({ selected: state.page.selected }))(
           ))}
         </Card>
       </>
-    )
+    );
   }
-)
+);

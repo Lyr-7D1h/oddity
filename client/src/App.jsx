@@ -45,6 +45,7 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
           const routes = moduleComponents[mod.name]
           if (routes) {
             routes.forEach(moduleRoute => {
+              console.log(path.join(basePath + moduleRoute.path))
               moduleRoutes.push(
                 <Route
                   path={path.join(basePath + moduleRoute.path)}

@@ -1,0 +1,22 @@
+{
+  "name": "Forum",
+  "version": "0.0.1",
+  "routes": [
+    {
+      "path": "/",
+      "component": "/client/components/index"
+    },
+    {
+      "path": "/:category/",
+      "component": "/client/components/index"
+    },
+    {
+      "path": "/:category/:thread/",
+      "component": "/client/components/index"
+    },
+    {
+      "path": "/:category/:thread/:post/",
+      "component": "/client/components/index"
+    }
+  ]
+}

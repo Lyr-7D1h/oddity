@@ -2,6 +2,7 @@ const {
   babelInclude,
   override,
   removeModuleScopePlugin,
+  addWebpackAlias,
   addLessLoader
 } = require('customize-cra')
 
@@ -36,5 +37,12 @@ module.exports = override(
 
   // Remove import scope & add modules to babel-loader scope
   removeModuleScopePlugin(),
-  babelInclude([path.resolve('src'), path.resolve('../modules')])
+  babelInclude([path.resolve('src'), path.resolve('../modules')]),
+
+  // Add alias for components to easily fetch it
+  addWebpackAlias({
+    ['@components']: path.resolve(__dirname, 'src', 'components'),
+    ['@helpers']: path.resolve(__dirname, 'src', 'helpers'),
+    ['@actions']: path.resolve(__dirname, 'src', 'redux', 'actions')
+  })
 )
