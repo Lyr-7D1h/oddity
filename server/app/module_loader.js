@@ -5,7 +5,7 @@ const glob = require('glob')
 const fastifyAutoload = require('fastify-autoload')
 
 const MODULES_DIR = path.join(__dirname, '..', '..', 'modules')
-let moduleComponentsData = `export default {\n`
+const moduleComponentsData = []
 
 /**
  * Load all files and check if they are okay
@@ -41,14 +41,15 @@ module.exports = (fastify, _, done) => {
                 if (err) reject(err)
 
                 if (matches.length === 1) {
-                  moduleComponentsData += `\t\t{\n\t\t\tpath: "/",\n\t\t\tcomponent: require("${path.join(
-                    '../../modules',
-                    path.basename(modulePath),
-                    'client',
-                    'components',
-                    matches[0]
-                  )}").default\n\t\t},\n`
-                  resolve(true)
+                  resolve(
+                    `\t\t{\n\t\t\tpath: "/",\n\t\t\tcomponent: require("${path.join(
+                      '../../modules',
+                      path.basename(modulePath),
+                      'client',
+                      'components',
+                      matches[0]
+                    )}").default\n\t\t},\n`
+                  )
                 } else {
                   resolve(false)
                 }
@@ -83,15 +84,15 @@ module.exports = (fastify, _, done) => {
                     if (err) reject(err)
 
                     if (matches.length === 1) {
-                      moduleComponentsData += `\t\t{\n\t\t\tpath: "${
-                        route.path
-                      }",\n\t\t\tcomponent: require("${path.join(
-                        '../../modules',
-                        path.basename(modulePath),
-                        route.component
-                      )}").default\n\t\t},\n`
-
-                      resolve()
+                      resolve(
+                        `\t\t{\n\t\t\tpath: "${
+                          route.path
+                        }",\n\t\t\tcomponent: require("${path.join(
+                          '../../modules',
+                          path.basename(modulePath),
+                          route.component
+                        )}").default\n\t\t}\n`
+                      )
                     } else {
                       reject(new Error(`Component ${componentPath} not found`))
                     }
@@ -100,11 +101,11 @@ module.exports = (fastify, _, done) => {
               })
             )
           })
-          Promise.all(routesPromises).then(() => {
+          Promise.all(routesPromises).then(modules => {
             if (!hasBasePath) {
               addBaseComponent()
                 .then(() => {
-                  resolve()
+                  resolve(modules)
                 })
                 .catch(err => reject(err))
             } else {
@@ -180,7 +181,6 @@ module.exports = (fastify, _, done) => {
           config = require(path.join(modulePath, config))
           const { name, version } = config
           fastify.log.info(`Loading module ${name} (${version})`)
-          moduleComponentsData += `\t"${name}":[\n`
 
           // Load Module Directory
           fs.readdir(modulePath, (err, moduleFiles) => {
@@ -195,7 +195,19 @@ module.exports = (fastify, _, done) => {
                 case 'config.json':
                   break
                 case 'client':
-                  srcLoaders.push(loadClient(config, modulePath))
+                  srcLoaders.push(
+                    new Promise((resolve, reject) => {
+                      loadClient(config, modulePath)
+                        .then(modules => {
+                          console.log(modules)
+                          moduleComponentsData.push(
+                            `\t"${name}": [\n${modules.join(',')}\t]\n`
+                          )
+                          resolve(true)
+                        })
+                        .catch(err => reject(err))
+                    })
+                  )
                   break
                 case 'server':
                   srcLoaders.push(loadServer(config, moduleSrcPath))
@@ -205,10 +217,11 @@ module.exports = (fastify, _, done) => {
                   break
               }
             })
-            Promise.all(srcLoaders).then(() => {
-              moduleComponentsData += '\t]\n'
-              resolve()
-            })
+            Promise.all(srcLoaders)
+              .then(modules => {
+                resolve(true)
+              })
+              .catch(err => reject(err))
           })
         } else {
           reject(new Error(`Config File not found in ${modulePath}`))
@@ -233,17 +246,17 @@ module.exports = (fastify, _, done) => {
 
     Promise.all(moduleLoaders)
       .then(() => {
-        moduleComponentsData += '}'
+        const componentExportFile = path.join(
+          __dirname,
+          '..',
+          '..',
+          'client',
+          'src',
+          'moduleComponents.js'
+        )
         fs.writeFile(
-          path.join(
-            __dirname,
-            '..',
-            '..',
-            'client',
-            'src',
-            'moduleComponents.js'
-          ),
-          moduleComponentsData,
+          componentExportFile,
+          `export default {\n${moduleComponentsData.join(',')}\n}`,
           () => {
             fastify.log.debug('==== MODULE LOADER FINISH ====')
             fastify.log.info('Modules loaded')
