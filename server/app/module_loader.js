@@ -41,7 +41,7 @@ module.exports = (fastify, _, done) => {
                 if (err) reject(err)
 
                 if (matches.length === 1) {
-                  resolve(
+                  resolve([
                     true,
                     `\t\t{\n\t\t\tpath: "/",\n\t\t\tcomponent: require("${path.join(
                       '../../modules',
@@ -50,7 +50,7 @@ module.exports = (fastify, _, done) => {
                       'components',
                       matches[0]
                     )}").default\n\t\t},\n`
-                  )
+                  ])
                 } else {
                   resolve(false)
                 }
@@ -102,22 +102,24 @@ module.exports = (fastify, _, done) => {
               })
             )
           })
-          Promise.all(routesPromises).then(modules => {
-            if (!hasBasePath) {
-              addBaseComponent()
-                .then((_, indexModule) => {
-                  modules.push(indexModule)
-                  resolve(modules)
-                })
-                .catch(err => reject(err))
-            } else {
-              resolve(modules)
-            }
-          })
+          Promise.all(routesPromises)
+            .then(modules => {
+              if (!hasBasePath) {
+                addBaseComponent()
+                  .then(([_, indexModule]) => {
+                    modules.push(indexModule)
+                    resolve(modules)
+                  })
+                  .catch(err => reject(err))
+              } else {
+                resolve(modules)
+              }
+            })
+            .catch(err => reject(err))
         } else {
           // Read /client/components
           addBaseComponent()
-            .then((created, indexModule) => {
+            .then(([created, indexModule]) => {
               if (created) {
                 resolve([indexModule])
               } else {
@@ -188,7 +190,12 @@ module.exports = (fastify, _, done) => {
           fs.readdir(modulePath, (err, moduleFiles) => {
             if (err) reject(err)
 
-            const srcLoaders = []
+            const srcLoaders = [
+              fastify.models.module.upsert({
+                name,
+                version
+              })
+            ]
             moduleFiles.forEach(moduleFile => {
               const moduleSrcPath = path.join(modulePath, moduleFile)
               switch (moduleFile.toLowerCase()) {
@@ -219,7 +226,7 @@ module.exports = (fastify, _, done) => {
               }
             })
             Promise.all(srcLoaders)
-              .then(modules => {
+              .then(() => {
                 resolve(true)
               })
               .catch(err => reject(err))

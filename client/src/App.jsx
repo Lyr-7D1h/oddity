@@ -7,16 +7,12 @@ import { setSelected } from './redux/actions/pageActions'
 
 import notificationHandler from './helpers/notificationHandler'
 
-// import HomePage from './components/pages/HomePage'
 import LoginPage from './components/pages/LoginPage'
 import AdminPage from './components/pages/AdminPage'
 import ConfigLoader from './components/containers/ConfigLoader'
 import RegisterPage from './components/pages/RegisterPage'
 import TermsOfServicePage from './components/pages/TermsOfServicePage'
 import NotFoundPage from './components/pages/NotFoundPage'
-// import ForumPage from './components/pages/ForumPage'
-// import ServersPage from './components/pages/ServersPage'
-// import MembersPage from './components/pages/MembersPage'
 import NoHomePage from './components/pages/NoHomePage'
 import AccountPage from './components/pages/AccountPage'
 import FinishAccountPage from './components/pages/FinishAccountPage'
@@ -45,7 +41,6 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
           const routes = moduleComponents[mod.name]
           if (routes) {
             routes.forEach(moduleRoute => {
-              console.log(path.join(basePath + moduleRoute.path))
               moduleRoutes.push(
                 <Route
                   path={path.join(basePath + moduleRoute.path)}
