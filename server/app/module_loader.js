@@ -42,6 +42,7 @@ module.exports = (fastify, _, done) => {
 
                 if (matches.length === 1) {
                   resolve(
+                    true,
                     `\t\t{\n\t\t\tpath: "/",\n\t\t\tcomponent: require("${path.join(
                       '../../modules',
                       path.basename(modulePath),
@@ -104,20 +105,21 @@ module.exports = (fastify, _, done) => {
           Promise.all(routesPromises).then(modules => {
             if (!hasBasePath) {
               addBaseComponent()
-                .then(() => {
+                .then((_, indexModule) => {
+                  modules.push(indexModule)
                   resolve(modules)
                 })
                 .catch(err => reject(err))
             } else {
-              resolve()
+              resolve(modules)
             }
           })
         } else {
           // Read /client/components
           addBaseComponent()
-            .then(created => {
+            .then((created, indexModule) => {
               if (created) {
-                resolve()
+                resolve([indexModule])
               } else {
                 fastify.log.debug(
                   `No clientside routes found for ${config.name}`
@@ -199,7 +201,6 @@ module.exports = (fastify, _, done) => {
                     new Promise((resolve, reject) => {
                       loadClient(config, modulePath)
                         .then(modules => {
-                          console.log(modules)
                           moduleComponentsData.push(
                             `\t"${name}": [\n${modules.join(',')}\t]\n`
                           )

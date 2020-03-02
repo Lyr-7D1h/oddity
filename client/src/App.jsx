@@ -37,13 +37,12 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
 
         const basePath = route.default ? '/' : route.path
 
-        const module = modules.find(module => module.id === route.moduleId)
+        const mod = modules.find(mod => mod.id === route.moduleId)
 
         if (route.default) noHomeSet = false
-        console.log(module)
 
-        if (module) {
-          const routes = moduleComponents[module.name]
+        if (mod) {
+          const routes = moduleComponents[mod.name]
           if (routes) {
             routes.forEach(moduleRoute => {
               moduleRoutes.push(
@@ -60,92 +59,13 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
               )
             })
           } else {
-            console.error(`No Routes for Module: ${module} found`)
-            notificationHandler.error(`No Routes for Module: ${module} found`)
+            console.error(`No Routes for Module: ${mod} found`)
+            notificationHandler.error(`No Routes for Module: ${mod} found`)
           }
         } else {
-          console.error(`Module ${module} is not defined`, route)
+          console.error(`Module ${mod} is not defined`, route)
           notificationHandler.error('Unknown module is used')
         }
-
-        // switch (route.module) {
-        //   case 'example':
-        //     component = ModulePage
-        //     break
-        //   case 'servers':
-        //     component = ServersPage
-        //     break
-        //   case 'forum':
-        //     moduleRoutes = moduleRoutes.concat([
-        //       <Route
-        //         path={path}
-        //         key={i}
-        //         exact
-        //         render={({ location }) => {
-        //           dispatch(setSelected(location.pathname))
-        //           return <ForumPage />
-        //         }}
-        //       ></Route>,
-        //       <Route
-        //         path={path + '/:category'}
-        //         key={'category' + i}
-        //         exact
-        //         render={({ location, match }) => {
-        //           dispatch(setSelected(location.pathname))
-        //           return <ForumPage category={match.params.category} />
-        //         }}
-        //       ></Route>,
-        //       <Route
-        //         path={path + '/:category/:thread'}
-        //         key={'thread' + i}
-        //         exact
-        //         render={({ location, match }) => {
-        //           dispatch(setSelected(location.pathname))
-        //           return (
-        //             <ForumPage
-        //               category={match.params.category}
-        //               thread={match.params.thread}
-        //             />
-        //           )
-        //         }}
-        //       ></Route>,
-        //       <Route
-        //         path={path + '/:category/:thread/:post'}
-        //         key={'post' + i}
-        //         exact
-        //         render={({ location, match }) => {
-        //           dispatch(setSelected(location.pathname))
-        //           return (
-        //             <ForumPage
-        //               category={match.params.category}
-        //               thread={match.params.thread}
-        //               post={match.params.post}
-        //             />
-        //           )
-        //         }}
-        //       ></Route>
-        //     ])
-        //     continue
-        //   case 'members':
-        //     component = MembersPage
-        //     break
-        //   case 'home':
-        //     component = HomePage
-        //     break
-        //   default:
-        // }
-
-        // moduleRoutes.push(
-        //   <Route
-        //     key={i}
-        //     exact
-        //     path={path}
-        //     render={({ location }) => {
-        //       dispatch(setSelected(location.pathname))
-        //       return React.createElement(component, {})
-        //     }}
-        //   ></Route>
-        // )
       }
       return moduleRoutes
     }

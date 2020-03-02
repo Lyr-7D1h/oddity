@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "routes": [
     {
+      "path": "/",
+      "component": "/client/components/index"
+    },
+    {
       "path": "/sub-example",
       "component": "/client/components/Example"
     },
