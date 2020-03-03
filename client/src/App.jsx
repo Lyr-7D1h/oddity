@@ -43,7 +43,7 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
             routes.forEach(moduleRoute => {
               moduleRoutes.push(
                 <Route
-                  path={path.join(basePath + moduleRoute.path)}
+                  path={'/' + path.join(basePath, moduleRoute.path)}
                   key={i}
                   exact
                   render={props => {

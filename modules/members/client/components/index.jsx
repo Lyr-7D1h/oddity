@@ -1,8 +1,8 @@
-import React from 'react'
-import Page from '../containers/Page'
-import MembersTable from '../MembersTable'
-import Centered from '../containers/Centered'
-import { Card } from 'antd'
+import React from "react";
+import Page from "@components/containers/Page";
+import MembersTable from "./MembersTable";
+import Centered from "@components/containers/Centered";
+import { Card } from "antd";
 
 export default () => {
   return (
@@ -13,5 +13,5 @@ export default () => {
         </Card>
       </Centered>
     </Page>
-  )
-}
+  );
+};

@@ -185,7 +185,7 @@ module.exports = (fastify, _, done) => {
       }
 
       const loadPlugins = pluginPath => {
-        fastify.log.debug(`Loading Plugin ${pluginPath}`)
+        fastify.log.debug(`Loading Plugins ${pluginPath}`)
         fastify.register(fastifyAutoload, {
           dir: pluginPath,
           options: Object.assign({})
