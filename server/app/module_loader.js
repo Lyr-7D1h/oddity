@@ -6,6 +6,7 @@ const fastifyAutoload = require('fastify-autoload')
 
 const MODULES_DIR = path.join(__dirname, '..', '..', 'modules')
 const moduleComponentsData = []
+const modulesLoaded = []
 
 /**
  * Load all files and check if they are okay
@@ -18,6 +19,21 @@ module.exports = (fastify, _, done) => {
       fastify.log.error(err)
       process.exit(1)
     }
+  }
+
+  const removeUnusedModules = () => {
+    return new Promise((resolve, reject) => {
+      fastify.db
+        .query('DELETE FROM modules WHERE NOT name IN (?)', {
+          replacements: [modulesLoaded]
+        })
+        .then(res => {
+          if (res[1].rowCount)
+            fastify.log.debug(`Remove ${res[1].rowCount} old modules`)
+          resolve()
+        })
+        .catch(err => reject(err))
+    })
   }
 
   // Only loads components
@@ -227,6 +243,7 @@ module.exports = (fastify, _, done) => {
             })
             Promise.all(srcLoaders)
               .then(() => {
+                modulesLoaded.push(name)
                 resolve(true)
               })
               .catch(err => reject(err))
@@ -254,23 +271,28 @@ module.exports = (fastify, _, done) => {
 
     Promise.all(moduleLoaders)
       .then(() => {
-        const componentExportFile = path.join(
-          __dirname,
-          '..',
-          '..',
-          'client',
-          'src',
-          'moduleComponents.js'
-        )
-        fs.writeFile(
-          componentExportFile,
-          `export default {\n${moduleComponentsData.join(',')}\n}`,
-          () => {
-            fastify.log.debug('==== MODULE LOADER FINISH ====')
-            fastify.log.info('Modules loaded')
-            done()
-          }
-        )
+        removeUnusedModules()
+          .then(() => {
+            const componentExportFile = path.join(
+              __dirname,
+              '..',
+              '..',
+              'client',
+              'src',
+              'moduleComponents.js'
+            )
+
+            fs.writeFile(
+              componentExportFile,
+              `export default {\n${moduleComponentsData.join(',')}\n}`,
+              () => {
+                fastify.log.debug('==== MODULE LOADER FINISH ====')
+                fastify.log.info('Modules loaded')
+                done()
+              }
+            )
+          })
+          .catch(err => errHandler(err))
       })
       .catch(err => {
         errHandler(err)
