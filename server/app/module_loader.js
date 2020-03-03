@@ -24,13 +24,35 @@ module.exports = (fastify, _, done) => {
   const removeUnusedModules = () => {
     return new Promise((resolve, reject) => {
       fastify.db
-        .query('DELETE FROM modules WHERE NOT name IN (?)', {
+        .query('SELECT id, name FROM modules WHERE NOT name IN (?)', {
           replacements: [modulesLoaded]
         })
-        .then(res => {
-          if (res[1].rowCount)
-            fastify.log.debug(`Remove ${res[1].rowCount} old modules`)
-          resolve()
+        .then(([mods]) => {
+          if (mods.length) {
+            fastify.log.debug(
+              `Removing old modules (${mods.map(mod => mod.name).join(', ')})`
+            )
+
+            const ids = mods.map(mod => mod.id)
+
+            fastify.db
+              .query('DELETE FROM routes WHERE "moduleId" IN (?)', {
+                replacements: [ids]
+              })
+              .then(() => {
+                fastify.db
+                  .query('DELETE FROM modules WHERE "id" IN (?)', {
+                    replacements: [ids]
+                  })
+                  .then(() => {
+                    resolve()
+                  })
+                  .catch(err => reject(err))
+              })
+              .catch(err => reject(err))
+          } else {
+            resolve()
+          }
         })
         .catch(err => reject(err))
     })
