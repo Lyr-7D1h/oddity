@@ -33,7 +33,7 @@ test:
   variables:
     POSTGRES_DB: testing
     POSTGRES_USER: test
-    PGPASSWORD: test_pass
+    POSTGRES_PASSWORD: test_pass
 
     DB_HOST: postgres
     DB_NAME: testing
@@ -48,7 +48,7 @@ test:
     - cd ./client && npm audit
     - cd ../server && npm audit
     # Build server & client
-    - cd ./client && npm ci && npm run build
+    - cd ../client && npm ci && npm run build
     - cd ../server && npm ci
   script:
     - cd ../client && npm test
