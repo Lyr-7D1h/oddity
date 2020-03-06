@@ -1,32 +1,32 @@
-'use strict'
+"use strict";
 
 module.exports = async fastify => {
-  require('./find')(fastify)
+  //   require("./find")(fastify);
 
-  fastify.get('/forum', (request, reply) => {
+  fastify.get("/forum", (request, reply) => {
     fastify.models.forumCategory
       .findAll({
         attributes: {
-          exclude: ['createdAt', 'updatedAt']
+          exclude: ["createdAt", "updatedAt"]
         },
-        order: [['order', 'ASC']],
+        order: [["order", "ASC"]],
         include: [
           {
             model: fastify.models.forumThread,
-            as: 'threads',
-            order: [['order', 'ASC']],
+            as: "threads",
+            order: [["order", "ASC"]],
             attributes: {
-              exclude: ['createdAt', 'updatedAt']
+              exclude: ["createdAt", "updatedAt"]
             },
             include: {
               model: fastify.models.forumPost,
-              as: 'latestPost',
-              order: [['createdAt', 'ASC']],
+              as: "latestPost",
+              order: [["createdAt", "ASC"]],
               include: [
                 {
                   model: fastify.models.user,
-                  as: 'author',
-                  attributes: ['identifier', 'username', 'roleId']
+                  as: "author",
+                  attributes: ["identifier", "username", "roleId"]
                 }
               ],
               limit: 1
@@ -35,56 +35,56 @@ module.exports = async fastify => {
         ]
       })
       .then(result => {
-        reply.send(result)
+        reply.send(result);
       })
       .catch(err => {
-        fastify.log.error(err)
-        fastify.sentry.captureException(err)
-        reply.internalServerError()
-      })
-  })
+        fastify.log.error(err);
+        fastify.sentry.captureException(err);
+        reply.internalServerError();
+      });
+  });
 
-  fastify.get('/forum/categories', (request, reply) => {
+  fastify.get("/forum/categories", (request, reply) => {
     fastify.models.forumCategory
       .findAll({
         attributes: {
-          exclude: ['createdAt', 'updatedAt']
+          exclude: ["createdAt", "updatedAt"]
         },
-        order: [['order', 'ASC']]
+        order: [["order", "ASC"]]
       })
       .then(categories => {
-        reply.send(categories)
+        reply.send(categories);
       })
       .catch(err => {
-        fastify.log.error(err)
-        fastify.sentry.captureException(err)
-        reply.internalServerError()
-      })
-  })
+        fastify.log.error(err);
+        fastify.sentry.captureException(err);
+        reply.internalServerError();
+      });
+  });
 
-  fastify.get('/forum/threads', (request, reply) => {
+  fastify.get("/forum/threads", (request, reply) => {
     fastify.models.forumThread
       .findAll({
         attributes: {
-          exclude: ['createdAt', 'updatedAt']
+          exclude: ["createdAt", "updatedAt"]
         },
-        order: [['order', 'ASC']]
+        order: [["order", "ASC"]]
       })
       .then(threads => {
-        reply.send(threads)
+        reply.send(threads);
       })
       .catch(err => {
-        fastify.log.error(err)
-        fastify.sentry.captureException(err)
-        reply.internalServerError()
-      })
-  })
+        fastify.log.error(err);
+        fastify.sentry.captureException(err);
+        reply.internalServerError();
+      });
+  });
 
   fastify.get(
-    '/forum/categories/:id',
+    "/forum/categories/:id",
     {
       schema: {
-        params: 'id#'
+        params: "id#"
       }
     },
     (request, reply) => {
@@ -92,25 +92,25 @@ module.exports = async fastify => {
         .findOne({
           where: { id: request.params.id },
           attributes: {
-            exclude: ['createdAt', 'updatedAt']
+            exclude: ["createdAt", "updatedAt"]
           },
-          order: [['order', 'ASC']],
+          order: [["order", "ASC"]],
           include: [
             {
               model: fastify.models.forumThread,
               attributes: {
-                exclude: ['createdAt', 'updatedAt']
+                exclude: ["createdAt", "updatedAt"]
               },
-              as: 'threads',
+              as: "threads",
               include: {
                 model: fastify.models.forumPost,
-                as: 'latestPost',
-                order: [['createdAt', 'ASC']],
+                as: "latestPost",
+                order: [["createdAt", "ASC"]],
                 include: [
                   {
                     model: fastify.models.user,
-                    as: 'author',
-                    attributes: ['identifier', 'username']
+                    as: "author",
+                    attributes: ["identifier", "username"]
                   }
                 ],
                 limit: 1
@@ -119,21 +119,21 @@ module.exports = async fastify => {
           ]
         })
         .then(category => {
-          reply.send(category)
+          reply.send(category);
         })
         .catch(err => {
-          fastify.log.error(err)
-          fastify.sentry.captureException(err)
-          reply.internalServerError()
-        })
+          fastify.log.error(err);
+          fastify.sentry.captureException(err);
+          reply.internalServerError();
+        });
     }
-  )
+  );
 
   fastify.get(
-    '/forum/threads/:id',
+    "/forum/threads/:id",
     {
       schema: {
-        params: 'id#'
+        params: "id#"
       }
     },
     (request, reply) => {
@@ -141,38 +141,38 @@ module.exports = async fastify => {
         .findOne({
           where: { id: request.params.id },
           attributes: {
-            exclude: ['createdAt', 'updatedAt']
+            exclude: ["createdAt", "updatedAt"]
           },
-          order: [['order', 'ASC']],
+          order: [["order", "ASC"]],
           include: {
             model: fastify.models.forumPost,
-            as: 'posts',
-            order: [['createdAt', 'ASC']],
+            as: "posts",
+            order: [["createdAt", "ASC"]],
             include: [
               {
                 model: fastify.models.user,
-                as: 'author',
-                attributes: ['identifier', 'username', 'avatar'],
-                include: { model: fastify.models.role, attributes: ['name'] }
+                as: "author",
+                attributes: ["identifier", "username", "avatar"],
+                include: { model: fastify.models.role, attributes: ["name"] }
               }
             ]
           }
         })
         .then(threads => {
-          reply.send(threads)
+          reply.send(threads);
         })
         .catch(err => {
-          fastify.log.error(err)
-          fastify.sentry.captureException(err)
-          reply.internalServerError()
-        })
+          fastify.log.error(err);
+          fastify.sentry.captureException(err);
+          reply.internalServerError();
+        });
     }
-  )
+  );
 
   fastify.get(
-    '/forum/posts/:id',
+    "/forum/posts/:id",
     {
-      params: 'id#'
+      params: "id#"
     },
     (request, reply) => {
       fastify.models.forumPost
@@ -183,27 +183,27 @@ module.exports = async fastify => {
           include: [
             {
               model: fastify.models.user,
-              as: 'author',
-              attributes: ['identifier', 'username', 'roleId']
+              as: "author",
+              attributes: ["identifier", "username", "roleId"]
             }
           ]
         })
         .then(posts => {
-          reply.send(posts)
+          reply.send(posts);
         })
         .catch(err => {
-          fastify.log.error(err)
-          fastify.sentry.captureException(err)
-          reply.internalServerError()
-        })
+          fastify.log.error(err);
+          fastify.sentry.captureException(err);
+          reply.internalServerError();
+        });
     }
-  )
+  );
 
   fastify.post(
-    '/forum/categories',
+    "/forum/categories",
     {
       schema: {
-        type: 'object'
+        type: "object"
       },
       preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
@@ -211,20 +211,20 @@ module.exports = async fastify => {
       fastify.models.forumCategory
         .create(request.body)
         .then(category => {
-          reply.send(category)
+          reply.send(category);
         })
         .catch(err => {
-          fastify.log.error(err)
-          fastify.sentry.captureException(err)
-          reply.internalServerError()
-        })
+          fastify.log.error(err);
+          fastify.sentry.captureException(err);
+          reply.internalServerError();
+        });
     }
-  )
+  );
   fastify.post(
-    '/forum/threads',
+    "/forum/threads",
     {
       schema: {
-        type: 'object'
+        type: "object"
       },
       preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
@@ -232,29 +232,29 @@ module.exports = async fastify => {
       fastify.models.forumThread
         .create(request.body)
         .then(thread => {
-          reply.send(thread)
+          reply.send(thread);
         })
         .catch(err => {
-          fastify.log.error(err)
-          fastify.sentry.captureException(err)
-          reply.internalServerError()
-        })
+          fastify.log.error(err);
+          fastify.sentry.captureException(err);
+          reply.internalServerError();
+        });
     }
-  )
+  );
 
   fastify.post(
-    '/forum/categories-collection',
+    "/forum/categories-collection",
     {
       schema: {
         body: {
-          type: 'array'
+          type: "array"
         }
       },
       preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
     (request, reply) => {
       fastify.models.forumCategory.findAll().then(categories => {
-        const promises = []
+        const promises = [];
 
         // TODO: Fix loop updating
         categories.forEach(category => {
@@ -268,51 +268,51 @@ module.exports = async fastify => {
               fastify.models.forumThread.destroy({
                 where: { categoryId: category.id }
               })
-            )
+            );
             promises.push(
               fastify.models.forumCategory.destroy({
                 where: { id: category.id }
               })
-            )
+            );
           }
-        })
+        });
 
         request.body.forEach(category => {
           promises.push(
             fastify.models.forumCategory.upsert(category, { returning: true })
-          )
-        })
+          );
+        });
 
         Promise.all(promises)
           .then(results => {
-            results = results.filter(result => isNaN(result) && result) // filter out results of delete
-            reply.send(results.map(result => result[0]))
+            results = results.filter(result => isNaN(result) && result); // filter out results of delete
+            reply.send(results.map(result => result[0]));
           })
           .catch(err => {
-            fastify.log.error(err)
-            fastify.sentry.captureException(err)
-            reply.internalServerError()
-          })
-      })
+            fastify.log.error(err);
+            fastify.sentry.captureException(err);
+            reply.internalServerError();
+          });
+      });
     }
-  )
+  );
 
   fastify.post(
-    '/forum/threads-collection',
+    "/forum/threads-collection",
     {
       schema: {
         body: {
-          type: 'array'
+          type: "array"
         }
       },
       preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
     (request, reply) => {
       fastify.models.forumThread.findAll().then(threads => {
-        const promises = []
+        const promises = [];
 
         // check if same title in same category
-        const temp = []
+        const temp = [];
         request.body.forEach(thread => {
           temp.forEach(tempThread => {
             if (
@@ -320,12 +320,12 @@ module.exports = async fastify => {
               tempThread.categoryId === thread.categoryId
             ) {
               return reply.badRequest(
-                'Cannot have the same Thread Title for the same Category'
-              )
+                "Cannot have the same Thread Title for the same Category"
+              );
             }
-          })
-          temp.push(thread)
-        })
+          });
+          temp.push(thread);
+        });
 
         // check if it needs to be deleted
         threads.forEach(thread => {
@@ -337,37 +337,37 @@ module.exports = async fastify => {
           )
             promises.push(
               fastify.models.forumThread.destroy({ where: { id: thread.id } })
-            )
-        })
+            );
+        });
 
         // update or create if not exists
         // TODO: Fix loop updating
         request.body.forEach(thread => {
           promises.push(
             fastify.models.forumThread.upsert(thread, { returning: true })
-          )
-        })
+          );
+        });
 
         Promise.all(promises)
           .then(results => {
-            results = results.filter(result => isNaN(result) && result) // filter out results of delete
-            reply.send(results.map(result => result[0]))
+            results = results.filter(result => isNaN(result) && result); // filter out results of delete
+            reply.send(results.map(result => result[0]));
           })
           .catch(err => {
-            fastify.log.error(err)
-            fastify.sentry.captureException(err)
-            reply.internalServerError()
-          })
-      })
+            fastify.log.error(err);
+            fastify.sentry.captureException(err);
+            reply.internalServerError();
+          });
+      });
     }
-  )
+  );
 
   fastify.post(
-    '/forum/posts',
+    "/forum/posts",
     {
       schema: {
         body: {
-          type: 'object'
+          type: "object"
         }
       },
       preHandler: [fastify.auth([fastify.authentication.cookie])]
@@ -376,13 +376,13 @@ module.exports = async fastify => {
       fastify.models.forumPost
         .create(request.body)
         .then(post => {
-          reply.send(post)
+          reply.send(post);
         })
         .catch(err => {
-          fastify.log.error(err)
-          fastify.sentry.captureException(err)
-          reply.badRequest(err.message)
-        })
+          fastify.log.error(err);
+          fastify.sentry.captureException(err);
+          reply.badRequest(err.message);
+        });
     }
-  )
-}
+  );
+};
