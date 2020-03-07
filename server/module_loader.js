@@ -1,17 +1,73 @@
+'use strict'
+
+/**
+ * Reads files in /modules =>
+ *  (Should validate files)
+ *  Upserts module in database
+ *  Creates client import file
+ *  Creates server import file
+ */
+
 const fs = require('fs')
 const path = require('path')
 const glob = require('glob')
+const Fastify = require('fastify')
+
+require('dotenv').config()
 
 const fastifyAutoload = require('fastify-autoload')
 
-const MODULES_DIR = path.join(__dirname, '..', '..', 'modules')
-const moduleComponentsData = []
+const MODULES_DIR = path.join(__dirname, '..', 'modules')
+
+const clientImportPath = path.join(
+  __dirname,
+  '..',
+  'client',
+  'module_loader_imports.js'
+)
+const clientImportData = []
+
+const serverImportPath = path.join(__dirname, 'module_loader_imports.js')
+const serverImportData = []
+
 const modulesLoaded = []
 
-/**
- * Load all files and check if they are okay
- */
-module.exports = (fastify, _, done) => {
+const fastify = Fastify({
+  logger: {
+    level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+    prettyPrint: process.env.NODE_ENV === 'development'
+  },
+  dotenv: true
+})
+
+const envSchema = {
+  type: 'object',
+  required: ['DB_USERNAME', 'DB_PASSWORD', 'DB_NAME'],
+  properties: {
+    DB_HOST: { type: 'string' },
+    DB_NAME: { type: 'string' },
+    DB_USERNAME: { type: 'string' },
+    DB_PASSWORD: { type: 'string' }
+  },
+  additionalProperties: false
+}
+
+fastify
+  .register(require('fastify-env'), { schema: envSchema })
+  .register(require('./plugins/sequelize'))
+  .register(require('./db/models'))
+
+fastify.ready(err => {
+  if (err) {
+    console.error('Fastify failed')
+    console.error(err)
+    process.exit(1)
+  }
+
+  /**
+   * Load all files and check if they are okay
+   */
+
   fastify.log.debug('==== MODULE LOADER START ====')
 
   const errHandler = err => {
@@ -220,8 +276,10 @@ module.exports = (fastify, _, done) => {
 
         let config = matches[0]
         if (config && matches.length === 1) {
+          // Fetch config
           config = require(path.join(modulePath, config))
           const { name, version } = config
+
           fastify.log.info(`Loading module ${name} (${version})`)
 
           // Load Module Directory
@@ -235,7 +293,6 @@ module.exports = (fastify, _, done) => {
               })
             ]
             moduleFiles.forEach(moduleFile => {
-              const moduleSrcPath = path.join(modulePath, moduleFile)
               switch (moduleFile.toLowerCase()) {
                 case 'config.js':
                   break
@@ -246,7 +303,7 @@ module.exports = (fastify, _, done) => {
                     new Promise((resolve, reject) => {
                       loadClient(config, modulePath)
                         .then(modules => {
-                          moduleComponentsData.push(
+                          clientImportData.push(
                             `\t"${name}": [\n${modules.join(',')}\t]\n`
                           )
                           resolve(true)
@@ -256,7 +313,7 @@ module.exports = (fastify, _, done) => {
                   )
                   break
                 case 'server':
-                  srcLoaders.push(loadServer(config, moduleSrcPath))
+                  // srcLoaders.push(loadServer(config, moduleSrcPath))
                   break
                 default:
                   console.error(`COULD NOT LOAD FILE ${moduleFile}`)
@@ -277,6 +334,9 @@ module.exports = (fastify, _, done) => {
     })
   }
 
+  /**
+   * Start Loading
+   */
   fs.readdir(MODULES_DIR, (err, moduleDirs) => {
     errHandler(err)
 
@@ -293,24 +353,25 @@ module.exports = (fastify, _, done) => {
 
     Promise.all(moduleLoaders)
       .then(() => {
+        // remove unused modules when all are loaded
         removeUnusedModules()
           .then(() => {
-            const componentExportFile = path.join(
-              __dirname,
-              '..',
-              '..',
-              'client',
-              'src',
-              'moduleComponents.js'
-            )
-
+            // Write client import file
             fs.writeFile(
-              componentExportFile,
-              `export default {\n${moduleComponentsData.join(',')}\n}`,
-              () => {
-                fastify.log.debug('==== MODULE LOADER FINISH ====')
-                fastify.log.info('Modules loaded')
-                done()
+              clientImportPath,
+              `module.exports = {\n${clientImportData.join(',')}\n}`,
+              err => {
+                errHandler(err)
+                fs.writeFile(
+                  serverImportPath,
+                  `module.exports = {\n${serverImportData.join(',')}}`,
+                  err => {
+                    errHandler(err)
+                    fastify.log.debug('==== MODULE LOADER FINISH ====')
+                    fastify.log.info('Modules loaded')
+                    process.exit(0)
+                  }
+                )
               }
             )
           })
@@ -320,4 +381,4 @@ module.exports = (fastify, _, done) => {
         errHandler(err)
       })
   })
-}
+})

@@ -48,8 +48,7 @@ test:
     - cd ./client && npm audit
     - cd ../server && npm audit
     # Build server & client
-    - cd ../client && npm ci && npm run build
-    - cd ../server && npm ci
+    - ./setup.sh
   script:
     - cd ../client && npm test
     - cd ../server && DB_HOST=postgres npm test

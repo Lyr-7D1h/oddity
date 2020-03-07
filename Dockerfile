@@ -16,6 +16,12 @@ WORKDIR /usr/src/app/server
 RUN cd ../server/
 RUN npm ci
 
+# Link node_modules for modules
+WORKDIR /usr/src/app
+RUN ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/" 
+
+# Load module Files
+
 # Start App
 CMD npm start
 EXPOSE 5000
