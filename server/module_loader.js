@@ -106,7 +106,7 @@ const loadClient = (config, modulePath) => {
                   clientImportData.routes[config.name].push({
                     path: '/',
                     component: `require('${path.join(
-                      '../../modules',
+                      '../modules',
                       path.basename(modulePath),
                       'client',
                       'components',
@@ -151,7 +151,7 @@ const loadClient = (config, modulePath) => {
                       clientImportData.routes[config.name].push({
                         path: route.path,
                         component: `require('${path.join(
-                          '../../modules',
+                          '../modules',
                           path.basename(modulePath),
                           route.component
                         )}').default`
