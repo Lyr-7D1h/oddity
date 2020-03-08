@@ -45,8 +45,8 @@ test:
     - node --version
     - npm --version
     # Audit server & client
-    - cd ./client && npm audit
-    - cd ../server && npm audit
+    - cd ./client && npm audit --production --audit-level=high
+    - cd ../server && npm audit --production --audit-level=high
     # Build server & client
     - ./setup.sh
   script:
