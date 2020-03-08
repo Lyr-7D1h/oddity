@@ -17,7 +17,7 @@ import NoHomePage from './components/pages/NoHomePage'
 import AccountPage from './components/pages/AccountPage'
 import FinishAccountPage from './components/pages/FinishAccountPage'
 
-import { routes } from '../module_loader_imports'
+import moduleLoaderImports from '../module_loader_imports'
 
 // import ModulePage from '/home/ivo/p/oddity/modules/example_module/client/components'
 
@@ -38,7 +38,7 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
         if (route.default) noHomeSet = false
 
         if (mod) {
-          const modRoutes = routes[mod.name]
+          const modRoutes = moduleLoaderImports.routes[mod.name]
           if (modRoutes) {
             modRoutes.forEach(moduleRoute => {
               moduleRoutes.push(
