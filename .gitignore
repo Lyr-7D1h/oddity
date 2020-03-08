@@ -29,6 +29,4 @@ server/.env
 # to ignore videos (from cypress)
 *.mp4
 
-moduleComponents.js
-
 module_loader_imports.js
