@@ -18,7 +18,8 @@ echo OK && \
 
 echo -e "\n\n${CYAN}SERVER: Starting server to load Tables & Modules${NY}" && \
 cd server && \
-timeout 5 npm start 
+node module_loader && \
+# timeout 5 npm start 
 
 
 echo -e "\n\n${CYAN}CLIENT: Installing dependencies${NY}" && \
