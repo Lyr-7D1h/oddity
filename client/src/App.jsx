@@ -38,9 +38,9 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
         if (route.default) noHomeSet = false
 
         if (mod) {
-          const routes = routes[mod.name]
-          if (routes) {
-            routes.forEach(moduleRoute => {
+          const modRoutes = routes[mod.name]
+          if (modRoutes) {
+            modRoutes.forEach(moduleRoute => {
               moduleRoutes.push(
                 <Route
                   path={'/' + path.join(basePath, moduleRoute.path)}
