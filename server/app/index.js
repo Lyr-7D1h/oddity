@@ -69,8 +69,6 @@ module.exports = async (fastify, opts) => {
     // Load models
     .register(require('../db/models'))
 
-    .register(require('./module_loader'))
-
     // Autoload Routes
     .register(fastifyAutoload, {
       dir: path.join(__dirname, '../routes'),

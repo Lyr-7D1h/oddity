@@ -49,6 +49,17 @@ server
   .register(require('fastify-env'), { schema: envSchema })
   .register(require('./app'))
 
+// If in development run module_loader on start as a child process
+if (process.env.NODE_ENV === 'development')
+  require('child_process').exec('node module_loader', (err, stdout) => {
+    if (err) {
+      server.log.fatal('Something went wrong with the module loader')
+      server.log.error(err)
+      process.exit(1)
+    }
+    server.log.info('\n', stdout)
+  })
+
 server.listen(process.env.PORT || 5000, '0.0.0.0', err => {
   if (server.config.NODE_ENV === 'development') {
     server.log.warn('RUNNING IN DEVELOPMENT MODE')
