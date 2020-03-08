@@ -48,9 +48,9 @@ test:
     - cd ./client && npm audit --production --audit-level=high
     - cd ../server && npm audit --production --audit-level=high
     # Build server & client
-    - ./setup.sh
+    - cd .. && ./setup.sh
   script:
-    - cd ../client && npm test
+    - cd ./client && npm test
     - cd ../server && DB_HOST=postgres npm test
 
 staging:
