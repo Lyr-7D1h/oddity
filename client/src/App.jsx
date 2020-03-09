@@ -1,26 +1,27 @@
 import React from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import path from 'path'
 
 import { connect } from 'react-redux'
 import { setSelected } from './redux/actions/pageActions'
 
 import notificationHandler from './helpers/notificationHandler'
 
-import HomePage from './components/pages/HomePage'
 import LoginPage from './components/pages/LoginPage'
 import AdminPage from './components/pages/AdminPage'
 import ConfigLoader from './components/containers/ConfigLoader'
 import RegisterPage from './components/pages/RegisterPage'
 import TermsOfServicePage from './components/pages/TermsOfServicePage'
 import NotFoundPage from './components/pages/NotFoundPage'
-import ForumPage from './components/pages/ForumPage'
-import ServersPage from './components/pages/ServersPage'
-import MembersPage from './components/pages/MembersPage'
 import NoHomePage from './components/pages/NoHomePage'
 import AccountPage from './components/pages/AccountPage'
 import FinishAccountPage from './components/pages/FinishAccountPage'
 
-const App = ({ routes, userNeedsSetup, dispatch }) => {
+import moduleLoaderImports from '../module_loader_imports'
+
+// import ModulePage from '/home/ivo/p/oddity/modules/example_module/client/components'
+
+const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
   let noHomeSet = true
 
   const getModuleRoutes = () => {
@@ -28,92 +29,39 @@ const App = ({ routes, userNeedsSetup, dispatch }) => {
       let moduleRoutes = []
       for (let i in routes) {
         const route = routes[i]
-        let component = NotFoundPage
+        // let component = NotFoundPage
 
-        const path = route.default ? '/' : '/' + route.path
+        const basePath = route.default ? '/' : route.path
 
-        switch (route.module) {
-          case 'servers':
-            component = ServersPage
-            break
-          case 'forum':
-            moduleRoutes = moduleRoutes.concat([
-              <Route
-                path={path}
-                key={i}
-                exact
-                render={({ location }) => {
-                  dispatch(setSelected(location.pathname))
-                  return <ForumPage />
-                }}
-              ></Route>,
-              <Route
-                path={path + '/:category'}
-                key={'category' + i}
-                exact
-                render={({ location, match }) => {
-                  dispatch(setSelected(location.pathname))
-                  return <ForumPage category={match.params.category} />
-                }}
-              ></Route>,
-              <Route
-                path={path + '/:category/:thread'}
-                key={'thread' + i}
-                exact
-                render={({ location, match }) => {
-                  dispatch(setSelected(location.pathname))
-                  return (
-                    <ForumPage
-                      category={match.params.category}
-                      thread={match.params.thread}
-                    />
-                  )
-                }}
-              ></Route>,
-              <Route
-                path={path + '/:category/:thread/:post'}
-                key={'post' + i}
-                exact
-                render={({ location, match }) => {
-                  dispatch(setSelected(location.pathname))
-                  return (
-                    <ForumPage
-                      category={match.params.category}
-                      thread={match.params.thread}
-                      post={match.params.post}
-                    />
-                  )
-                }}
-              ></Route>
-            ])
-            continue
-          case 'members':
-            component = MembersPage
-            break
-          case 'home':
-            component = HomePage
-            break
-          default:
-            console.error(
-              `Module ${route.module} is not defined from route: `,
-              route
-            )
-            notificationHandler.error('Modules misconfigured')
-        }
+        const mod = modules.find(mod => mod.id === route.moduleId)
 
         if (route.default) noHomeSet = false
 
-        moduleRoutes.push(
-          <Route
-            key={i}
-            exact
-            path={path}
-            render={({ location }) => {
-              dispatch(setSelected(location.pathname))
-              return React.createElement(component, {})
-            }}
-          ></Route>
-        )
+        if (mod) {
+          const modRoutes = moduleLoaderImports.routes[mod.name]
+          if (modRoutes) {
+            modRoutes.forEach(moduleRoute => {
+              moduleRoutes.push(
+                <Route
+                  path={'/' + path.join(basePath, moduleRoute.path)}
+                  key={i}
+                  exact
+                  render={props => {
+                    dispatch(setSelected(props.location.pathname))
+
+                    return React.createElement(moduleRoute.component, props)
+                  }}
+                />
+              )
+            })
+          } else {
+            console.error(`No Routes for Module: ${mod} found`)
+            notificationHandler.error(`No Routes for Module: ${mod} found`)
+          }
+        } else {
+          console.error(`Module ${mod} is not defined`, route)
+          notificationHandler.error('Unknown module is used')
+        }
       }
       return moduleRoutes
     }
@@ -190,6 +138,7 @@ export default connect(state => {
   }
   return {
     routes: state.config.routes,
+    modules: state.modules,
     userNeedsSetup: userNeedsSetup
   }
 })(App)

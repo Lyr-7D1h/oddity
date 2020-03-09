@@ -91,20 +91,26 @@ module.exports = async (fastify, opts) => {
     fastify.register(require('./default_config'))
   }
 
+  /**
+   * Load Client
+   * In Dev: Proxy server for fast page rerendering
+   * In Production: Render static files from the react build folder
+   */
   if (fastify.config.NODE_ENV === 'development') {
-    // if development proxy requests to dev react server
     fastify.register(require('./proxy'), {
       upstream: 'http://localhost:3000',
       prefix: '/',
       http2: false
     })
   } else {
-    // use react build
     fastify.register(require('./static'), {
       root: path.join(__dirname, '../../client/build')
     })
   }
 
-  // Load documentation
-  fastify.ready(() => fastify.oas())
+  // Run code when ready
+  fastify.ready(() => {
+    // Load Documentation
+    fastify.oas()
+  })
 }

@@ -1,6 +1,6 @@
 {
-  "name": "oddity-v2",
-  "version": "1.0.0",
+  "name": "oddity-server",
+  "version": "0.1.0",
   "description": "",
   "main": "server.js",
   "directories": {
@@ -9,7 +9,7 @@
   "scripts": {
     "test": "tap --coverage test/**/*.test.js",
     "start": "node server.js",
-    "dev": "NODE_ENV=development nodemon start"
+    "dev": "NODE_ENV=development nodemon -w ../modules -i module_loader_imports.js -w . start"
   },
   "keywords": [],
   "author": "ivelthoven",
@@ -33,6 +33,7 @@
     "fastify-sensible": "^2.1.1",
     "fastify-session": "^3.0.0",
     "fastify-static": "^2.5.0",
+    "glob": "^7.1.6",
     "make-promises-safe": "^5.1.0",
     "pg": "^7.15.2",
     "pg-native": "^3.0.0",

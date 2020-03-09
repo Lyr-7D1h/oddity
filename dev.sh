@@ -1,5 +1,5 @@
 cd client
-gnome-terminal --tab -e 'npm start'
+gnome-terminal --tab --command 'npm start'
 
 cd ../server
-gnome-terminal --tab -e 'npm run dev'
+gnome-terminal --tab --active --command 'npm run dev'

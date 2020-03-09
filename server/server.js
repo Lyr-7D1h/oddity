@@ -21,6 +21,7 @@ const Fastify = require('fastify')
 const server = Fastify({
   // ignoreTrailingSlash: true,
   logger: {
+    level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
     prettyPrint: process.env.NODE_ENV === 'development'
   },
   dotenv: true
@@ -28,12 +29,7 @@ const server = Fastify({
 
 const envSchema = {
   type: 'object',
-  required: [
-    'SESSION_SECRET',
-    'DB_USERNAME',
-    'DB_PASSWORD',
-    'DB_NAME'
-  ],
+  required: ['SESSION_SECRET', 'DB_USERNAME', 'DB_PASSWORD', 'DB_NAME'],
   properties: {
     DB_HOST: { type: 'string' },
     DB_NAME: { type: 'string' },
@@ -52,6 +48,17 @@ server.decorate('sentry', Sentry)
 server
   .register(require('fastify-env'), { schema: envSchema })
   .register(require('./app'))
+
+// If in development run module_loader on start as a child process
+if (process.env.NODE_ENV === 'development')
+  require('child_process').exec('node module_loader', (err, stdout) => {
+    if (err) {
+      server.log.fatal('Something went wrong with the module loader')
+      server.log.error(err)
+      process.exit(1)
+    }
+    server.log.info('\n', stdout)
+  })
 
 server.listen(process.env.PORT || 5000, '0.0.0.0', err => {
   if (server.config.NODE_ENV === 'development') {

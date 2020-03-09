@@ -1,24 +1,24 @@
-import React from 'react'
-import { Card, Empty } from 'antd'
-import { useEffect } from 'react'
-import requester from '../../helpers/requester'
-import { useState } from 'react'
-import ReactQuill from 'react-quill'
+import React from "react";
+import { Card, Empty } from "antd";
+import { useEffect } from "react";
+import requester from "../../../../client/src/helpers/requester";
+import { useState } from "react";
+import ReactQuill from "react-quill";
 
 export default ({ postId }) => {
-  const [post, setPost] = useState(null)
+  const [post, setPost] = useState(null);
 
   useEffect(() => {
     requester.get(`forum/posts/${postId}`).then(post => {
-      setPost(post)
-    })
-  }, [postId])
+      setPost(post);
+    });
+  }, [postId]);
 
   if (!post) {
-    return <Empty />
+    return <Empty />;
   }
 
-  console.log(post)
+  console.log(post);
 
   return (
     <Card
@@ -34,5 +34,5 @@ export default ({ postId }) => {
         readOnly={true}
       ></ReactQuill>
     </Card>
-  )
-}
+  );
+};

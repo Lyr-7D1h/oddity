@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const HOST = process.env.DB_HOST || 'localhost'
 const DATABASE = process.env.DB_NAME || 'oddity'
 const USERNAME = process.env.DB_USERNAME || 'oddity'

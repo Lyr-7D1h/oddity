@@ -4,33 +4,32 @@ import EditableTable from './EditableTable'
 import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
 
-const columns = [
-  {
-    title: 'Title',
-    dataIndex: 'name',
-    dataType: 'text',
-    required: true
-  },
-  {
-    title: 'Path',
-    dataIndex: 'path',
-    dataType: 'text',
-    required: false
-  },
-  {
-    title: 'Module',
-    dataIndex: 'module',
-    dataType: ['forum', 'servers', 'members', 'home'],
-    required: true
-  },
-  {
-    title: 'Is Home',
-    dataIndex: 'default',
-    dataType: 'bool'
-  }
-]
-
-const RoutingTable = ({ configId }) => {
+const RoutingTable = ({ configId, modules }) => {
+  const columns = [
+    {
+      title: 'Title',
+      dataIndex: 'name',
+      dataType: 'text',
+      required: true
+    },
+    {
+      title: 'Path',
+      dataIndex: 'path',
+      dataType: 'text',
+      required: false
+    },
+    {
+      title: 'Module',
+      dataIndex: 'moduleId',
+      dataType: modules.map(mod => ({ name: mod.name, value: mod.id })),
+      required: true
+    },
+    {
+      title: 'Is Home',
+      dataIndex: 'default',
+      dataType: 'bool'
+    }
+  ]
   const [routes, setRoutes] = useState([])
 
   useEffect(() => {
@@ -69,4 +68,7 @@ const RoutingTable = ({ configId }) => {
   )
 }
 
-export default connect(state => ({ configId: state.config.id }))(RoutingTable)
+export default connect(state => ({
+  configId: state.config.id,
+  modules: state.modules
+}))(RoutingTable)

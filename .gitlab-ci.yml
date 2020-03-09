@@ -45,13 +45,12 @@ test:
     - node --version
     - npm --version
     # Audit server & client
-    - cd ./client && npm audit
-    - cd ../server && npm audit
+    - cd ./client && npm audit --production --audit-level=high
+    - cd ../server && npm audit --production --audit-level=high
     # Build server & client
-    - cd ../client && npm ci && npm run build
-    - cd ../server && npm ci
+    - cd .. && ./setup.sh
   script:
-    - cd ../client && npm test
+    - cd ./client && npm test
     - cd ../server && DB_HOST=postgres npm test
 
 staging:
