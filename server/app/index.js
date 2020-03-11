@@ -2,6 +2,7 @@
 
 const path = require('path')
 const fastifyAutoload = require('fastify-autoload')
+const fp = require('fastify-plugin')
 
 module.exports = async (fastify, opts) => {
   fastify
@@ -67,7 +68,7 @@ module.exports = async (fastify, opts) => {
     })
 
     // Load models
-    .register(require('../db/models'))
+    .register(fp(require('../db/models')), { name: 'models' })
 
     // Autoload Routes
     .register(fastifyAutoload, {

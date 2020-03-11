@@ -44,43 +44,6 @@ const errHandler = err => {
   }
 }
 
-// const removeUnusedModules = () => {
-//   return new Promise((resolve, reject) => {
-//     fastify.db
-//       .query('SELECT id, name FROM modules WHERE NOT name IN (?)', {
-//         replacements: [modulesLoaded]
-//       })
-//       .then(([mods]) => {
-//         if (mods.length) {
-//           console.debug(
-//             `Removing old modules (${mods.map(mod => mod.name).join(', ')})`
-//           )
-
-//           const ids = mods.map(mod => mod.id)
-
-//           fastify.db
-//             .query('DELETE FROM routes WHERE "moduleId" IN (?)', {
-//               replacements: [ids]
-//             })
-//             .then(() => {
-//               fastify.db
-//                 .query('DELETE FROM modules WHERE "id" IN (?)', {
-//                   replacements: [ids]
-//                 })
-//                 .then(() => {
-//                   resolve()
-//                 })
-//                 .catch(err => reject(err))
-//             })
-//             .catch(err => reject(err))
-//         } else {
-//           resolve()
-//         }
-//       })
-//       .catch(err => reject(err))
-//   })
-// }
-
 // Only loads components
 const loadClient = (config, modulePath) => {
   return new Promise((resolve, reject) => {
