@@ -27,9 +27,9 @@ const clientImportData = {
 }
 
 const serverImportPath = path.join(__dirname, 'module_loader_imports.js')
-const serverImportData = []
-
-const modulesLoaded = []
+const serverImportData = {
+  modules: []
+}
 
 /**
  * Load all files and check if they are okay
@@ -175,10 +175,27 @@ const loadClient = (config, modulePath) => {
   })
 }
 
-const loadServer = (_, serverPath) => {
+const loadServer = (config, modulePath) => {
   const loadRoutes = () => {
     return new Promise((resolve, reject) => {})
   }
+
+  return new Promise((resolve, reject) => {
+    fs.readdir(path.join(modulePath, 'server'), (err, matches) => {
+      if (err) reject(err)
+
+      const serverLoaders = []
+      matches.forEach(match => {
+        switch (match) {
+          case 'routes':
+            loadRoutes()
+            break
+        }
+      })
+
+      resolve(serverLoaders)
+    })
+  })
 }
 
 const loadModule = modulePath => {
@@ -209,7 +226,7 @@ const loadModule = modulePath => {
                 srcLoaders.push(loadClient(config, modulePath))
                 break
               case 'server':
-                // srcLoaders.push(loadServer(config, moduleSrcPath))
+                srcLoaders.push(loadServer(config, modulePath))
                 break
               default:
                 console.error(`COULD NOT LOAD FILE ${moduleFile}`)
@@ -218,7 +235,7 @@ const loadModule = modulePath => {
           })
           Promise.all(srcLoaders)
             .then(() => {
-              modulesLoaded.push(name)
+              serverImportData.modules.push(name)
               resolve(true)
             })
             .catch(err => reject(err))
@@ -260,7 +277,7 @@ fs.readdir(MODULES_DIR, (err, moduleDirs) => {
         // write server import file
         fs.writeFile(
           serverImportPath,
-          `module.exports = {\n${serverImportData.join(',')}}`,
+          `module.exports = ${JSON.stringify(serverImportData)}`,
           err => {
             errHandler(err)
             console.debug('==== MODULE LOADER FINISH ====')
