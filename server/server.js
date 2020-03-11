@@ -57,7 +57,7 @@ if (process.env.NODE_ENV === 'development')
       server.log.error(err)
       process.exit(1)
     }
-    server.log.info('\n', stdout)
+    server.log.debug('\n', stdout)
   })
 
 server.listen(process.env.PORT || 5000, '0.0.0.0', err => {

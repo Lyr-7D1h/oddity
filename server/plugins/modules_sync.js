@@ -3,14 +3,17 @@ const fp = require('fastify-plugin')
 
 module.exports = fp(
   async fastify => {
-    console.log(modules)
     const upsertModules = () => {
       const mods = modules.map(mod => ({
         name: mod.name,
-        version: mod.version
+        version: mod.version,
+        createdAt: new Date(),
+        updatedAt: new Date()
       }))
-      console.log(mods)
-      return fastify.db.queryInterface.upsert('modules', mods)
+      return fastify.db.queryInterface.bulkInsert('modules', mods, {
+        updateOnDuplicate: ['name', 'version', 'updatedAt'],
+        upsertKeys: ['name']
+      })
     }
     const removeUnusedModules = () => {
       return new Promise((resolve, reject) => {
@@ -20,7 +23,9 @@ module.exports = fp(
           })
           .then(([mods]) => {
             if (mods.length) {
-              fastify.log.debug(`Removing old modules "${mods.join(',')}"`)
+              fastify.log.debug(
+                `Removing old modules "${mods.map(mod => mod.name).join(',')}"`
+              )
 
               const ids = mods.map(mod => mod.id)
 
@@ -55,6 +60,7 @@ module.exports = fp(
   },
   {
     name: 'modules_sync',
+    decorators: ['models'],
     dependencies: ['sequelize']
   }
 )
