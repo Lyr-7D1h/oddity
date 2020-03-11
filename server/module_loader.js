@@ -235,7 +235,7 @@ const loadModule = modulePath => {
           })
           Promise.all(srcLoaders)
             .then(() => {
-              serverImportData.modules.push(name)
+              serverImportData.modules.push(config)
               resolve(true)
             })
             .catch(err => reject(err))

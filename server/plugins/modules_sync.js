@@ -3,15 +3,24 @@ const fp = require('fastify-plugin')
 
 module.exports = fp(
   async fastify => {
+    console.log(modules)
+    const upsertModules = () => {
+      const mods = modules.map(mod => ({
+        name: mod.name,
+        version: mod.version
+      }))
+      console.log(mods)
+      return fastify.db.queryInterface.upsert('modules', mods)
+    }
     const removeUnusedModules = () => {
       return new Promise((resolve, reject) => {
         fastify.db
           .query('SELECT id, name FROM modules WHERE NOT name IN (?)', {
-            replacements: [modules]
+            replacements: [modules.map(mod => mod.name)]
           })
           .then(([mods]) => {
             if (mods.length) {
-              fastify.log.debug('Removing old modules')
+              fastify.log.debug(`Removing old modules "${mods.join(',')}"`)
 
               const ids = mods.map(mod => mod.id)
 
@@ -38,6 +47,7 @@ module.exports = fp(
       })
     }
     try {
+      await upsertModules()
       await removeUnusedModules()
     } catch (err) {
       fastify.log.error(err)
