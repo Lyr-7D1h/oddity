@@ -31,6 +31,12 @@ const serverImportData = {
   modules: []
 }
 
+const dbFiles = {
+  seeders: [],
+  models: [],
+  migrations: []
+}
+
 /**
  * Load all files and check if they are okay
  */
@@ -42,6 +48,54 @@ const errHandler = err => {
     console.error(err)
     process.exit(1)
   }
+}
+
+const loadDbFiles = () => {
+  const syncFiles = (sources, destination) => {
+    return new Promise((resolve, reject) => {
+      fs.readdir(destination, (err, existingFiles) => {
+        if (err) reject(err)
+
+        existingFiles = existingFiles.filter(file =>
+          file.startsWith('.imported_')
+        )
+
+        console.log(existingFiles)
+
+        const loaders = []
+
+        // Remove file if it does not exist
+        existingFiles.forEach(existingFile => {
+          const sourcesFilesList = sources.map(file => path.basename(file))
+          console.log(sourcesFilesList, existingFile)
+          if (sourcesFilesList.indexOf(existingFile) === -1) {
+            loaders.push(
+              new Promise((resolve, reject) => {
+                fs.unlink(path.join(destination, existingFile), err => {
+                  if (err) reject(err)
+                  resolve()
+                })
+              })
+            )
+          }
+        })
+
+        sources.forEach(source => {
+          loaders.push(
+            new Promise((resolve, reject) => {
+              fs.copyFile(source, destination, () => {
+                resolve()
+              })
+            })
+          )
+        })
+
+        resolve(loaders)
+      })
+    })
+  }
+
+  return Promise.all([syncFiles(dbFiles.seeders, './db/seeders')])
 }
 
 // Only loads components
@@ -177,7 +231,20 @@ const loadClient = (config, modulePath) => {
 
 const loadServer = (config, modulePath) => {
   const loadRoutes = () => {
-    return new Promise((resolve, reject) => {})
+    return new Promise((resolve, reject) => {
+      serverImportData.routes = [require(path.join(modulePath, 'routes'))]
+    })
+  }
+
+  const pushDbFile = dbFolder => {
+    return new Promise((resolve, reject) => {
+      fs.readdir(dbFolder, (err, matches) => {
+        if (err) reject(err)
+
+        dbFiles[dbFolder] = dbFiles[dbFolder].concat(matches)
+        resolve()
+      })
+    })
   }
 
   return new Promise((resolve, reject) => {
@@ -189,6 +256,15 @@ const loadServer = (config, modulePath) => {
         switch (match) {
           case 'routes':
             loadRoutes()
+            break
+          case 'models':
+            serverLoaders.push(pushDbFile('models'))
+            break
+          case 'migrations':
+            serverLoaders.push(pushDbFile('migrations'))
+            break
+          case 'seeders':
+            serverLoaders.push(pushDbFile('seeders'))
             break
         }
       })
@@ -280,8 +356,16 @@ fs.readdir(MODULES_DIR, (err, moduleDirs) => {
           `module.exports = ${JSON.stringify(serverImportData)}`,
           err => {
             errHandler(err)
-            console.debug('==== MODULE LOADER FINISH ====')
-            process.exit(0)
+
+            // Syncronize DB Files
+            loadDbFiles()
+              .then(() => {
+                console.debug('==== MODULE LOADER FINISH ====')
+                process.exit(0)
+              })
+              .catch(err => {
+                errHandler(err)
+              })
           }
         )
       })

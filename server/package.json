@@ -9,7 +9,7 @@
   "scripts": {
     "test": "tap --coverage test/**/*.test.js",
     "start": "node server.js",
-    "dev": "NODE_ENV=development nodemon -w ../modules -i module_loader_imports.js -w . start"
+    "dev": "NODE_ENV=development nodemon -w ../modules -i db -i module_loader_imports.js -w . start"
   },
   "keywords": [],
   "author": "ivelthoven",
