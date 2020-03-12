@@ -56,36 +56,42 @@ const loadDbFiles = () => {
       fs.readdir(destination, (err, existingFiles) => {
         if (err) reject(err)
 
-        existingFiles = existingFiles.filter(file =>
-          file.startsWith('.imported_')
-        )
-
-        console.log(existingFiles)
-
         const loaders = []
+        if (existingFiles) {
+          existingFiles = existingFiles.filter(file =>
+            file.startsWith('.imported_')
+          )
 
-        // Remove file if it does not exist
-        existingFiles.forEach(existingFile => {
-          const sourcesFilesList = sources.map(file => path.basename(file))
-          console.log(sourcesFilesList, existingFile)
-          if (sourcesFilesList.indexOf(existingFile) === -1) {
-            loaders.push(
-              new Promise((resolve, reject) => {
-                fs.unlink(path.join(destination, existingFile), err => {
-                  if (err) reject(err)
-                  resolve()
+          // Remove file if it does not exist in sources
+          existingFiles.forEach(existingFile => {
+            const sourcesFilesList = sources.map(file => path.basename(file))
+            existingFile = existingFile.replace('.imported_', '')
+            if (sourcesFilesList.indexOf(existingFile) === -1) {
+              loaders.push(
+                new Promise((resolve, reject) => {
+                  fs.unlink(
+                    path.join(destination, '.imported_' + existingFile),
+                    err => {
+                      if (err) reject(err)
+                      resolve()
+                    }
+                  )
                 })
-              })
-            )
-          }
-        })
+              )
+            }
+          })
+        }
 
         sources.forEach(source => {
           loaders.push(
             new Promise((resolve, reject) => {
-              fs.copyFile(source, destination, () => {
-                resolve()
-              })
+              fs.copyFile(
+                source,
+                path.join(destination, '.imported_' + path.basename(source)),
+                () => {
+                  resolve()
+                }
+              )
             })
           )
         })
@@ -95,7 +101,11 @@ const loadDbFiles = () => {
     })
   }
 
-  return Promise.all([syncFiles(dbFiles.seeders, './db/seeders')])
+  return Promise.all([
+    syncFiles(dbFiles.seeders, './db/seeders'),
+    syncFiles(dbFiles.models, './db/models'),
+    syncFiles(dbFiles.migrations, './db/migrations')
+  ])
 }
 
 // Only loads components
@@ -238,9 +248,12 @@ const loadServer = (config, modulePath) => {
 
   const pushDbFile = dbFolder => {
     return new Promise((resolve, reject) => {
-      fs.readdir(dbFolder, (err, matches) => {
+      fs.readdir(path.join(modulePath, 'server', dbFolder), (err, matches) => {
         if (err) reject(err)
 
+        matches = matches.map(match =>
+          path.join(modulePath, 'server', dbFolder, match)
+        )
         dbFiles[dbFolder] = dbFiles[dbFolder].concat(matches)
         resolve()
       })
