@@ -8,7 +8,7 @@ COPY . /usr/src/app
 
 # Build Server
 WORKDIR /usr/src/app/server
-RUN npm ci
+RUN npm ci --production
 
 # Create module_loader_imports file
 RUN node module_loader.js
@@ -19,7 +19,7 @@ RUN ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/"
 
 # Build Client
 WORKDIR /usr/src/app/client
-RUN npm ci
+RUN npm ci --production
 RUN npm run build
 
 # Start App

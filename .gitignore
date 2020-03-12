@@ -30,3 +30,6 @@ server/.env
 *.mp4
 
 module_loader_imports.js
+
+# Imported db files from module_loader
+.imported_*
