@@ -19,10 +19,7 @@ module.exports = fp(
       files
         .filter(
           // FILTER: Only js files and not this file
-          file =>
-            file.indexOf('.') !== 0 &&
-            file !== basename &&
-            file.slice(-3) === '.js'
+          file => file !== basename && file.slice(-3) === '.js'
         )
         .forEach(file => {
           const model = fastify.db['import'](path.join(__dirname, file))
