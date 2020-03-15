@@ -11,11 +11,14 @@ npx sequelize-cli db:drop && \
 echo -e "\n\n${CYAN}Creating Database${NY}" && \
 npx sequelize-cli db:create && \
 
+echo -e "\n\n${CYAN}Executing module_loader to get most recent db files${NY}" && \
+node module_loader
+
 echo -e "\n\n${CYAN}Executing models_sync to load tables${NY}" && \
 node models_sync
 
-#echo -e "${CYAN}Executing Migrations${NY}" && \
-#npx sequelize-cli db:migrate && \
+# echo -e "${CYAN}Executing Migrations${NY}" && \
+# npx sequelize-cli db:migrate && \
 
 echo -e "\n\n${CYAN}Seeding Database${NY}" && \
-npx sequelize-cli db:seed:all
+npx sequelize-cli db:seed:all --debug=true

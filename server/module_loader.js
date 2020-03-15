@@ -53,7 +53,7 @@ const errHandler = err => {
 const loadDbFiles = () => {
   const syncFiles = (sources, destination) => {
     return new Promise((resolve, reject) => {
-      fs.readdir(destination, (err, existingFiles) => {
+      fs.readdir(path.join(__dirname, destination), (err, existingFiles) => {
         if (err) reject(err)
 
         const loaders = []
@@ -84,10 +84,11 @@ const loadDbFiles = () => {
 
         sources.forEach(source => {
           loaders.push(
-            new Promise((resolve, reject) => {
+            new Promise(resolve => {
               fs.copyFile(
                 source,
                 path.join(destination, '.imported_' + path.basename(source)),
+                fs.constants.COPYFILE_FICLONE,
                 () => {
                   resolve()
                 }
@@ -242,7 +243,7 @@ const loadClient = (config, modulePath) => {
 const loadServer = (config, modulePath) => {
   const loadRoutes = () => {
     return new Promise((resolve, reject) => {
-      serverImportData.routes = [require(path.join(modulePath, 'routes'))]
+      // serverImportData.routes = [require(path.join(modulePath, 'routes'))]
     })
   }
 

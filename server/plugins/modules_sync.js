@@ -10,9 +10,39 @@ module.exports = fp(
         createdAt: new Date(),
         updatedAt: new Date()
       }))
-      return fastify.db.queryInterface.bulkInsert('modules', mods, {
-        updateOnDuplicate: ['name', 'version', 'updatedAt'],
-        upsertKeys: ['name']
+      return new Promise((resolve, reject) => {
+        fastify.db
+          .query('SELECT * FROM "modules" WHERE name IN (?)', {
+            replacements: [mods.map(mod => mod.name)]
+          })
+          .then(([existingModules]) => {
+            const promises = []
+
+            if (existingModules)
+              promises.push(
+                fastify.db.queryInterface.bulkInsert(
+                  'modules',
+                  existingModules,
+                  {
+                    updateOnDuplicate: ['name', 'version', 'updatedAt'],
+                    upsertKeys: ['name']
+                  }
+                )
+              )
+
+            const modsLeft = mods.filter(
+              exisingMod => -1 !== existingModules.indexOf(exisingMod.name)
+            )
+
+            if (modsLeft.length > 0)
+              promises.push(
+                fastify.db.queryInterface.bulkInsert('modules', modsLeft)
+              )
+            Promise.all(promises)
+              .then(() => resolve())
+              .catch(err => reject(err))
+          })
+          .catch(err => reject(err))
       })
     }
     const removeUnusedModules = () => {
