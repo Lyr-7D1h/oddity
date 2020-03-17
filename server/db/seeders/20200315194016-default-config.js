@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('configs', [
+    return queryInterface.bulkInsert('configs', [
       {
         id: 1,
         name: 'default',
