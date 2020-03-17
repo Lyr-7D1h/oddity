@@ -356,9 +356,10 @@ fs.readdir(MODULES_DIR, (err, moduleDirs) => {
 
   Promise.all(moduleLoaders)
     .then(() => {
+      console.log(JSON.stringify(clientImportData))
       let clientFile = `module.exports = ${JSON.stringify(clientImportData)}`
-        .replace('"require(', 'require(')
-        .replace(').default"', ').default')
+        .replace(/("require\()/g, 'require(')
+        .replace(/\).default"/g, ').default')
 
       // Write client import file
       fs.writeFile(clientImportPath, clientFile, err => {
