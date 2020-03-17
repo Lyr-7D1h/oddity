@@ -30,7 +30,15 @@ jobs:
     strategy:
       matrix:
         node-version: ['12.x', '10.x']
-    
+
+    env:
+      DB_HOST: postgres
+      DB_NAME: testing
+      DB_PASSWORD: test_pass
+      DB_USERNAME: test
+      SESSION_SECRET: kn&6Ji5#dKtF!z#*rH@u48hm22NEz&bdFJ&JzwhYVF
+      SENTRY_DSN: https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726
+
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -42,13 +50,6 @@ jobs:
     - name: Test Server
       run: npm test
       working-directory: server
-      env:
-        DB_HOST: postgres
-        DB_NAME: testing
-        DB_PASSWORD: test_pass
-        DB_USERNAME: test
-        SESSION_SECRET: kn&6Ji5#dKtF!z#*rH@u48hm22NEz&bdFJ&JzwhYVF
-        SENTRY_DSN: https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726
     - name: Test Client
       run: npm test
       working-directory: client
