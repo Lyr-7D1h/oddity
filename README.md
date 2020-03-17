@@ -1,5 +1,5 @@
 # ODDITY
-![](https://github.com/Lyr-7D1h/oddity/workflows/Tests/badge.svg)
+![Tests](https://github.com/OddityServers/oddity/workflows/Tests/badge.svg)
 
 ## Introduction
 
