@@ -33,6 +33,8 @@ cd server
 npm run dev
 ```
 
+### On a windows system
+Use linux
 
 ## Credits
 Thanks to orbital for the artwork <3
