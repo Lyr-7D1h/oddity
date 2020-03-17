@@ -11,8 +11,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-16.04
-    container: node:latest
+    runs-on: ubuntu-latest
+    container: cypress/base:13.6.0
 
     services:
       postgres:
@@ -45,9 +45,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: cypress-io/github-action@v1
-        with:
-          working-directory: client
+#       - uses: cypress-io/github-action@v1
+#         with:
+#           working-directory: client
       - name: Build
         run: ./setup.sh
       - name: Test Server
