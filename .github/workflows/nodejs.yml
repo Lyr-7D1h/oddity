@@ -20,7 +20,7 @@ jobs:
         env: 
           POSTGRES_DB: testing
           POSTGRES_USER: test
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: test_pass
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -34,8 +34,8 @@ jobs:
     env:
       DB_HOST: postgres
       DB_NAME: testing
-      DB_PASSWORD: test_pass
       DB_USERNAME: test
+      DB_PASSWORD: test_pass
       SESSION_SECRET: kn&6Ji5#dKtF!z#*rH@u48hm22NEz&bdFJ&JzwhYVF
       SENTRY_DSN: https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726
 
