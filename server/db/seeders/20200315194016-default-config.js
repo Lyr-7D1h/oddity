@@ -6,7 +6,7 @@ module.exports = {
       {
         id: 1,
         name: 'default',
-        title: 'Default',
+        title: 'Oddity',
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date()
