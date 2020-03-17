@@ -51,6 +51,8 @@ jobs:
       run: npm test
       working-directory: server
     - uses: cypress-io/github-action@v1
+      with:
+        working-directory: client
     - name: Test Client
       run: npm test
       working-directory: client
