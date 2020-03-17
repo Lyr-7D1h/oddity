@@ -7,8 +7,11 @@ echo -e "\n\n${CYAN}SERVER: Installing dependencies${NY}" && \
 cd server && \
 npm ci && \
 
-echo -e "\n\n${CYAN}SERVER: Executing module_loader.js to load Tables & Modules${NY}" && \
+echo -e "\n\n${CYAN}SERVER: Executing module_loader.js to load transfer DB Files${NY}" && \
 node module_loader && \
+
+echo -e "\n\n${CYAN}SERVER: Executing models_sync to create all tables${NY}" && \
+node models_sync && \
 
 echo -e "\n\n${CYAN}SERVER: Seeding database${NY}" && \
 npx sequelize-cli db:seed:all
