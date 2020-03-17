@@ -50,6 +50,7 @@ jobs:
     - name: Test Server
       run: npm test
       working-directory: server
+    - uses: cypress-io/github-action@v1
     - name: Test Client
       run: npm test
       working-directory: client
