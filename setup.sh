@@ -13,6 +13,7 @@ node module_loader && \
 echo -e "\n\n${CYAN}SERVER: Executing models_sync to create all tables${NY}" && \
 node models_sync && \
 
+# Depends on Modules being loaded
 echo -e "\n\n${CYAN}SERVER: Seeding database${NY}" && \
 npx sequelize-cli db:seed:all
 
