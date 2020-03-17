@@ -1,4 +1,5 @@
 # ODDITY
+![](https://github.com/Lyr-7D1h/oddity/workflows/Test/badge.svg)
 
 ## Introduction
 
