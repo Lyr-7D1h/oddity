@@ -15,6 +15,7 @@ const schema = {
   type: 'object',
   required: ['DB_NAME', 'DB_USERNAME', 'DB_PASSWORD'],
   properties: {
+    DB_HOST: { type: 'string' },
     DB_NAME: { type: 'string' },
     DB_USERNAME: { type: 'string' },
     DB_PASSWORD: { type: 'string' }
