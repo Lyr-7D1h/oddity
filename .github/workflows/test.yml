@@ -48,8 +48,19 @@ jobs:
 #       - uses: cypress-io/github-action@v1
 #         with:
 #           working-directory: client
-      - name: Build
-        run: ./setup.sh
+      - name: Build Server
+        run: |
+          npm ci
+          node module_loader
+          node models_sync
+        working-directory: server
+      - name: Load Modules
+        run: ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/"
+      - name: Build Client
+        working-directory: client
+        run: |
+          npm ci
+          npm run build
       - name: Test Server
         run: npm test
         working-directory: server
