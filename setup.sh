@@ -22,7 +22,8 @@ ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/" && \
 echo OK && \
 
 echo -e "\n\n${CYAN}CLIENT: Installing dependencies${NY}" && \
-cd ../client && \
+cd client && \
 npm ci && \
+
 echo -e "\n\n${CYAN}CLIENT: Building minified static files${NY}" && \
 npm run build
