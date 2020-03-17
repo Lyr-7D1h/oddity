@@ -34,7 +34,7 @@ npm run dev
 ```
 
 ### On a windows system
-Use linux
+Use linux :p
 
 ## Credits
 Thanks to orbital for the artwork <3
