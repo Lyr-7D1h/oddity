@@ -9,11 +9,11 @@ import SubNav from '../SubNav'
 import ForumTable from '../ForumTable'
 import ModulesTable from '../ModulesTable'
 
-export default ({ page }) => {
+export default ({ match }) => {
   const nav = ['Routing', 'Forum', 'Modules']
 
   let Content
-  switch (page) {
+  switch (match.params.page) {
     case 'routing':
       Content = (
         <>

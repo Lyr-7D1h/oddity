@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import path from 'path'
 
 import { connect } from 'react-redux'
-import { setSelected } from './redux/actions/pageActions'
 
 import notificationHandler from './helpers/notificationHandler'
 
@@ -19,8 +18,6 @@ import FinishAccountPage from './components/pages/FinishAccountPage'
 
 import moduleLoaderImports from '../module_loader_imports'
 
-// import ModulePage from '/home/ivo/p/oddity/modules/example_module/client/components'
-
 const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
   let noHomeSet = true
 
@@ -29,7 +26,6 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
       let moduleRoutes = []
       for (let i in routes) {
         const route = routes[i]
-        // let component = NotFoundPage
 
         const basePath = route.default ? '/' : route.path
 
@@ -47,8 +43,6 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
                   key={i}
                   exact
                   render={props => {
-                    dispatch(setSelected(props.location.pathname))
-
                     return React.createElement(moduleRoute.component, props)
                   }}
                 />
@@ -78,9 +72,8 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
         key={i}
         exact
         path={route.path}
-        render={({ location }) => {
-          dispatch(setSelected(location.pathname))
-          return React.createElement(route.component, {})
+        render={props => {
+          return React.createElement(route.component, props)
         }}
       />
     )
@@ -91,18 +84,16 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
       key={1}
       exact
       path="/admin"
-      render={({ location }) => {
-        dispatch(setSelected(location.pathname))
-        return <AdminPage />
+      render={props => {
+        return <AdminPage {...props} />
       }}
     />,
     <Route
       key={2}
       exact
       path="/admin/:page"
-      render={({ location, match }) => {
-        dispatch(setSelected(location.pathname))
-        return <AdminPage page={match.params.page} />
+      render={props => {
+        return <AdminPage {...props} />
       }}
     />
   ]

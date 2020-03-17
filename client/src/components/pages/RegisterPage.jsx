@@ -8,7 +8,7 @@ import Title from 'antd/lib/typography/Title'
 import { Redirect } from 'react-router-dom'
 import Centered from '../containers/Centered'
 
-export default () => {
+export default props => {
   const [accountCreated, setAccountCreate] = useState(false)
 
   const handleSubmit = () => {

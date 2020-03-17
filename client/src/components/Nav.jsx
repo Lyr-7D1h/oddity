@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Menu, Row, Col, Typography } from 'antd'
 
+import { withRouter } from 'react-router'
+
 import { Link } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
 import requester from '../helpers/requester'
@@ -9,14 +11,14 @@ import notificationHandler from '../helpers/notificationHandler'
 import { connect } from 'react-redux'
 import { updateUser } from '../redux/actions/userActions'
 
-const Nav = ({ selected, config, user, updateUser }) => {
+const Nav = ({ config, user, updateUser, location }) => {
   let { routes, title } = config
   const [loginError, setLoginError] = useState(false)
 
   // make sure default route / home route is not included
   routes = routes.filter(route => !route.default)
 
-  selected = selected[0]
+  const selected = location.pathname.split('/')[1]
 
   const handleLogout = () => {
     requester
@@ -105,11 +107,10 @@ export default connect(
   state => {
     return {
       user: state.user,
-      config: state.config,
-      selected: state.page.selected
+      config: state.config
     }
   },
   {
     updateUser
   }
-)(Nav)
+)(withRouter(Nav))
