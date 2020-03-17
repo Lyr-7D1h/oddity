@@ -28,7 +28,8 @@ const clientImportData = {
 
 const serverImportPath = path.join(__dirname, 'module_loader_imports.js')
 const serverImportData = {
-  modules: []
+  modules: [],
+  routesDirectories: []
 }
 
 const dbFiles = {
@@ -242,9 +243,9 @@ const loadClient = (config, modulePath) => {
 
 const loadServer = (config, modulePath) => {
   const loadRoutes = () => {
-    return new Promise((resolve, reject) => {
-      // serverImportData.routes = [require(path.join(modulePath, 'routes'))]
-    })
+    serverImportData.routesDirectories.push(
+      path.join(modulePath, 'server', 'routes')
+    )
   }
 
   const pushDbFile = dbFolder => {
@@ -356,7 +357,7 @@ fs.readdir(MODULES_DIR, (err, moduleDirs) => {
 
   Promise.all(moduleLoaders)
     .then(() => {
-      let clientFile = `module.exports = ${JSON.stringify(clientImportData)}`
+      const clientFile = `module.exports = ${JSON.stringify(clientImportData)}`
         .replace(/("require\()/g, 'require(')
         .replace(/\).default"/g, ').default')
 
@@ -364,24 +365,23 @@ fs.readdir(MODULES_DIR, (err, moduleDirs) => {
       fs.writeFile(clientImportPath, clientFile, err => {
         errHandler(err)
 
+        const serverFile = `module.exports = ${JSON.stringify(
+          serverImportData
+        )}`
         // write server import file
-        fs.writeFile(
-          serverImportPath,
-          `module.exports = ${JSON.stringify(serverImportData)}`,
-          err => {
-            errHandler(err)
+        fs.writeFile(serverImportPath, serverFile, err => {
+          errHandler(err)
 
-            // Syncronize DB Files
-            loadDbFiles()
-              .then(() => {
-                console.debug('==== MODULE LOADER FINISH ====')
-                process.exit(0)
-              })
-              .catch(err => {
-                errHandler(err)
-              })
-          }
-        )
+          // Syncronize DB Files
+          loadDbFiles()
+            .then(() => {
+              console.debug('==== MODULE LOADER FINISH ====')
+              process.exit(0)
+            })
+            .catch(err => {
+              errHandler(err)
+            })
+        })
       })
     })
     .catch(err => {

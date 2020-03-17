@@ -3,6 +3,7 @@
 const path = require('path')
 const fastifyAutoload = require('fastify-autoload')
 const fp = require('fastify-plugin')
+const { routesDirectories } = require('../module_loader_imports')
 
 module.exports = async (fastify, opts) => {
   fastify
@@ -86,6 +87,16 @@ module.exports = async (fastify, opts) => {
       decorateReply: false,
       root: path.join(__dirname, '../../resources')
     })
+
+  routesDirectories.forEach(dir => {
+    fastify.register(fastifyAutoload, {
+      dir: dir,
+      options: Object.assign({
+        prefix: '/api',
+        opts
+      })
+    })
+  })
 
   // Load default config if not a test
   if (fastify.config.NODE_ENV !== 'testing') {
