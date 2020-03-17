@@ -5,19 +5,19 @@ name: Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     container: node:latest
-    
-    services: 
+
+    services:
       postgres:
         image: postgres:latest
-        env: 
+        env:
           POSTGRES_DB: testing
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test_pass
@@ -29,7 +29,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: ['12.x', '10.x']
+        node-version: ["12.x", "10.x"]
 
     env:
       DB_HOST: postgres
@@ -40,19 +40,19 @@ jobs:
       SENTRY_DSN: https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Build
-      run: ./setup.sh
-    - name: Test Server
-      run: npm test
-      working-directory: server
-    - uses: cypress-io/github-action@v1
-      with:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: cypress-io/github-action@v1
+        with:
+          working-directory: client
+      - name: Build
+        run: ./setup.sh
+      - name: Test Server
+        run: npm test
+        working-directory: server
+      - name: Test Client
+        run: npm test
         working-directory: client
-    - name: Test Client
-      run: npm test
-      working-directory: client
