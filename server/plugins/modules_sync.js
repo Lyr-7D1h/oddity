@@ -30,9 +30,11 @@ module.exports = fp(
                 )
               )
 
-            const modsLeft = mods.filter(
-              exisingMod => -1 !== existingModules.indexOf(exisingMod.name)
-            )
+            const modsLeft = mods.filter(exisingMod => {
+              return !existingModules.find(mod => {
+                return mod.name === exisingMod.name
+              })
+            })
 
             if (modsLeft.length > 0)
               promises.push(
