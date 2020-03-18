@@ -9,9 +9,9 @@ export default ({ children }) => {
       align="middle"
       style={{ textAlign: 'center' }}
     >
-      <Col span={6}></Col>
-      <Col span={12}>{children}</Col>
-      <Col span={6}></Col>
+      <Col span={4}></Col>
+      <Col span={14}>{children}</Col>
+      <Col span={4}></Col>
     </Row>
   )
 }
