@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import requester from '@helpers/requester'
 import notificationHandler from '@helpers/notificationHandler'
-import { Card, Table, Tag, Button } from 'antd'
+import { Table, Tag, Button } from 'antd'
 
 export default () => {
   const [modules, setModules] = useState([])
