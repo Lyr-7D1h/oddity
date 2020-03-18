@@ -18,7 +18,7 @@ export default ({ match }) => {
       Content = (
         <>
           <Title>Routing</Title>
-          <RoutingTable />
+          {/* <RoutingTable /> */}
         </>
       )
       break

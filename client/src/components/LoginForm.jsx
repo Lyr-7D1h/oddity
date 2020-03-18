@@ -1,5 +1,7 @@
 import React from 'react'
-import { Form, Icon, Input, Button } from 'antd'
+import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import '@ant-design/compatible/assets/index.css'
+import { Input, Button, Form } from 'antd'
 import { Link } from 'react-router-dom'
 
 import notificationHandler from '../helpers/notificationHandler'
@@ -26,40 +28,24 @@ const LoginForm = ({ updateUser, ...props }) => {
       })
   }
 
-  const handleSubmit = e => {
-    e.preventDefault()
-
-    const username = e.target[0].value
-    const password = e.target[1].value
-
-    if (username) {
-      if (password) {
-        handleLogin({ username, password })
-      } else {
-        notificationHandler.error('Please fill in your password')
-      }
-    } else {
-      notificationHandler.error('Please fill in your username')
-    }
+  const handleSubmit = values => {
+    const { username, password } = values
+    handleLogin({ username, password })
   }
 
   return (
-    <Form onSubmit={handleSubmit} className="login-form">
-      <Form.Item>
+    <Form onFinish={handleSubmit} className="login-form">
+      <Form.Item name="username" rules={[{ required: true }]}>
         <Input
-          prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+          prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
           type="text"
-          name="user"
           placeholder="ID or Email"
-          required
         />
       </Form.Item>
-      <Form.Item>
+      <Form.Item name="password" rules={[{ required: true }]}>
         <Input.Password
-          prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-          name="password"
+          prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
           placeholder="Password"
-          required
         />
       </Form.Item>
       <Form.Item>

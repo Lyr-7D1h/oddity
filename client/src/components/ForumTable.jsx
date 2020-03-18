@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
-import { Button, Row, Col, Collapse, Icon, Input, Empty } from 'antd'
+import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Row, Col, Collapse, Input, Empty } from 'antd';
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DndProvider, DragSource, DropTarget } from 'react-dnd'
 import ActionPopup from './ActionPopup'
@@ -158,11 +159,11 @@ const RoutingTable = ({ config, updateConfig }) => {
             onClick={() => handleDelete(categoryIndex, threadIndex)}
             className="oddity-collapse-delete"
           >
-            <Icon type="delete" />
+            <DeleteOutlined />
           </div>
         </div>
       )
-    )
+    );
   }
 
   const ThreadDnD = DropTarget(
@@ -268,11 +269,11 @@ const RoutingTable = ({ config, updateConfig }) => {
             onClick={() => handleDelete(index)}
             className="oddity-collapse-delete"
           >
-            <Icon type="delete" />
+            <DeleteOutlined />
           </div>
         </div>
       )
-    )
+    );
   }
 
   const CategoryDnD = DropTarget(

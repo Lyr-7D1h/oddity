@@ -15,7 +15,7 @@ export default withRouter(({ items, location }) => {
         defaultSelectedKeys={[selected]}
         theme="light"
         mode="horizontal"
-        style={{ margin: 0 }}
+        style={{ margin: 0, width: '100%' }}
       >
         {items.map((item, i) => (
           <Menu.Item

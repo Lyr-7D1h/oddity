@@ -1,5 +1,6 @@
 import React from 'react'
-import { Result, Button, Icon, Row } from 'antd'
+import { RightOutlined } from '@ant-design/icons';
+import { Result, Button, Row } from 'antd';
 import { Link } from 'react-router-dom'
 
 export default () => {
@@ -12,7 +13,7 @@ export default () => {
           <Link to="/admin">
             <Button type="primary" style={{ width: '30%', height: '50px' }}>
               ADMIN PANEL
-              <Icon type="right" />
+              <RightOutlined />
             </Button>
           </Link>
           <br />
@@ -22,11 +23,11 @@ export default () => {
               style={{ width: '30%', height: '50px', marginTop: '50px' }}
             >
               OR LOGIN FIRST
-              <Icon type="right" />
+              <RightOutlined />
             </Button>
           </Link>
         </Row>
       }
     />
-  )
+  );
 }

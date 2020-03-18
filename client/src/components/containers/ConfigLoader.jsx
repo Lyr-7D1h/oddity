@@ -1,11 +1,12 @@
 import React from 'react'
-import { Spin, Icon } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 import { connect } from 'react-redux'
 import Centered from './Centered'
 
 const ConfigLoader = ({ config, children }) => {
   if (config.isLoading) {
-    const loadIcon = <Icon type="loading" style={{ fontSize: '3em' }} spin />
+    const loadIcon = <LoadingOutlined style={{ fontSize: '3em' }} spin />
 
     return (
       <div style={{ marginTop: '45vh' }}>

@@ -1,5 +1,6 @@
 import React from 'react'
-import { Result, Button, Icon } from 'antd'
+import { LeftOutlined } from '@ant-design/icons';
+import { Result, Button } from 'antd';
 import { Link } from 'react-router-dom'
 
 export default () => {
@@ -11,11 +12,11 @@ export default () => {
       extra={
         <Link to="/">
           <Button type="primary" style={{ width: '30%', height: '50px' }}>
-            <Icon type="left" />
+            <LeftOutlined />
             BACK HOME
           </Button>
         </Link>
       }
     />
-  )
+  );
 }

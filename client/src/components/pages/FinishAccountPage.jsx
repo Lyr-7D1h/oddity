@@ -2,18 +2,8 @@ import React, { useState } from 'react'
 import Centered from '../containers/Centered'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
-import {
-  Steps,
-  Upload,
-  Icon,
-  Avatar,
-  Row,
-  Col,
-  Button,
-  Card,
-  Typography,
-  Layout
-} from 'antd'
+import { InboxOutlined, LeftOutlined, RightOutlined, UploadOutlined } from '@ant-design/icons';
+import { Steps, Upload, Avatar, Row, Col, Button, Card, Typography, Layout } from 'antd';
 import notificationHandler from '../../helpers/notificationHandler'
 import { updateUser } from '../../redux/actions/userActions'
 
@@ -80,13 +70,13 @@ const FinishAccountPage = ({ user, dispatch }) => {
           <Col span={12}>
             <Upload {...props} style={{ width: '100vw' }}>
               <Button type="secundary">
-                <Icon type="upload" /> Upload other image
+                <UploadOutlined /> Upload other image
               </Button>
             </Upload>
           </Col>
           <Col span={12}>
             <Button type="primary" onClick={next} block>
-              Next <Icon type="right" />
+              Next <RightOutlined />
             </Button>
           </Col>
         </Row>
@@ -94,7 +84,7 @@ const FinishAccountPage = ({ user, dispatch }) => {
     ) : (
       <Upload.Dragger {...props}>
         <p className="ant-upload-drag-icon">
-          <Icon type="inbox" />
+          <InboxOutlined />
         </p>
         <p className="ant-upload-text">
           Click or drag file to this area to upload
@@ -131,12 +121,12 @@ const FinishAccountPage = ({ user, dispatch }) => {
       <Row>
         <Col span={12}>
           <Button onClick={previous} block>
-            <Icon type="left" /> Back
+            <LeftOutlined /> Back
           </Button>
         </Col>
         <Col span={12}>
           <Button type="primary" onClick={next} block>
-            Finish <Icon type="right" />
+            Finish <RightOutlined />
           </Button>
         </Col>
       </Row>

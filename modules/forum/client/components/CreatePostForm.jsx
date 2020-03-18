@@ -6,111 +6,99 @@ import notificationHandler from "../../../../client/src/helpers/notificationHand
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 
-export default Form.create({ name: "create_post_form" })(
-  connect(state => ({ userId: state.user.id }))(
-    ({ threadId, userId, form, currentPath }) => {
-      const loggedIn = !isNaN(userId);
+export default connect(state => ({ userId: state.user.id }))(
+  ({ threadId, userId, currentPath }) => {
+    const loggedIn = !isNaN(userId);
 
-      const [postHtml, setPostHtml] = useState([]);
-      const { getFieldDecorator, validateFields } = form;
+    const [postHtml, setPostHtml] = useState([]);
 
-      const handleSubmit = e => {
-        e.preventDefault();
-        validateFields((err, values) => {
-          if (!err) {
-            values = {
-              ...values,
-              content: postHtml,
-              threadId: threadId,
-              authorId: userId
-            };
-            console.log(values);
+    const handleSubmit = values => {
+      values = {
+        ...values,
+        content: postHtml,
+        threadId: threadId,
+        authorId: userId
+      };
+      console.log(values);
 
-            requester
-              .post(`forum/posts`, values)
-              .then(() => {
-                return <Redirect to={currentPath + `../${values.title}`} />;
-              })
-              .catch(err => {
-                notificationHandler.error("Could not send post", err.message);
-              });
-          } else {
-            notificationHandler.error("Invalid Input");
-          }
+      requester
+        .post(`forum/posts`, values)
+        .then(() => {
+          return <Redirect to={currentPath + `../${values.title}`} />;
+        })
+        .catch(err => {
+          notificationHandler.error("Could not send post", err.message);
         });
-      };
+    };
 
-      const handlePostChange = (html, change, source, editor) => {
-        setPostHtml(editor.getContents());
-      };
+    const handlePostChange = (html, change, source, editor) => {
+      setPostHtml(editor.getContents());
+    };
 
-      const formItemLayout = {
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 6 }
-        },
-        wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 16 }
-        }
-      };
-      const tailFormItemLayout = {
-        wrapperCol: {
-          xs: {
-            span: 24,
-            offset: 0
-          },
-          sm: {
-            span: 24,
-            offset: 0
-          }
-        }
-      };
-
-      if (loggedIn) {
-        return (
-          <Card title={"Create new post"} onSubmit={handleSubmit}>
-            <Form {...formItemLayout}>
-              <Form.Item label="Title">
-                {getFieldDecorator("title", {
-                  rules: [{ required: true }]
-                })(<Input />)}
-              </Form.Item>
-              <ReactQuill
-                placeholder="Write something..."
-                onChange={handlePostChange}
-                style={{ marginBottom: "24px" }}
-              />
-              <Form.Item
-                {...tailFormItemLayout}
-                className="ant-col-lg-5"
-                style={{ margin: 0, float: "right" }}
-              >
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="login-form-button"
-                  block
-                >
-                  Create
-                </Button>
-              </Form.Item>
-              <Form.Item
-                {...tailFormItemLayout}
-                className="ant-col-lg-5"
-                style={{ margin: 0, float: "right" }}
-              >
-                <Button block>Save as draft</Button>
-              </Form.Item>
-            </Form>
-          </Card>
-        );
-      } else {
-        notificationHandler.info(
-          "You need to be logged in to write a new post"
-        );
-        return <Redirect to="/login" />;
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 6 }
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 }
       }
+    };
+    const tailFormItemLayout = {
+      wrapperCol: {
+        xs: {
+          span: 24,
+          offset: 0
+        },
+        sm: {
+          span: 24,
+          offset: 0
+        }
+      }
+    };
+
+    if (loggedIn) {
+      return (
+        <Card title={"Create new post"} onSubmit={handleSubmit}>
+          <Form onFisish={handleSubmit} {...formItemLayout}>
+            <Form.Item label="Title">
+              {getFieldDecorator("title", {
+                rules: [{ required: true }]
+              })(<Input />)}
+            </Form.Item>
+            <ReactQuill
+              placeholder="Write something..."
+              onChange={handlePostChange}
+              style={{ marginBottom: "24px" }}
+            />
+            <Form.Item
+              {...tailFormItemLayout}
+              className="ant-col-lg-5"
+              style={{ margin: 0, float: "right" }}
+            >
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="login-form-button"
+                block
+              >
+                Create
+              </Button>
+            </Form.Item>
+            <Form.Item
+              {...tailFormItemLayout}
+              className="ant-col-lg-5"
+              style={{ margin: 0, float: "right" }}
+            >
+              <Button block>Save as draft</Button>
+            </Form.Item>
+          </Form>
+        </Card>
+      );
+    } else {
+      notificationHandler.info("You need to be logged in to write a new post");
+      return <Redirect to="/login" />;
     }
-  )
+  }
 );

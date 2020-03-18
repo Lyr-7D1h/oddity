@@ -1,7 +1,10 @@
 import React from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { Link } from 'react-router-dom'
-import { Form, Input, Tooltip, Icon, Checkbox, Button } from 'antd'
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Tooltip, Checkbox, Button } from 'antd';
 
 import notificationHandler from '../helpers/notificationHandler'
 import requester from '../helpers/requester'
@@ -121,7 +124,7 @@ class RegistrationForm extends React.Component {
               <span>
                 ID&nbsp;
                 <Tooltip title="Your Identifier is used to Identify you and is most unique about you. You can not change this in the future!">
-                  <Icon type="question-circle-o" />
+                  <QuestionCircleOutlined />
                 </Tooltip>
               </span>
             }
@@ -217,7 +220,7 @@ class RegistrationForm extends React.Component {
           </Button>
         </Form.Item>
       </Form>
-    )
+    );
   }
 }
 
