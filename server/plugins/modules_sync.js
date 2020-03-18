@@ -20,13 +20,14 @@ module.exports = fp(
             const promises = []
 
             if (existingModules)
-              existingModules.forEach(mod => {
+              for (const i in existingModules) {
+                const mod = existingModules[i]
                 promises.push(
                   fastify.db.queryInterface.bulkUpdate('modules', mod, {
                     name: mod.name
                   })
                 )
-              })
+              }
 
             const modsLeft = mods.filter(exisingMod => {
               return !existingModules.find(mod => {
@@ -34,13 +35,15 @@ module.exports = fp(
               })
             })
 
-            if (modsLeft.length > 0)
+            if (modsLeft.length > 0) {
               promises.push(
                 fastify.db.queryInterface.bulkInsert('modules', modsLeft, {
                   ignoreDuplicates: true
                 })
               )
-            Promise.all(promises)
+            }
+            // Return needed to fix (node:6106) Warning: a promise was created in a handler at domain.js:137:15 but was not returned from it
+            return Promise.all(promises)
               .then(() => resolve())
               .catch(err => reject(err))
           })
