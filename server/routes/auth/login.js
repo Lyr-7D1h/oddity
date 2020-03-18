@@ -11,6 +11,7 @@ module.exports = async fastify => {
       fastify.models.user
         .findOne({ where: { id: request.credentials.id } })
         .then(user => {
+          console.log(request.credentials)
           request.session.user = request.credentials
 
           fastify.models.role
@@ -24,13 +25,8 @@ module.exports = async fastify => {
                 email: user.email
               }
 
-              if (role === null) {
-                // TODO: Should not be possible so remove?
-                fastify.log.warn('User does not have a role')
-              } else {
-                userCookie.roleId = role.id.toString()
-                userCookie.permissions = role.permissions // TODO: Should be permissions of user + role
-              }
+              userCookie.roleId = role.id.toString()
+              userCookie.permissions = role.permissions | user.permissions // TODO: Should be permissions of user + role
 
               reply.setCookie('user', JSON.stringify(userCookie), {
                 httpOnly: false, // Should always be false because js needs to interact with this

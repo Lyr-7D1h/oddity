@@ -14,7 +14,6 @@ module.exports = {
             return queryInterface
               .bulkInsert('users', [
                 {
-                  id: 1,
                   username: 'Admin',
                   identifier: 'admin',
                   password: hash,

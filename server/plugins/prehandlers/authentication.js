@@ -12,7 +12,9 @@ module.exports = fp(async instance => {
     const basicCredentials = auth(request)
 
     if (basicCredentials && basicCredentials.name && basicCredentials.pass) {
-      instance.log.info(`Basic Authentication attempt ${basicCredentials.name}`)
+      instance.log.info(
+        `Basic Authentication attempt for "${basicCredentials.name}"`
+      )
 
       instance.models.user
         .findOne({
@@ -52,41 +54,23 @@ module.exports = fp(async instance => {
 
   // TODO: Make more efficient and make improve permissions checking
   const cookieAuth = (request, reply, done) => {
-    console.log('COOKIE AUTH')
-
     if (request.session && request.session.user) {
       if (request.session.user.id) {
         // check if still in DB
         instance.models.user
-          .findOne({ where: { id: request.session.user.id } })
+          .findOne({
+            where: { id: request.session.user.id },
+            include: [{ model: instance.models.role, as: 'role' }]
+          })
           .then(user => {
             if (user) {
               const hasPermsUser = instance.permissions.validateRouteAuth(
                 request.raw.url,
-                user.permissions
+                user.permissions | user.role.permissions
               )
               if (hasPermsUser) {
                 request.credentials.id = request.session.user.id
                 done()
-              } else if (user.roleId) {
-                instance.models.role
-                  .findOne({ where: { id: user.roleId } })
-                  .then(role => {
-                    if (role) {
-                      const hasPermsRole = instance.permissions.validateRouteAuth(
-                        request.raw.url,
-                        role.permissions
-                      )
-                      if (hasPermsRole) {
-                        request.credentials.id = request.session.user.id
-                        done()
-                      } else {
-                        done(new Unauthorized())
-                      }
-                    } else {
-                      done(new Unauthorized())
-                    }
-                  })
               } else {
                 done(new Unauthorized())
               }

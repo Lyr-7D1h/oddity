@@ -98,11 +98,6 @@ module.exports = async (fastify, opts) => {
     })
   })
 
-  // Load default config if not a test
-  if (fastify.config.NODE_ENV !== 'testing') {
-    fastify.register(require('./default_config'))
-  }
-
   /**
    * Load Client
    * In Dev: Proxy server for fast page rerendering

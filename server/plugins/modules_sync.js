@@ -2,7 +2,7 @@ const { modules } = require('../module_loader_imports')
 const fp = require('fastify-plugin')
 
 module.exports = fp(
-  async fastify => {
+  (fastify, _, done) => {
     const upsertModules = () => {
       const mods = modules.map(mod => ({
         name: mod.name,
@@ -83,12 +83,15 @@ module.exports = fp(
           .catch(err => reject(err))
       })
     }
-    try {
-      await upsertModules()
-      await removeUnusedModules()
-    } catch (err) {
-      fastify.log.error(err)
-    }
+    upsertModules()
+      .then(() => {
+        removeUnusedModules()
+          .then(() => {
+            done()
+          })
+          .catch(err => done(err))
+      })
+      .catch(err => done(err))
   },
   {
     name: 'modules_sync',

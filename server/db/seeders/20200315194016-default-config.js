@@ -4,7 +4,6 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('configs', [
       {
-        id: 1,
         name: 'default',
         title: 'Oddity',
         isActive: true,

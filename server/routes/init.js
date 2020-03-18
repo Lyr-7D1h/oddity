@@ -16,6 +16,7 @@ module.exports = async fastify => {
 
     initPromises.push(
       fastify.models.module.findAll({
+        where: { enabled: true },
         attributes: { exclude: ['createdAt', 'updatedAt'] }
       })
     )
