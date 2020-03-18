@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         is: /^(\d+\.)?(\d+\.)?(\*|\d+)$/i
+      },
+      enabled: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
       }
     },
     {}

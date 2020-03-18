@@ -6,6 +6,7 @@ module.exports = {
       {
         id: 1,
         name: "Home",
+        enabled: true,
         version: "0.0.1",
         createdAt: new Date(),
         updatedAt: new Date()
