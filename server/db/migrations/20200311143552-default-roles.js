@@ -7,7 +7,7 @@ module.exports = {
         name: 'User',
         isDefault: true,
         color: 0xfff,
-        permissions: 1,
+        permissions: 0,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -15,7 +15,7 @@ module.exports = {
         name: 'Admin',
         isDefault: false,
         color: 0xf00,
-        permissions: 0,
+        permissions: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       }
