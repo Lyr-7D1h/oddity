@@ -7,6 +7,7 @@ module.exports = fp(
       const mods = modules.map(mod => ({
         name: mod.name,
         version: mod.version,
+        enabled: false,
         createdAt: new Date(),
         updatedAt: new Date()
       }))
@@ -19,16 +20,13 @@ module.exports = fp(
             const promises = []
 
             if (existingModules)
-              promises.push(
-                fastify.db.queryInterface.bulkInsert(
-                  'modules',
-                  existingModules,
-                  {
-                    updateOnDuplicate: ['name', 'version', 'updatedAt'],
-                    upsertKeys: ['name']
-                  }
+              existingModules.forEach(mod => {
+                promises.push(
+                  fastify.db.queryInterface.bulkUpdate('modules', mod, {
+                    name: mod.name
+                  })
                 )
-              )
+              })
 
             const modsLeft = mods.filter(exisingMod => {
               return !existingModules.find(mod => {
@@ -38,7 +36,9 @@ module.exports = fp(
 
             if (modsLeft.length > 0)
               promises.push(
-                fastify.db.queryInterface.bulkInsert('modules', modsLeft)
+                fastify.db.queryInterface.bulkInsert('modules', modsLeft, {
+                  ignoreDuplicates: true
+                })
               )
             Promise.all(promises)
               .then(() => resolve())
