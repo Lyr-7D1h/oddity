@@ -45,8 +45,9 @@ const envSchema = {
 
 server.decorate('sentry', Sentry)
 
-server.register(require('fastify-env'), { schema: envSchema })
-// .register(require('./app'))
+server
+  .register(require('fastify-env'), { schema: envSchema })
+  .register(require('./app'))
 
 // If in development run module_loader on start as a child process
 if (process.env.NODE_ENV === 'development')
