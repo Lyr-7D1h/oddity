@@ -45,9 +45,8 @@ const envSchema = {
 
 server.decorate('sentry', Sentry)
 
-server
-  .register(require('fastify-env'), { schema: envSchema })
-  .register(require('./app'))
+server.register(require('fastify-env'), { schema: envSchema })
+// .register(require('./app'))
 
 // If in development run module_loader on start as a child process
 if (process.env.NODE_ENV === 'development')
@@ -65,6 +64,9 @@ server.listen(process.env.PORT || 5000, '0.0.0.0', err => {
     server.log.warn('RUNNING IN DEVELOPMENT MODE')
     server.log.info('Routes:')
     console.debug(server.printRoutes())
+    server.log.info(
+      'Startup time is ' + require('perf_hooks').performance.now() + 'ms'
+    )
   }
 
   server.log.info(`Listening on http://0.0.0.0:${process.env.PORT || 5000}`)
