@@ -6,7 +6,6 @@ import Centered from '../containers/Centered'
 // import RoutingTable from '../RoutingTable'
 import AdminRedirect from '../containers/AdminRedirect'
 import SubNav from '../SubNav'
-import ForumTable from '../ForumTable'
 import ModulesTable from '../ModulesTable'
 
 export default ({ match }) => {
@@ -14,28 +13,11 @@ export default ({ match }) => {
 
   let Content
   switch (match.params.page) {
-    case 'routing':
-      Content = (
-        <>
-          <Title>Routing</Title>
-          {/* <RoutingTable /> */}
-        </>
-      )
-      break
     case 'modules':
       Content = (
         <>
           <Title>Modules</Title>
           <ModulesTable />
-        </>
-      )
-
-      break
-    case 'forum':
-      Content = (
-        <>
-          <Title>Forum</Title>
-          <ForumTable />
         </>
       )
       break

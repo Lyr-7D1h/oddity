@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cd client
 gnome-terminal --tab --command 'npm start'
 
