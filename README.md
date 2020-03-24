@@ -16,25 +16,23 @@ Requirements
 - postgresql (V12.2 used)
 
 
-### On a linux system with gnome-terminal
-run `./setup.sh` and after that `./dev.sh`
-
-### On a linux system without gnome-terminal
+### Linux Based Systems With Bash Installed (or in Windows WLS)
 run `./setup.sh`
 
-Run client in a process/window
+Run client
 ```
 cd client
 npm start
 ```
+This will start a development server which is intended only for development.
+This will refresh modified files.  
+
 Run server in a seperate process/window
 ```
 cd server
 npm run dev
 ```
-
-### On a windows system
-Use linux :p
+This will start the server in a development mode. It will proxy requests to the client development server if it isn't prefixed with `/api` or `/documentation`
 
 ## Credits
 Thanks to orbital for the artwork <3
