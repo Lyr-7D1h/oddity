@@ -3,6 +3,9 @@ const fp = require('fastify-plugin')
 
 module.exports = fp(
   (fastify, _, done) => {
+    /**
+     * TODO: use models instead of raw queries
+     */
     const upsertModules = () => {
       const mods = modules.map(mod => ({
         name: mod.name,
@@ -99,6 +102,6 @@ module.exports = fp(
   {
     name: 'modules_sync',
     decorators: ['models'],
-    dependencies: ['sequelize']
+    dependencies: ['sequelize', 'models']
   }
 )

@@ -69,7 +69,9 @@ module.exports = async (fastify, opts) => {
     })
 
     // Load models
-    .register(fp(require('../db/models')), { name: 'models' })
+    .register(fp(require('../db/models'), { name: 'models' }))
+
+    .register(require('./modules_sync'))
 
     // Autoload Routes
     .register(fastifyAutoload, {
