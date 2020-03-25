@@ -2,12 +2,21 @@ import React, { useEffect, useState } from 'react'
 import requester from '@helpers/requester'
 import notificationHandler from '@helpers/notificationHandler'
 import { Table, Tag, Button } from 'antd'
+import { RollbackOutlined } from '@ant-design/icons'
+
+import moduleLoaderImports from '../../module_loader_imports'
 
 export default () => {
   const [modules, setModules] = useState([])
+  const [SettingsComponent, setSettingsComponent] = useState(null)
 
   useEffect(() => {
     requester.get('modules').then(modules => {
+      modules
+        .sort((a, b) => (a.enabled ? 1 : -1))
+        .map(mod => {
+          mod.adminPage = moduleLoaderImports.modules[mod.name].adminPage
+        })
       setModules(modules.sort((a, b) => (a === b ? 0 : a ? -1 : 1))) // sets enabled first
     })
   }, [])
@@ -62,8 +71,16 @@ export default () => {
     {
       dataIndex: 'enabled',
       render: (enabled, record) => {
-        if (enabled) {
-          return <Button>Settings</Button>
+        if (enabled && record.adminPage) {
+          return (
+            <Button
+              onClick={() =>
+                setSettingsComponent(React.createElement(record.adminPage))
+              }
+            >
+              Settings
+            </Button>
+          )
         }
       }
     }
@@ -71,14 +88,33 @@ export default () => {
 
   return (
     <div>
-      <Table
-        pagination={false}
-        showHeader={false}
-        loading={modules.length === 0}
-        columns={columns}
-        rowKey="id"
-        dataSource={modules}
-      />
+      {SettingsComponent ? (
+        <>
+          <Button
+            style={{
+              float: 'left',
+              width: '25%',
+              marginBottom: '10px',
+              marginRight: '10px'
+            }}
+            type="primary"
+            onClick={() => setSettingsComponent(null)}
+          >
+            <RollbackOutlined />
+            Back
+          </Button>
+          {SettingsComponent}
+        </>
+      ) : (
+        <Table
+          pagination={false}
+          showHeader={false}
+          loading={modules.length === 0}
+          columns={columns}
+          rowKey="id"
+          dataSource={modules}
+        />
+      )}
     </div>
   )
 }
