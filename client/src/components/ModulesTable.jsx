@@ -6,6 +6,12 @@ import { Table, Tag, Button } from 'antd'
 export default () => {
   const [modules, setModules] = useState([])
 
+  useEffect(() => {
+    requester.get('modules').then(modules => {
+      setModules(modules.sort((a, b) => (a === b ? 0 : a ? -1 : 1))) // sets enabled first
+    })
+  }, [])
+
   const setEnabled = id => {
     const enabled = !modules.find(mod => mod.id === id).enabled
     requester
@@ -24,6 +30,7 @@ export default () => {
         notificationHandler.error('Could not enable Module', err.message)
       })
   }
+
   const columns = [
     {
       dataIndex: 'name'
@@ -61,13 +68,6 @@ export default () => {
       }
     }
   ]
-
-  useEffect(() => {
-    requester.get('modules').then(modules => {
-      console.log(modules)
-      setModules(modules)
-    })
-  }, [])
 
   return (
     <div>

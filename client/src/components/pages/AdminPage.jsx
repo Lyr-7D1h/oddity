@@ -3,13 +3,17 @@ import { Card } from 'antd'
 import Page from '../containers/Page'
 import Title from 'antd/lib/typography/Title'
 import Centered from '../containers/Centered'
-// import RoutingTable from '../RoutingTable'
 import AdminRedirect from '../containers/AdminRedirect'
 import SubNav from '../SubNav'
 import ModulesTable from '../ModulesTable'
+import { Redirect } from 'react-router-dom'
 
 export default ({ match }) => {
-  const nav = ['Routing', 'Forum', 'Modules']
+  const nav = ['General', 'Modules']
+
+  if (!match.params.page) {
+    return <Redirect to="/admin/general"></Redirect>
+  }
 
   let Content
   switch (match.params.page) {
@@ -22,7 +26,7 @@ export default ({ match }) => {
       )
       break
     default:
-      Content = <div>Admin page</div>
+      Content = <div>General Settings</div>
       break
   }
 

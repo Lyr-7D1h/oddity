@@ -34,7 +34,7 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
         if (route.default) noHomeSet = false
 
         if (mod) {
-          const modRoutes = moduleLoaderImports.routes[mod.name]
+          const modRoutes = moduleLoaderImports.modules[mod.name].routes
           if (modRoutes) {
             modRoutes.forEach(moduleRoute => {
               moduleRoutes.push(
