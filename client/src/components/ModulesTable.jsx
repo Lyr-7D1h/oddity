@@ -16,6 +16,7 @@ export default () => {
         .sort((a, b) => (a.enabled ? 1 : -1))
         .map(mod => {
           mod.adminPage = moduleLoaderImports.modules[mod.name].adminPage
+          return mod
         })
       setModules(modules.sort((a, b) => (a === b ? 0 : a ? -1 : 1))) // sets enabled first
     })
