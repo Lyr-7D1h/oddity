@@ -11,7 +11,40 @@ module.exports = async fastify => {
       .catch(err => {
         fastify.log.error(err)
         fastify.sentry.captureException(err)
-        reply.send(fastify.httpErrors.internalServerError())
+        reply.internalServerError()
       })
   })
+
+  fastify.patch(
+    '/config/title',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          properties: {
+            title: {
+              type: 'string'
+            }
+          },
+          required: ['title']
+        }
+      },
+      preHandler: [fastify.auth([fastify.authentication.cookie])]
+    },
+    (request, reply) => {
+      fastify.models.config
+        .update(
+          {
+            title: request.body.title
+          },
+          { where: { isActive: true }, returning: true }
+        )
+        .then(result => reply.send(result[1][0]))
+        .catch(err => {
+          fastify.log.error(err)
+          fastify.sentry.captureException(err)
+          reply.internalServerError()
+        })
+    }
+  )
 }

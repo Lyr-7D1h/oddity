@@ -75,20 +75,20 @@ const Nav = ({ config, user, updateUser, location }) => {
                   </Menu.Item>
                 </Menu.ItemGroup>
                 <Menu.ItemGroup title="Actions">
-                  <Menu.Item key="logout">
-                    <Typography.Text type="danger" onClick={handleLogout}>
-                      Logout
-                    </Typography.Text>
+                  <Menu.Item key="logout" onClick={handleLogout}>
+                    <Typography.Text type="danger">Logout</Typography.Text>
                   </Menu.Item>
                 </Menu.ItemGroup>
               </Menu.SubMenu>
             )}
 
             {user.identifier === 'admin' && (
-              <Menu.Item style={{ float: 'right' }} key="logout">
-                <Typography.Text type="danger" onClick={handleLogout}>
-                  Logout
-                </Typography.Text>
+              <Menu.Item
+                style={{ float: 'right' }}
+                onClick={handleLogout}
+                key="logout"
+              >
+                <Typography.Text type="danger">Logout</Typography.Text>
               </Menu.Item>
             )}
             {user.permissions === 1 && (

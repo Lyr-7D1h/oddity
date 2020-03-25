@@ -1,23 +1,30 @@
 import React from 'react'
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Input, Button } from 'antd';
+import { Input, Button } from 'antd'
+import { Form } from 'antd'
 
 import { connect } from 'react-redux'
 import { updateConfig } from '../redux/actions/configActions'
+import requester from '../helpers/requester'
+import notificationHandler from '../helpers/notificationHandler'
 
 const ConfigForm = ({ dispatch, config, ...props }) => {
-  const handleSubmit = e => {
-    e.preventDefault()
-    const data = { ...config }
-    data.title = e.target[0].value
-    dispatch(updateConfig(data))
+  const handleFinish = values => {
+    requester
+      .patch('config/title', values)
+      .then(resultConfig => {
+        config.title = resultConfig.title
+        dispatch(updateConfig(config))
+      })
+      .catch(err => {
+        console.error(err)
+        notificationHandler.error('Could not update Configuration', err.message)
+      })
   }
 
   return (
-    <Form onSubmit={handleSubmit} className="login-form">
-      <Form.Item>
-        <Input type="text" name="title" placeholder={config.title} required />
+    <Form onFinish={handleFinish} className="login-form">
+      <Form.Item label="Title" name="title" rules={[{ required: true }]}>
+        <Input />
       </Form.Item>
       <Form.Item>
         <Button

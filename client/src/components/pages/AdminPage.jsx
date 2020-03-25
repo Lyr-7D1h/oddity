@@ -7,6 +7,7 @@ import AdminRedirect from '../containers/AdminRedirect'
 import SubNav from '../SubNav'
 import ModulesTable from '../ModulesTable'
 import { Redirect } from 'react-router-dom'
+import ConfigForm from '@components/ConfigForm'
 
 export default ({ match }) => {
   const nav = ['General', 'Modules']
@@ -26,7 +27,12 @@ export default ({ match }) => {
       )
       break
     default:
-      Content = <div>General Settings</div>
+      Content = (
+        <>
+          <Title>General Settings</Title>
+          <ConfigForm />
+        </>
+      )
       break
   }
 
