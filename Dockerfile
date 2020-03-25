@@ -11,7 +11,7 @@ WORKDIR /usr/src/app/server
 RUN npm ci --production
 
 # Create module_loader_imports file
-RUN node module_loader.js
+RUN node module_loader
 
 # Link node_modules for modules
 WORKDIR /usr/src/app
