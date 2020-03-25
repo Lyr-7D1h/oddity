@@ -18,5 +18,6 @@
       "path": "/:category/:thread/:post/",
       "component": "/client/components/index"
     }
-  ]
+  ],
+  "adminPage": "AdminPage"
 }

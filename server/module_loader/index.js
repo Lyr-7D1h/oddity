@@ -3,7 +3,7 @@
 /**
  * Reads files in /modules =>
  *  (Should validate files)
- *  Upserts module in database
+ *  Writes db files in /modules to their corresponding place in /server
  *  Creates client import file
  *  Creates server import file
  */
