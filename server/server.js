@@ -8,7 +8,8 @@ require('dotenv').config()
 // sentry.io
 Sentry.init({
   dsn: 'https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726',
-  environment: process.env.NODE_ENV
+  environment:
+    process.env.NODE_ENV === 'development' ? 'development' : 'production'
 })
 
 // installs an 'unhandledRejection' handler
