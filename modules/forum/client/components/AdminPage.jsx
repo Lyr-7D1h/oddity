@@ -5,7 +5,7 @@ import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Row, Col, Collapse, Input, Empty } from "antd";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DndProvider, DragSource, DropTarget } from "react-dnd";
-import ActionPopup from "@components/ActionPopup";
+import SavePopup from "@components/SavePopup";
 
 const RoutingTable = ({ config, updateConfig }) => {
   const [items, setItems] = useState([]);
@@ -347,17 +347,7 @@ const RoutingTable = ({ config, updateConfig }) => {
   );
   return (
     <>
-      {hasChanges && (
-        <ActionPopup>
-          <div>
-            <div style={{ marginBottom: 15 }}>You have unsaved changes</div>
-
-            <Button type="oddity" onClick={handleSave} block>
-              Save Changes
-            </Button>
-          </div>
-        </ActionPopup>
-      )}
+      {hasChanges && <SavePopup onSave={handleSave} />}
       <Input required ref={forumInput} placeholder="Title" />
       <Row style={{ marginBottom: "30px" }}>
         <Col span={12}>

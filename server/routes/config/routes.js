@@ -38,12 +38,11 @@ module.exports = async fastify => {
           items: {
             type: 'object',
             properties: {
-              name: { type: 'string' },
               path: { type: 'string' },
               moduleId: { type: 'integer' },
               default: { type: 'boolean' }
             },
-            required: ['name', 'path', 'moduleId']
+            required: ['path', 'moduleId']
           }
         }
       },

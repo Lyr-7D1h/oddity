@@ -27,6 +27,10 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
       for (let i in routes) {
         const route = routes[i]
 
+        if (!route.isActive) {
+          return
+        }
+
         const basePath = route.default ? '/' : route.path
 
         const mod = modules.find(mod => mod.id === route.moduleId)

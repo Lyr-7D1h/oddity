@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.bulkInsert("routes", [
       {
         name: "Home",
-        path: "/",
+        path: "",
         default: true,
         moduleId: 1,
         configId: 1,
@@ -18,7 +18,7 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkDelete("routes", [
       {
-        name: "Home"
+        moduleId: 1
       }
     ]);
   }
