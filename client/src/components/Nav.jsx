@@ -11,7 +11,7 @@ import notificationHandler from '../helpers/notificationHandler'
 import { connect } from 'react-redux'
 import { updateUser } from '../redux/actions/userActions'
 
-const Nav = ({ config, user, updateUser, location }) => {
+const Nav = ({ modules, config, user, updateUser, location }) => {
   let { routes, title } = config
   const [loginError, setLoginError] = useState(false)
 
@@ -50,9 +50,11 @@ const Nav = ({ config, user, updateUser, location }) => {
             style={{ lineHeight: '64px', marginRight: '20px', border: 'none' }}
             className="oddity-nav"
           >
-            {routes.map((mod, i) => (
-              <Menu.Item key={mod.path}>
-                <Link to={`/${mod.path}`}>{mod.name}</Link>
+            {routes.map((route, i) => (
+              <Menu.Item key={route.path}>
+                <Link to={`/${route.path}`}>
+                  {modules.find(mod => mod.id === route.moduleId).name}
+                </Link>
               </Menu.Item>
             ))}
 
@@ -107,7 +109,8 @@ export default connect(
   state => {
     return {
       user: state.user,
-      config: state.config
+      config: state.config,
+      modules: state.modules
     }
   },
   {
