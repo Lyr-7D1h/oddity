@@ -5,8 +5,7 @@ const fp = require('fastify-plugin')
  * stays in sync with session info
  */
 module.exports = fp((instance, _, done) => {
-  instance.addHook('onRequest', (request, reply, done) => {
-    console.log(request.session)
+  instance.addHook('preHandler', (request, reply, done) => {
     if (request.cookies.user && !request.session.user) {
       reply.clearCookie('user')
       done()
@@ -16,7 +15,7 @@ module.exports = fp((instance, _, done) => {
       !request.cookies.user
     ) {
       instance
-        .setUserCookie(reply, reply.session.user.id)
+        .setUserCookie(reply, request.session.user.id)
         .then(() => {
           done()
         })
