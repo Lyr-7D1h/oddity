@@ -46,12 +46,7 @@ module.exports = async fastify => {
           }
         }
       },
-      preHandler: [
-        fastify.auth([
-          fastify.authentication.cookie,
-          fastify.authentication.basic
-        ])
-      ]
+      preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
     (request, reply) => {
       fastify.models.config

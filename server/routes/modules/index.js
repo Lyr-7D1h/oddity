@@ -15,8 +15,8 @@ module.exports = async fastify => {
   fastify.put(
     '/modules/:id',
     {
-      schema: { params: 'id#' }
-      // preHandler: [fastify.auth([fastify.authentication.cookie])]
+      schema: { params: 'id#' },
+      preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
     (request, reply) => {
       if (!request.body) return reply.badRequest()

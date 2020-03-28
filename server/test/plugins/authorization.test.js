@@ -31,7 +31,7 @@ const basicTest = app => {
         preHandler: app.auth([app.authentication.basic])
       },
       (request, reply) => {
-        reply.send(request.credentials)
+        reply.send()
       }
     )
   })

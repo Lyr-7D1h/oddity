@@ -3,10 +3,6 @@ const auth = require('basic-auth')
 const { Unauthorized, InternalServerError } = require('http-errors')
 
 module.exports = fp(async instance => {
-  instance.decorateRequest('credentials', {
-    id: null
-  })
-
   const basicAuth = (request, reply, done) => {
     // get credentials from request
     const basicCredentials = auth(request)
@@ -31,7 +27,7 @@ module.exports = fp(async instance => {
               .validate(basicCredentials.pass, user.password)
               .then(isValid => {
                 if (isValid) {
-                  request.credentials.id = user.id
+                  reply.user = { id: user.id }
                   done()
                 } else {
                   done(new Unauthorized())
@@ -69,7 +65,6 @@ module.exports = fp(async instance => {
                 user.permissions | user.role.permissions
               )
               if (hasPermsUser) {
-                request.credentials.id = request.session.user.id
                 done()
               } else {
                 done(new Unauthorized())
