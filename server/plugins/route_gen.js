@@ -38,35 +38,33 @@ module.exports = fp(async instance => {
         switch (method) {
           case 'GET':
             if (route.multiple) {
-              return async (request, reply) => {
+              return (request, reply) => {
                 model
                   .findAll({ attributes: columns })
                   .then(items => {
-                    reply.send(items)
+                    return reply.send(items)
                   })
                   .catch(err => {
                     instance.log.error(err)
                     instance.sentry.captureException(err)
-                    reply.internalServerError()
+                    return reply.internalServerError()
                   })
-                await reply
               }
             } else {
-              return async (request, reply) => {
+              return (request, reply) => {
                 model
                   .findOne({
                     where: { id: request.params.id, attributes: columns }
                   })
                   .then(item => {
                     if (!item) reply.notFound()
-                    reply.send(item)
+                    return reply.send(item)
                   })
                   .catch(err => {
                     instance.log.error(err)
                     instance.sentry.captureException(err)
-                    reply.internalServerError()
+                    return reply.internalServerError()
                   })
-                await reply
               }
             }
           case 'POST':
@@ -78,18 +76,17 @@ module.exports = fp(async instance => {
                 `(${tableName} Route) No need to specify columns for POST`
               )
             }
-            return async (request, reply) => {
+            return (request, reply) => {
               model
                 .create(request.body)
                 .then(res => {
-                  reply.send(res)
+                  return reply.send(res)
                 })
                 .catch(err => {
                   instance.log.error(err)
                   instance.sentry.captureException(err)
-                  reply.badRequest()
+                  return reply.badRequest()
                 })
-              await reply
             }
           case 'PATCH':
             if (route.multiple) {
@@ -100,22 +97,21 @@ module.exports = fp(async instance => {
                 `(${tableName} Route) No need to specify columns for POST`
               )
             }
-            return async (request, reply) => {
+            return (request, reply) => {
               model
                 .patch(request.body)
                 .then(response => {
                   if (response.nModified === 0) {
-                    reply.noChange()
+                    return reply.noChange()
                   } else {
-                    reply.success()
+                    return reply.success()
                   }
                 })
                 .catch(err => {
                   instance.log.error(err)
                   instance.sentry.captureException(err)
-                  reply.badRequest()
+                  return reply.badRequest()
                 })
-              await reply
             }
 
           case 'PUT':
@@ -127,22 +123,21 @@ module.exports = fp(async instance => {
                 `(${tableName} Route) No need to specify columns for POST`
               )
             }
-            return async (request, reply) => {
+            return (request, reply) => {
               model
                 .update(request.body)
                 .then(response => {
                   if (response.nModified === 0) {
-                    reply.noChange()
+                    return reply.noChange()
                   } else {
-                    reply.success()
+                    return reply.success()
                   }
                 })
                 .catch(err => {
                   instance.log.error(err)
                   instance.sentry.captureException(err)
-                  reply.badRequest()
+                  return reply.badRequest()
                 })
-              await reply
             }
           case 'DELETE':
             if (route.multiple) {
@@ -153,7 +148,7 @@ module.exports = fp(async instance => {
                 `(${tableName} Route) No need to specify columns for POST`
               )
             }
-            return async (request, reply) => {
+            return (request, reply) => {
               model
                 .destroy({ where: { id: request.params.id } })
                 .then(response => {
@@ -167,7 +162,6 @@ module.exports = fp(async instance => {
                   instance.sentry.captureException(err)
                   return reply.badRequest()
                 })
-              await reply
             }
         }
       }

@@ -5,11 +5,11 @@ module.exports = async fastify => {
     fastify.models.module
       .findAll({ attributes: { exclude: ['createdAt', 'updatedAt'] } })
       .then(modules => {
-        reply.send(modules)
+        return reply.send(modules)
       })
       .catch(err => {
         fastify.log.error(err)
-        reply.internalServerError()
+        return reply.internalServerError()
       })
   })
   fastify.put(
@@ -29,9 +29,9 @@ module.exports = async fastify => {
         )
         .then(([amountModified, mod]) => {
           if (amountModified === 0) {
-            reply.noChange()
+            return reply.noChange()
           } else {
-            reply.send(mod)
+            return reply.send(mod)
           }
         })
     }
