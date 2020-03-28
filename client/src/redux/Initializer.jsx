@@ -12,12 +12,15 @@ import moduleReducer from './reducers/modulesReducer'
 import { updateUser } from './actions/userActions'
 import { updateConfig, fetchConfig } from './actions/configActions'
 import { fetchModules, updateModules } from './actions/moduleActions'
+import routesReducer from './reducers/routesReducer'
+import { updateRoutes, fetchRoutes } from './actions/routesActions'
 
 const store = createStore(
   combineReducers({
     config: configReducer,
     user: userReducer,
-    modules: moduleReducer
+    modules: moduleReducer,
+    routes: routesReducer
   }),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
@@ -35,7 +38,9 @@ if (user.username !== undefined) {
 // Load config from /api/config
 store.dispatch(fetchConfig())
 store.dispatch(fetchModules())
+store.dispatch(fetchRoutes())
 requester.get('init').then(init => {
   store.dispatch(updateModules(init.modules))
   store.dispatch(updateConfig(init.config))
+  store.dispatch(updateRoutes(init.routes))
 })

@@ -10,7 +10,7 @@ import SavePopup from './SavePopup'
 
 export default connect(state => ({
   configId: state.config.id,
-  routes: state.config.routes
+  routes: state.routes
 }))(({ routes, configId }) => {
   const [modules, setModules] = useState([])
   const [SettingsComponent, setSettingsComponent] = useState(null)
@@ -36,6 +36,7 @@ export default connect(state => ({
     requester
       .put(`modules/${id}`, { enabled })
       .then(() => {
+        setChangesMade(true)
         setModules(
           modules.map(mod => {
             if (mod.id === id) {

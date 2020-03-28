@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
   })
   route.associate = models => {
     route.belongsTo(models.config)
+    route.belongsTo(models.module)
   }
 
   return route

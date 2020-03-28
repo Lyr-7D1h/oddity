@@ -4,11 +4,17 @@ module.exports = async fastify => {
     initPromises.push(
       fastify.models.config.findOne({
         where: { isActive: true },
+        attributes: { exclude: ['createdAt', 'updatedAt'] }
+      })
+    )
+
+    initPromises.push(
+      fastify.models.route.findAll({
         attributes: { exclude: ['createdAt', 'updatedAt'] },
         include: [
           {
-            model: fastify.models.route,
-            attributes: { exclude: ['createdAt', 'updatedAt'] }
+            model: fastify.models.module,
+            where: { enabled: true }
           }
         ]
       })
@@ -22,8 +28,8 @@ module.exports = async fastify => {
     )
 
     Promise.all(initPromises)
-      .then(([config, modules]) => {
-        reply.send({ config, modules })
+      .then(([config, routes, modules]) => {
+        reply.send({ config, routes, modules })
       })
       .catch(err => {
         fastify.log.error(err)

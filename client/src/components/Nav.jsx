@@ -11,8 +11,7 @@ import notificationHandler from '../helpers/notificationHandler'
 import { connect } from 'react-redux'
 import { updateUser } from '../redux/actions/userActions'
 
-const Nav = ({ modules, config, user, updateUser, location }) => {
-  let { routes, title } = config
+const Nav = ({ modules, title, routes, user, updateUser, location }) => {
   const [loginError, setLoginError] = useState(false)
 
   // make sure default route / home route is not included
@@ -109,8 +108,9 @@ export default connect(
   state => {
     return {
       user: state.user,
-      config: state.config,
-      modules: state.modules
+      routes: state.routes,
+      modules: state.modules,
+      title: state.config.title
     }
   },
   {
