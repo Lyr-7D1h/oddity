@@ -13,7 +13,7 @@ module.exports = fastify => {
           fastify.sentry.captureException(err)
           reply.send(fastify.httpErrors.internalServerError())
         }
-        reply.clearCookie('user', { path: '/' })
+        reply.clearCookie('user')
         reply.success()
       })
     }

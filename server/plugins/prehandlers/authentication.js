@@ -27,7 +27,7 @@ module.exports = fp(async instance => {
               .validate(basicCredentials.pass, user.password)
               .then(isValid => {
                 if (isValid) {
-                  reply.user = { id: user.id }
+                  request.user = { id: user.id }
                   done()
                 } else {
                   done(new Unauthorized())

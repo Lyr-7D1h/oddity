@@ -8,11 +8,11 @@ module.exports = async fastify => {
       preHandler: fastify.auth([fastify.authentication.basic])
     },
     (request, reply) => {
-      console.log(reply.user.id)
       fastify
-        .setUserCookie(reply, reply.user.id)
+        .setUserCookie(reply, request.user.id)
         .then(() => {
-          request.session.user = { id: reply.user.id }
+          request.session.user = { id: request.user.id }
+          console.log(request.session)
           reply.send()
         })
         .catch(err => {

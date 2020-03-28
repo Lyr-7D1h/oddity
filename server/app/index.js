@@ -3,6 +3,8 @@
 const path = require('path')
 const fastifyAutoload = require('fastify-autoload')
 const fp = require('fastify-plugin')
+const session = require('fastify-session')
+const SequelizeStore = require('connect-session-sequelize')(session.Store)
 const { routesDirectories } = require('../module_loader_imports')
 
 module.exports = async (fastify, opts) => {
@@ -37,14 +39,8 @@ module.exports = async (fastify, opts) => {
     .register(require('fastify-sensible'))
 
     .register(require('fastify-cookie'))
-    .register(require('fastify-session'), {
-      secret: fastify.config.SESSION_SECRET,
-      cookie: {
-        httpOnly: !(fastify.config.NODE_ENV === 'development'), // set httpOnly and secure off when in dev
-        secure: !(fastify.config.NODE_ENV === 'development')
-      }
-    })
 
+    // TODO: not sure when used
     .register(require('fastify-multipart'), {
       limits: {
         fieldNameSize: 100, // Max field name size in bytes
@@ -67,6 +63,29 @@ module.exports = async (fastify, opts) => {
       dir: path.join(__dirname, '../plugins'),
       options: Object.assign({}, opts)
     })
+    .register(
+      fp(
+        (instance, opts, done) => {
+          opts.store = new SequelizeStore({
+            db: instance.db,
+            modelKey: 'session'
+          })
+          session(instance, opts, done)
+          opts.store.sync()
+        },
+        {
+          dependencies: ['sequelize']
+        }
+      ),
+      {
+        secret: fastify.config.SESSION_SECRET,
+        cookie: {
+          httpOnly: !(fastify.config.NODE_ENV === 'development'), // set httpOnly and secure off when in dev
+          secure: !(fastify.config.NODE_ENV === 'development'),
+          expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // session is valid for 14 days
+        }
+      }
+    )
 
     // Load models
     .register(fp(require('../db/models'), { name: 'models' }))

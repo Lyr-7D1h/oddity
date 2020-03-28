@@ -132,7 +132,7 @@ export default connect(state => {
     }
   }
   return {
-    routes: state.config.routes,
+    routes: state.routes,
     modules: state.modules,
     userNeedsSetup: userNeedsSetup
   }
