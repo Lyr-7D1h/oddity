@@ -71,7 +71,7 @@ server.listen(process.env.PORT || 5000, '0.0.0.0', err => {
     )
   }
 
-  server.log.info(`Listening on http://0.0.0.0:${process.env.PORT || 5000}`)
+  // server.log.info(`Listening on http://0.0.0.0:${process.env.PORT || 5000}`)
 
   if (err) {
     server.log.fatal(err)
