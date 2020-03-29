@@ -4,20 +4,20 @@
   "routes": [
     {
       "path": "/",
-      "component": "/client/components/index"
+      "component": "/client/components/pages/RootPage"
     },
     {
       "path": "/:category/",
-      "component": "/client/components/index"
+      "component": "/client/components/pages/CategoryPage"
     },
     {
       "path": "/:category/:thread/",
-      "component": "/client/components/index"
+      "component": "/client/components/pages/ThreadPage"
     },
     {
       "path": "/:category/:thread/:post/",
-      "component": "/client/components/index"
+      "component": "/client/components/pages/PostPage"
     }
   ],
-  "adminPage": "AdminPage"
+  "adminPage": "/client/components/pages/AdminPage"
 }

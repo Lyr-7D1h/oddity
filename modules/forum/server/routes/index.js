@@ -1,8 +1,6 @@
 "use strict";
 
 module.exports = async fastify => {
-  //   require("./find")(fastify);
-
   fastify.get("/forum", (request, reply) => {
     fastify.models.forumCategory
       .findAll({
@@ -119,12 +117,12 @@ module.exports = async fastify => {
           ]
         })
         .then(category => {
-          reply.send(category);
+          return reply.send(category);
         })
         .catch(err => {
           fastify.log.error(err);
           fastify.sentry.captureException(err);
-          reply.internalServerError();
+          return reply.internalServerError();
         });
     }
   );

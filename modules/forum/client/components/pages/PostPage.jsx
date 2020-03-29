@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Empty } from "antd";
 import { useEffect } from "react";
-import requester from "../../../../client/src/helpers/requester";
+import requester from "@helpers/requester";
 import { useState } from "react";
 import ReactQuill from "react-quill";
 
