@@ -19,11 +19,10 @@ module.exports = () => {
   client.querySync('DROP SCHEMA IF EXISTS public CASCADE;')
   client.querySync('CREATE SCHEMA public;')
 
-  const out = require('child_process').execSync(
+  require('child_process').execSync(
     `DB_HOST=${DB_HOST} DB_NAME=${DB_NAME} DB_USERNAME=${DB_USERNAME} DB_PASSWORD=${DB_PASSWORD} node models_sync`,
     {
       cwd: require('path').join(__dirname, '..')
     }
   )
-  console.log(out)
 }

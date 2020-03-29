@@ -31,7 +31,7 @@ const basicTest = app => {
         preHandler: app.auth([app.authentication.basic])
       },
       (request, reply) => {
-        reply.send()
+        reply.send(request.user.id)
       }
     )
   })
@@ -101,7 +101,7 @@ test('Can authorize USING BASIC', t => {
 
                 t.equal(res.statusCode, 200)
 
-                t.equal(JSON.parse(res.body).id, 1)
+                t.equal(JSON.parse(res.body), 1)
               }
             )
           })
