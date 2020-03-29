@@ -1,3 +1,8 @@
+# BADGE LABEL
+ARG VCS_REF
+LABEL org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="e.g. https://github.com/microscaling/microscaling"
+
 FROM node:latest
 
 # App Directory
