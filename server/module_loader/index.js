@@ -49,7 +49,14 @@ fs.readdir(MODULES_DIR, (err, moduleDirs) => {
     .then(() => {
       Promise.all([writeServer(), writeClient(), writeDbFiles()])
         .then(() => {
-          console.debug('==== MODULE LOADER END ====')
+          writeDbFiles()
+            .then(() => {
+              console.debug('==== MODULE LOADER END ====')
+            })
+            .catch(err => {
+              console.error(err)
+              process.exit(1)
+            })
         })
         .catch(err => {
           console.error(err)

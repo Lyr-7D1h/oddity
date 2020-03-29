@@ -10,7 +10,7 @@ module.exports = () => {
 
   const syncFiles = (sources, destination) => {
     return new Promise((resolve, reject) => {
-      fs.readdir(path.join(__dirname, destination), (err, existingFiles) => {
+      fs.readdir(destination, (err, existingFiles) => {
         if (err) reject(err)
 
         const loaders = []
@@ -60,8 +60,8 @@ module.exports = () => {
   }
 
   return Promise.all([
-    syncFiles(seeders, '../db/seeders'),
-    syncFiles(models, '../db/models'),
-    syncFiles(migrations, '../db/migrations')
+    syncFiles(seeders, path.join(__dirname, '../db/seeders')),
+    syncFiles(models, path.join(__dirname, '../db/models')),
+    syncFiles(migrations, path.join(__dirname, '../db/migrations'))
   ])
 }
