@@ -1,5 +1,7 @@
 # ODDITY
 ![Tests](https://github.com/OddityServers/oddity/workflows/Tests/badge.svg)
+[![](https://images.microbadger.com/badges/version/oddityserver/oddity.svg)](https://microbadger.com/images/oddityserver/oddity "Get your own version badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/oddityserver/oddity.svg)](https://microbadger.com/images/oddityserver/oddity "Get your own image badge on microbadger.com")
 
 ## Introduction
 
