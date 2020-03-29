@@ -14,7 +14,7 @@ export default ({ match }) => {
     requester
       .get(`forum/find/${match.params.category}/${match.params.thread}`)
       .then(category => {
-        if (category === null) {
+        if (category === null || category.threads.length === 0) {
           setNotFound(true);
         } else {
           setThread(category.threads[0]);

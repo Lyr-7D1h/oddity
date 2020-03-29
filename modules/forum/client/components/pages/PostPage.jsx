@@ -1,38 +1,49 @@
 import React from "react";
-import { Card, Empty } from "antd";
 import { useEffect } from "react";
 import requester from "@helpers/requester";
 import { useState } from "react";
-import ReactQuill from "react-quill";
+import CreatePostForm from "../CreatePostForm";
+import Page from "../containers/Page";
+import path from "path";
+import PostCard from "../PostCard";
 
-export default ({ postId }) => {
-  const [post, setPost] = useState(null);
+export default ({ match }) => {
+  const [post, setPost] = useState({});
+  const [threadId, setThreadId] = useState(null);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    requester.get(`forum/posts/${postId}`).then(post => {
-      setPost(post);
-    });
-  }, [postId]);
-
-  if (!post) {
-    return <Empty />;
-  }
-
-  console.log(post);
+    if (match.params.post !== "create") {
+      requester
+        .get(
+          `forum/find/${match.params.category}/${match.params.thread}/${match.params.post}`
+        )
+        .then(category => {
+          console.log(category);
+          if (
+            category === null ||
+            category.threads.length === 0 ||
+            category.threads[0].posts.length === 0
+          ) {
+            setNotFound(true);
+          } else {
+            setPost(category.threads[0].posts[0]);
+            setThreadId(category.threads[0].id);
+          }
+        });
+    }
+  }, []);
 
   return (
-    <Card
-      title={
-        <p>
-          {post.title}, by {post.author.username}
-        </p>
-      }
-    >
-      <ReactQuill
-        defaultValue={post.content}
-        theme={null}
-        readOnly={true}
-      ></ReactQuill>
-    </Card>
+    <Page notFound={notFound}>
+      {match.params.post === "create" ? (
+        <CreatePostForm
+          threadId={threadId}
+          threadPath={path.join(match.url, "..")}
+        />
+      ) : (
+        <PostCard post={post} />
+      )}
+    </Page>
   );
 };

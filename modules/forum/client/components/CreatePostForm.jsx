@@ -5,26 +5,27 @@ import ReactQuill from "react-quill";
 import notificationHandler from "../../../../client/src/helpers/notificationHandler";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
+import path from "path";
 
 export default connect(state => ({ userId: state.user.id }))(
-  ({ threadId, userId, currentPath }) => {
+  ({ threadId, userId, threadPath }) => {
     const loggedIn = !isNaN(userId);
 
     const [postHtml, setPostHtml] = useState([]);
 
-    const handleSubmit = values => {
+    const handleFinish = values => {
       values = {
         ...values,
         content: postHtml,
         threadId: threadId,
         authorId: userId
       };
-      console.log(values);
 
       requester
         .post(`forum/posts`, values)
-        .then(() => {
-          return <Redirect to={currentPath + `../${values.title}`} />;
+        .then(post => {
+          console.log(post);
+          return <Redirect to={path.join(threadPath, post.title)} />;
         })
         .catch(err => {
           notificationHandler.error("Could not send post", err.message);
@@ -60,12 +61,10 @@ export default connect(state => ({ userId: state.user.id }))(
 
     if (loggedIn) {
       return (
-        <Card title={"Create new post"} onSubmit={handleSubmit}>
-          <Form onFisish={handleSubmit} {...formItemLayout}>
-            <Form.Item label="Title">
-              {getFieldDecorator("title", {
-                rules: [{ required: true }]
-              })(<Input />)}
+        <Card title={"Create new post"} onSubmit={handleFinish}>
+          <Form onFinish={handleFinish} {...formItemLayout}>
+            <Form.Item label="Title" name="title" rules={[{ required: true }]}>
+              <Input />
             </Form.Item>
             <ReactQuill
               placeholder="Write something..."
