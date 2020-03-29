@@ -4,7 +4,6 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert("routes", [
       {
-        name: "Home",
         path: "",
         default: true,
         moduleId: 1,
