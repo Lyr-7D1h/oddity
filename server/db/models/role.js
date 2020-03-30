@@ -1,5 +1,3 @@
-const fp = require('fastify-plugin')
-
 module.exports = (sequelize, DataTypes) => {
   const role = sequelize.define('role', {
     name: {

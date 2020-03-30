@@ -27,7 +27,7 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
       for (let i in routes) {
         const route = routes[i]
 
-        if (!route.isActive) {
+        if (!route.enabled) {
           return
         }
 
