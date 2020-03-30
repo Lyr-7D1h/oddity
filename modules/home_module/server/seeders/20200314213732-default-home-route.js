@@ -6,6 +6,7 @@ module.exports = {
       {
         path: "",
         default: true,
+        enabled: true,
         moduleId: 1,
         configId: 1,
         createdAt: new Date(),

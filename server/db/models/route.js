@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false
     },
-    isActive: {
+    enabled: {
       type: DataTypes.BOOLEAN,
       allowNull: false
     },
