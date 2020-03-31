@@ -7,6 +7,5 @@ import { Card } from "antd";
  */
 
 export default ({ match, location, history }) => {
-  console.log(match, location, history);
   return <Card>EXAMPLE</Card>;
 };

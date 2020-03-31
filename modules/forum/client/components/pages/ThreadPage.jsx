@@ -26,8 +26,6 @@ export default ({ match }) => {
       });
   }, []);
 
-  console.log(thread);
-
   return (
     <Page notFound={notFound}>
       <ThreadCard thread={thread} threadPath={threadPath} />

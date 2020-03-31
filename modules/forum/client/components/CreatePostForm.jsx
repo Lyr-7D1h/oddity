@@ -9,9 +9,8 @@ import path from "path";
 
 export default connect(state => ({ userId: state.user.id }))(
   ({ threadId, userId, threadPath }) => {
-    const loggedIn = !isNaN(userId);
-
     const [postHtml, setPostHtml] = useState([]);
+    const [createdPost, setCreatedPost] = useState(false);
 
     const handleFinish = values => {
       values = {
@@ -24,8 +23,7 @@ export default connect(state => ({ userId: state.user.id }))(
       requester
         .post(`forum/posts`, values)
         .then(post => {
-          console.log(post);
-          return <Redirect to={path.join(threadPath, post.title)} />;
+          setCreatedPost(post);
         })
         .catch(err => {
           notificationHandler.error("Could not send post", err.message);
@@ -59,45 +57,44 @@ export default connect(state => ({ userId: state.user.id }))(
       }
     };
 
-    if (loggedIn) {
-      return (
-        <Card title={"Create new post"} onSubmit={handleFinish}>
-          <Form onFinish={handleFinish} {...formItemLayout}>
-            <Form.Item label="Title" name="title" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <ReactQuill
-              placeholder="Write something..."
-              onChange={handlePostChange}
-              style={{ marginBottom: "24px" }}
-            />
-            <Form.Item
-              {...tailFormItemLayout}
-              className="ant-col-lg-5"
-              style={{ margin: 0, float: "right" }}
-            >
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="login-form-button"
-                block
-              >
-                Create
-              </Button>
-            </Form.Item>
-            <Form.Item
-              {...tailFormItemLayout}
-              className="ant-col-lg-5"
-              style={{ margin: 0, float: "right" }}
-            >
-              <Button block>Save as draft</Button>
-            </Form.Item>
-          </Form>
-        </Card>
-      );
-    } else {
-      notificationHandler.info("You need to be logged in to write a new post");
-      return <Redirect to="/login" />;
+    if (createdPost) {
+      return <Redirect to={path.join(threadPath, createdPost.title)} />;
     }
+
+    return (
+      <Card title={"Create new post"} onSubmit={handleFinish}>
+        <Form onFinish={handleFinish} {...formItemLayout}>
+          <Form.Item label="Title" name="title" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <ReactQuill
+            placeholder="Write something..."
+            onChange={handlePostChange}
+            style={{ marginBottom: "24px" }}
+          />
+          <Form.Item
+            {...tailFormItemLayout}
+            className="ant-col-lg-5"
+            style={{ margin: 0, float: "right" }}
+          >
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="login-form-button"
+              block
+            >
+              Create
+            </Button>
+          </Form.Item>
+          <Form.Item
+            {...tailFormItemLayout}
+            className="ant-col-lg-5"
+            style={{ margin: 0, float: "right" }}
+          >
+            <Button block>Save as draft</Button>
+          </Form.Item>
+        </Form>
+      </Card>
+    );
   }
 );

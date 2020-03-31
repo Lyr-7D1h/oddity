@@ -14,11 +14,9 @@ export default ({ match }) => {
     requester
       .get(`forum/find/${match.params.category}`)
       .then(category => {
-        console.log(category);
         if (category === null) {
           setNotFound(true);
         } else {
-          console.log(category);
           setCategory(category);
         }
       })

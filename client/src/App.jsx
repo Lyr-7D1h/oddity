@@ -28,7 +28,6 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
       for (let i in modules) {
         const route = modules[i].route
         const mod = modules[i]
-        console.log(mod.name)
 
         const basePath = route === '' ? '/' : route
 

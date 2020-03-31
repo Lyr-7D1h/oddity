@@ -1,46 +1,34 @@
 import React from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { Link } from 'react-router-dom'
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Input, Tooltip, Checkbox, Button } from 'antd';
+import { QuestionCircleOutlined, UserOutlined } from '@ant-design/icons'
+import { Form, Input, Tooltip, Checkbox, Button } from 'antd'
 
 import notificationHandler from '../helpers/notificationHandler'
 import requester from '../helpers/requester'
+import { useState } from 'react'
 
-class RegistrationForm extends React.Component {
-  state = {
-    confirmDirty: false,
-    identifier: ''
+export default () => {
+  const [identifier, setIdentifier] = useState(null)
+
+  const handleFinish = values => {
+    requester
+      .post('auth/register', values)
+      .then(isValid => {
+        if (isValid) {
+          this.props.onSubmit()
+          notificationHandler.success('Account Created')
+        } else {
+          notificationHandler.error('Wrong password or username')
+        }
+      })
+      .catch(err => {
+        console.error(err)
+        notificationHandler.error('Invalid Input', err.message)
+      })
   }
 
-  handleSubmit = e => {
-    e.preventDefault()
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        values.identifier = this.state.identifier
-
-        requester
-          .post('auth/register', values)
-          .then(isValid => {
-            if (isValid) {
-              this.props.onSubmit()
-              notificationHandler.success('Account Created')
-            } else {
-              notificationHandler.error('Wrong password or username')
-            }
-          })
-          .catch(err => {
-            notificationHandler.error('Invalid Input')
-          })
-      } else {
-        notificationHandler.error('Invalid Input')
-      }
-    })
-  }
-
-  identifierHandler = e => {
+  const identifierHandler = e => {
     e.preventDefault()
 
     const identifier = e.target.value.toLowerCase().replace(' ', '_')
@@ -48,180 +36,122 @@ class RegistrationForm extends React.Component {
     return e.target.value
   }
 
-  handleConfirmBlur = e => {
-    const { value } = e.target
-    this.setState({ confirmDirty: this.state.confirmDirty || !!value })
-  }
-
-  setCaptcha = val => {
-    this.props.form.setFieldsValue({ captcha: val })
-    this.setState({ captchaValue: val })
-  }
-
-  compareToFirstPassword = (rule, value, callback) => {
-    const { form } = this.props
-    if (value && value !== form.getFieldValue('password')) {
-      callback('Two passwords that you enter is inconsistent!')
-    } else {
-      callback()
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 6 }
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 }
     }
   }
-
-  validateToNextPassword = (rule, value, callback) => {
-    const { form } = this.props
-    if (value && this.state.confirmDirty) {
-      form.validateFields(['confirm'], { force: true })
-    }
-    callback()
-  }
-
-  render() {
-    const { getFieldDecorator } = this.props.form
-
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 6 }
+  const tailFormItemLayout = {
+    wrapperCol: {
+      xs: {
+        span: 24,
+        offset: 0
       },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 }
+      sm: {
+        span: 14,
+        offset: 6
       }
     }
-    const tailFormItemLayout = {
-      wrapperCol: {
-        xs: {
-          span: 24,
-          offset: 0
-        },
-        sm: {
-          span: 16,
-          offset: 6
-        }
-      }
-    }
-
-    return (
-      <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-        {/* Username */}
-        <Form.Item label="Username">
-          {getFieldDecorator('username', {
-            getValueFromEvent: this.identifierHandler,
-            rules: [
-              {
-                required: true,
-                message: 'Please input your nickname',
-                whitespace: true
-              }
-            ]
-          })(<Input />)}
-        </Form.Item>
-
-        {/* Identifier */}
-        {!this.state.identifier || (
-          <Form.Item
-            label={
-              <span>
-                ID&nbsp;
-                <Tooltip title="Your Identifier is used to Identify you and is most unique about you. You can not change this in the future!">
-                  <QuestionCircleOutlined />
-                </Tooltip>
-              </span>
-            }
-          >
-            <Input value={'#' + this.state.identifier} disabled />
-          </Form.Item>
-        )}
-
-        {/* E-mail */}
-        <Form.Item label="E-mail">
-          {getFieldDecorator('email', {
-            rules: [
-              {
-                type: 'email',
-                message: 'The input is not valid E-mail'
-              },
-              {
-                required: true,
-                message: 'Please input your E-mail'
-              }
-            ]
-          })(<Input />)}
-        </Form.Item>
-
-        {/* Password */}
-        <Form.Item label="Password" hasFeedback>
-          {getFieldDecorator('password', {
-            rules: [
-              {
-                required: true,
-                message: 'Please input your password'
-              },
-              {
-                validator: this.validateToNextPassword
-              }
-            ]
-          })(<Input.Password />)}
-        </Form.Item>
-        <Form.Item label="Confirm Password" hasFeedback>
-          {getFieldDecorator('confirm', {
-            rules: [
-              {
-                required: true,
-                message: 'Please confirm your password'
-              },
-              {
-                validator: this.compareToFirstPassword
-              }
-            ]
-          })(<Input.Password onBlur={this.handleConfirmBlur} />)}
-        </Form.Item>
-
-        {/* Captcha */}
-        <Form.Item
-          extra="We must make sure that your are a human."
-          {...tailFormItemLayout}
-        >
-          <ReCAPTCHA
-            sitekey="6LddQMQUAAAAAE5yoKG_94ZchxPGZPSMk4OhzJ-R"
-            onChange={this.setCaptcha}
-          />
-          {getFieldDecorator('captcha', {
-            rules: [
-              {
-                required: true,
-                message: 'Please fill in the captcha'
-              }
-            ]
-          })(<Input hidden />)}
-        </Form.Item>
-
-        {/* TOS */}
-        <Form.Item {...tailFormItemLayout}>
-          {getFieldDecorator('agreement', {
-            valuePropName: 'checked',
-            rules: [{ required: true }]
-          })(
-            <Checkbox>
-              I have read the <Link to="/tos">Terms of Service</Link>
-            </Checkbox>
-          )}
-        </Form.Item>
-
-        {/* Register */}
-        <Form.Item {...tailFormItemLayout}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-            block
-          >
-            Register
-          </Button>
-        </Form.Item>
-      </Form>
-    );
   }
-}
+  return (
+    <Form
+      name="registration"
+      scrollToFirstError
+      {...formItemLayout}
+      onFinish={handleFinish}
+    >
+      <Form.Item
+        label="Username"
+        name="username"
+        rules={[{ required: true, min: 3, max: 30 }]}
+      >
+        <Input />
+      </Form.Item>
 
-export default Form.create({ name: 'register' })(RegistrationForm)
+      {identifier ? (
+        <Form.Item
+          getValueFromEvent
+          name="identifier"
+          label={
+            <span>
+              ID&nbsp;
+              <Tooltip title="Your Identifier is used to Identify you and is most unique about you. You can not change this in the future!">
+                <QuestionCircleOutlined />
+              </Tooltip>
+            </span>
+          }
+        >
+          <Input value={'#' + identifier} disabled />
+        </Form.Item>
+      ) : (
+        ''
+      )}
+
+      <Form.Item
+        label="Email"
+        name="email"
+        rules={[{ type: 'email', required: true }]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        label="Password"
+        name="password"
+        rules={[{ required: true, min: 8, max: 40 }]}
+        hasFeedback
+      >
+        <Input.Password />
+      </Form.Item>
+      <Form.Item
+        label="Confirm Password"
+        name="password_confirm"
+        dependencies={['password']}
+        hasFeedback
+        rules={[
+          { required: true },
+          ({ getFieldValue }) => ({
+            validator(rule, value) {
+              if (!value || getFieldValue('password') === value) {
+                return Promise.resolve()
+              }
+              return Promise.reject("Passwords don't match")
+            }
+          })
+        ]}
+      >
+        <Input.Password />
+      </Form.Item>
+
+      <Form.Item {...tailFormItemLayout}>
+        <ReCAPTCHA sitekey="6LddQMQUAAAAAE5yoKG_94ZchxPGZPSMk4OhzJ-R" />
+      </Form.Item>
+
+      <Form.Item
+        {...tailFormItemLayout}
+        name="agreement"
+        valuePropName="checked"
+        rules={[
+          {
+            validator: (_, value) =>
+              value ? Promise.resolve() : Promise.reject()
+          }
+        ]}
+      >
+        <Checkbox>
+          I have read the <Link to="/tos">Terms of Service</Link>
+        </Checkbox>
+      </Form.Item>
+
+      <Form.Item {...tailFormItemLayout}>
+        <Button type="primary" htmlType="submit" block>
+          Register
+        </Button>
+      </Form.Item>
+    </Form>
+  )
+}
