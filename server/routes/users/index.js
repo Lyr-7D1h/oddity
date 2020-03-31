@@ -1,6 +1,8 @@
 'use strict'
 
 module.exports = async fastify => {
+  require('./identifier')(fastify)
+
   const columns = {
     exclude: [
       'password',

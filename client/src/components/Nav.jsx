@@ -11,11 +11,8 @@ import notificationHandler from '../helpers/notificationHandler'
 import { connect } from 'react-redux'
 import { updateUser } from '../redux/actions/userActions'
 
-const Nav = ({ modules, title, routes, user, updateUser, location }) => {
+const Nav = ({ modules, title, user, updateUser, location }) => {
   const [loginError, setLoginError] = useState(false)
-
-  // make sure default route / home route is not included
-  routes = routes.filter(route => !route.default)
 
   const selected = location.pathname.split('/')[1]
 
@@ -49,13 +46,13 @@ const Nav = ({ modules, title, routes, user, updateUser, location }) => {
             style={{ lineHeight: '64px', marginRight: '20px', border: 'none' }}
             className="oddity-nav"
           >
-            {routes.map((route, i) => (
-              <Menu.Item key={route.path}>
-                <Link to={`/${route.path}`}>
-                  {modules.find(mod => mod.id === route.moduleId).name}
-                </Link>
-              </Menu.Item>
-            ))}
+            {modules
+              .filter(mod => mod.route !== '')
+              .map((mod, i) => (
+                <Menu.Item key={mod.route}>
+                  <Link to={`/${mod.route}`}>{mod.name}</Link>
+                </Menu.Item>
+              ))}
 
             {user.username === undefined && (
               <Menu.Item style={{ float: 'right' }} key="login">
@@ -70,9 +67,12 @@ const Nav = ({ modules, title, routes, user, updateUser, location }) => {
 
             {user.username && user.identifier !== 'admin' && (
               <Menu.SubMenu style={{ float: 'right' }} title={user.username}>
-                <Menu.ItemGroup title="Profile">
-                  <Menu.Item key="account">
-                    <Link to="/account">Account</Link>
+                <Menu.ItemGroup title="Account">
+                  <Menu.Item key="profile">
+                    <Link to={`/u/${user.identifier}`}>Profile</Link>
+                  </Menu.Item>
+                  <Menu.Item key="settings">
+                    <Link to="/settings">Settings</Link>
                   </Menu.Item>
                 </Menu.ItemGroup>
                 <Menu.ItemGroup title="Actions">
@@ -108,7 +108,6 @@ export default connect(
   state => {
     return {
       user: state.user,
-      routes: state.routes,
       modules: state.modules,
       title: state.config.title
     }

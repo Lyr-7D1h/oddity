@@ -33,12 +33,12 @@ module.exports = async fastify => {
         ]
       })
       .then(result => {
-        reply.send(result);
+        return reply.send(result);
       })
       .catch(err => {
         fastify.log.error(err);
         fastify.sentry.captureException(err);
-        reply.internalServerError();
+        return reply.internalServerError();
       });
   });
 
@@ -51,12 +51,12 @@ module.exports = async fastify => {
         order: [["order", "ASC"]]
       })
       .then(categories => {
-        reply.send(categories);
+        return reply.send(categories);
       })
       .catch(err => {
         fastify.log.error(err);
         fastify.sentry.captureException(err);
-        reply.internalServerError();
+        return reply.internalServerError();
       });
   });
 
@@ -69,12 +69,12 @@ module.exports = async fastify => {
         order: [["order", "ASC"]]
       })
       .then(threads => {
-        reply.send(threads);
+        return reply.send(threads);
       })
       .catch(err => {
         fastify.log.error(err);
         fastify.sentry.captureException(err);
-        reply.internalServerError();
+        return reply.internalServerError();
       });
   });
 

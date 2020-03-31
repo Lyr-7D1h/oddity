@@ -20,8 +20,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     {}
   )
-  config.associate = models => {
-    config.hasMany(models.route)
-  }
+  config.associate = models => {}
   return config
 }

@@ -17,13 +17,18 @@ module.exports = (sequelize, DataTypes) => {
       enabled: {
         type: DataTypes.BOOLEAN,
         allowNull: false
+      },
+      route: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        isAlphanumeric: true,
+        unique: true
       }
     },
     {}
   )
   module.associate = function(models) {
     // associations can be defined here
-    module.hasMany(models.route)
   }
   return module
 }

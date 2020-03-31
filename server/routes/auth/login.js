@@ -12,7 +12,6 @@ module.exports = async fastify => {
         .setUserCookie(reply, request.user.id)
         .then(() => {
           request.session.user = { id: request.user.id }
-          console.log(request.session)
           reply.send()
         })
         .catch(err => {

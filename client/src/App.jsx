@@ -13,29 +13,26 @@ import RegisterPage from './components/pages/RegisterPage'
 import TermsOfServicePage from './components/pages/TermsOfServicePage'
 import NotFoundPage from './components/pages/NotFoundPage'
 import NoHomePage from './components/pages/NoHomePage'
-import AccountPage from './components/pages/AccountPage'
-import FinishAccountPage from './components/pages/FinishAccountPage'
+import AccountPage from './components/pages/AccountSettingsPage'
+// import FinishAccountPage from './components/pages/FinishAccountPage'
 
 import moduleLoaderImports from '../module_loader_imports'
+import ProfilePage from './components/pages/ProfilePage'
 
-const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
+const App = ({ modules, userNeedsSetup, dispatch }) => {
   let noHomeSet = true
 
   const getModuleRoutes = () => {
-    if (routes) {
+    if (modules.length > 0) {
       let moduleRoutes = []
-      for (let i in routes) {
-        const route = routes[i]
+      for (let i in modules) {
+        const route = modules[i].route
+        const mod = modules[i]
+        console.log(mod.name)
 
-        if (!route.enabled) {
-          return
-        }
+        const basePath = route === '' ? '/' : route
 
-        const basePath = route.default ? '/' : route.path
-
-        const mod = modules.find(mod => mod.id === route.moduleId)
-
-        if (route.default) noHomeSet = false
+        if (route === '') noHomeSet = false
 
         if (mod) {
           const modRoutes = moduleLoaderImports.modules[mod.name].routes
@@ -69,7 +66,8 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
     { path: '/login', component: LoginPage },
     { path: '/account', component: AccountPage },
     { path: '/register', component: RegisterPage },
-    { path: '/tos', component: TermsOfServicePage }
+    { path: '/tos', component: TermsOfServicePage },
+    { path: '/u/:identifier', component: ProfilePage }
   ].map((route, i) => {
     return (
       <Route
@@ -105,20 +103,20 @@ const App = ({ modules, routes, userNeedsSetup, dispatch }) => {
   return (
     <BrowserRouter>
       <ConfigLoader>
-        {userNeedsSetup ? (
+        {/* {userNeedsSetup ? (
           <FinishAccountPage />
-        ) : (
-          <Switch>
-            {defaultRoutes}
-            {adminRoutes}
+        ) : ( */}
+        <Switch>
+          {defaultRoutes}
+          {adminRoutes}
 
-            {getModuleRoutes()}
+          {getModuleRoutes()}
 
-            {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
+          {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
 
-            <Route path="*" component={NotFoundPage}></Route>
-          </Switch>
-        )}
+          <Route path="*" component={NotFoundPage}></Route>
+        </Switch>
+        {/* )} */}
       </ConfigLoader>
     </BrowserRouter>
   )
@@ -132,7 +130,6 @@ export default connect(state => {
     }
   }
   return {
-    routes: state.routes,
     modules: state.modules,
     userNeedsSetup: userNeedsSetup
   }

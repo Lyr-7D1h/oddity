@@ -10,11 +10,11 @@ import SavePopup from './SavePopup'
 
 export default connect(state => ({
   configId: state.config.id,
-  routes: state.routes
+  routes: state.modules.map(mod => mod.route)
 }))(({ routes, configId }) => {
   const [modules, setModules] = useState([])
   const [SettingsComponent, setSettingsComponent] = useState(null)
-  const [changesMade, setChangesMade] = useState(false)
+  const [changes, setChanges] = useState([])
 
   useEffect(() => {
     requester.get('modules').then(modules => {
@@ -22,9 +22,6 @@ export default connect(state => ({
         .sort((a, b) => (a.enabled ? 1 : -1))
         .map(mod => {
           mod.adminPage = moduleLoaderImports.modules[mod.name].adminPage
-          mod.route = routes.find(route => route.moduleId === mod.id) || {
-            path: ''
-          }
           return mod
         })
       setModules(modules.sort((a, b) => (a === b ? 0 : a ? -1 : 1))) // sets enabled first
@@ -34,9 +31,8 @@ export default connect(state => ({
   const setEnabled = id => {
     const enabled = !modules.find(mod => mod.id === id).enabled
     requester
-      .put(`modules/${id}`, { enabled })
+      .patch(`modules/${id}/enabled`, { enabled })
       .then(() => {
-        setChangesMade(true)
         setModules(
           modules.map(mod => {
             if (mod.id === id) {
@@ -51,93 +47,42 @@ export default connect(state => ({
       })
   }
 
-  const validateData = () => {
-    const errors = []
-
-    const occurances = {}
-    let hasOccurances = false
-    let defaultPath = 0
-    modules.forEach(mod => {
-      if (mod.enabled) {
-        if (occurances[mod.route.path] === true) {
-          hasOccurances = true
-        } else {
-          occurances[mod.route.path] = true
-        }
-        if (mod.route.path === '') {
-          defaultPath++
-        } else if (
-          mod.route.path.startsWith('/') ||
-          mod.route.path.endsWith('/')
-        ) {
-          errors.push("Format of path is invalid: don't include /")
-        }
-        occurances[mod] = true
-      }
-    })
-    console.log(occurances)
-    if (hasOccurances) {
-      errors.push('You can not have duplicate routes')
-    }
-
-    if (defaultPath !== 1) {
-      errors.push('There should only be one default path: an empty path')
-    }
-
-    return errors
-  }
-
   const routeChangeHandler = (id, value) => {
     setModules(
       modules.map(mod => {
-        if (mod.id === id) mod.route.path = value
+        if (mod.id === id) mod.route = value
         return mod
       })
     )
-    setChangesMade(true)
+    setChanges(
+      changes.concat([
+        {
+          id: id,
+          route: value
+        }
+      ])
+    )
   }
 
   const handleSave = () => {
-    const errors = validateData()
-    if (errors.length > 0) {
-      errors.forEach(error => {
-        notification['error']({
-          message: error,
-          duration: 10
-        })
-      })
-    } else {
+    changes.forEach(change => {
       requester
-        .patch(
-          `configs/${configId}/routes`,
-          modules
-            .filter(mod => mod.enabled)
-            .map(mod => ({
-              id: mod.route.id,
-              path: mod.route.path || '',
-              moduleId: mod.id,
-              configId: configId,
-              isActive: true,
-              default: mod.route.path === '' || mod.route.path === undefined
-            }))
-        )
-        .then(routes => {
+        .patch(`modules/${change.id}/route`, change)
+        .then(updatedModules => {
           setModules(
             modules.map(mod => {
-              const moduleRoute = routes.find(
-                route => route.moduleId === mod.id
-              )
-              if (moduleRoute) mod.route = moduleRoute
+              const umod = updatedModules.find(umod => umod.id === mod.id)
+              if (umod) mod.route = umod.route
               return mod
             })
           )
-          setChangesMade(false)
+          setChanges([])
         })
         .catch(err => {
           console.error(err)
           notificationHandler.error('Could not update routes', err.message)
         })
-    }
+    })
   }
 
   const columns = [
@@ -172,16 +117,13 @@ export default connect(state => ({
       dataIndex: 'route',
       render: (route, record) => {
         if (record.enabled) {
-          if (route && route.noRoute) {
-            return
-          }
           return (
             <Input
               type="text"
               prefix="/"
               placeholder="baseroute"
               onChange={e => routeChangeHandler(record.id, e.target.value)}
-              value={route ? route.path : ''}
+              value={route ? route : ''}
             />
           )
         }
@@ -209,7 +151,7 @@ export default connect(state => ({
 
   return (
     <div>
-      {changesMade ? <SavePopup onSave={handleSave} /> : ''}
+      {changes.length > 0 ? <SavePopup onSave={handleSave} /> : ''}
       {SettingsComponent ? (
         <>
           <Button

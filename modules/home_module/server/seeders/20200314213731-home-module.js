@@ -7,6 +7,7 @@ module.exports = {
         name: "Home",
         enabled: true,
         version: "0.0.1",
+        route: "",
         createdAt: new Date(),
         updatedAt: new Date()
       }

@@ -11,6 +11,7 @@ module.exports = fp(
         name: mod.name,
         version: mod.version,
         enabled: false,
+        route: mod.name,
         createdAt: new Date(),
         updatedAt: new Date()
       }))
