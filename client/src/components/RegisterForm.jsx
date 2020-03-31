@@ -1,7 +1,7 @@
 import React from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
-import { Link } from 'react-router-dom'
-import { QuestionCircleOutlined, UserOutlined } from '@ant-design/icons'
+import { Link, Redirect } from 'react-router-dom'
+import { QuestionCircleOutlined } from '@ant-design/icons'
 import { Form, Input, Tooltip, Checkbox, Button } from 'antd'
 
 import notificationHandler from '../helpers/notificationHandler'
@@ -9,15 +9,17 @@ import requester from '../helpers/requester'
 import { useState } from 'react'
 
 export default () => {
-  const [identifier, setIdentifier] = useState(null)
+  const [usingIdentifier, setUsingIdentifier] = useState(false)
+  const [registered, setRegistered] = useState(false)
+  const form = React.createRef()
 
   const handleFinish = values => {
     requester
       .post('auth/register', values)
       .then(isValid => {
         if (isValid) {
-          this.props.onSubmit()
           notificationHandler.success('Account Created')
+          setRegistered(true)
         } else {
           notificationHandler.error('Wrong password or username')
         }
@@ -28,11 +30,26 @@ export default () => {
       })
   }
 
+  const handleCaptcha = captchaValue => {
+    form.current.setFieldsValue({ captcha: captchaValue })
+  }
+  const handleExpireCatcha = () => {
+    form.current.setFieldsValue({ captcha: null })
+  }
+
   const identifierHandler = e => {
     e.preventDefault()
 
-    const identifier = e.target.value.toLowerCase().replace(' ', '_')
-    this.setState({ identifier: identifier })
+    const identifier = e.target.value
+      .toLowerCase()
+      .replace('-', '_')
+      .match(/(^[a-z0-9])\w+[a-z0-9]$/g)
+
+    if (identifier) {
+      form.current.setFieldsValue({ identifier: identifier.join('') })
+      setUsingIdentifier(true)
+    }
+
     return e.target.value
   }
 
@@ -58,24 +75,37 @@ export default () => {
       }
     }
   }
+
+  if (registered) {
+    return <Redirect to="/login" />
+  }
+
   return (
     <Form
       name="registration"
       scrollToFirstError
       {...formItemLayout}
       onFinish={handleFinish}
+      ref={form}
     >
       <Form.Item
+        getValueFromEvent={identifierHandler}
         label="Username"
         name="username"
-        rules={[{ required: true, min: 3, max: 30 }]}
+        rules={[
+          { required: true, message: 'Username is required' },
+          {
+            message: 'Username needs to have a length of 3-30',
+            min: 3,
+            max: 30
+          }
+        ]}
       >
         <Input />
       </Form.Item>
 
-      {identifier ? (
+      {usingIdentifier ? (
         <Form.Item
-          getValueFromEvent
           name="identifier"
           label={
             <span>
@@ -86,7 +116,7 @@ export default () => {
             </span>
           }
         >
-          <Input value={'#' + identifier} disabled />
+          <Input prefix="#" disabled />
         </Form.Item>
       ) : (
         ''
@@ -95,14 +125,20 @@ export default () => {
       <Form.Item
         label="Email"
         name="email"
-        rules={[{ type: 'email', required: true }]}
+        rules={[
+          { type: 'email', message: 'Email is invalid' },
+          { required: true, message: 'Email is required' }
+        ]}
       >
         <Input />
       </Form.Item>
       <Form.Item
         label="Password"
         name="password"
-        rules={[{ required: true, min: 8, max: 40 }]}
+        rules={[
+          { required: true, message: 'Password is required' },
+          { message: 'Password needs a length between 8-40', min: 8, max: 40 }
+        ]}
         hasFeedback
       >
         <Input.Password />
@@ -113,7 +149,7 @@ export default () => {
         dependencies={['password']}
         hasFeedback
         rules={[
-          { required: true },
+          { required: true, message: 'Confirm your password' },
           ({ getFieldValue }) => ({
             validator(rule, value) {
               if (!value || getFieldValue('password') === value) {
@@ -128,7 +164,17 @@ export default () => {
       </Form.Item>
 
       <Form.Item {...tailFormItemLayout}>
-        <ReCAPTCHA sitekey="6LddQMQUAAAAAE5yoKG_94ZchxPGZPSMk4OhzJ-R" />
+        <ReCAPTCHA
+          onChange={handleCaptcha}
+          onExpired={handleExpireCatcha}
+          sitekey="6LddQMQUAAAAAE5yoKG_94ZchxPGZPSMk4OhzJ-R"
+        />
+      </Form.Item>
+      <Form.Item
+        name="captcha"
+        rules={[{ required: true, message: 'Sorry no bots allowed' }]}
+      >
+        <Input hidden />
       </Form.Item>
 
       <Form.Item
@@ -137,8 +183,11 @@ export default () => {
         valuePropName="checked"
         rules={[
           {
+            required: true,
             validator: (_, value) =>
-              value ? Promise.resolve() : Promise.reject()
+              value
+                ? Promise.resolve()
+                : Promise.reject('You have to accept the Terms of Service')
           }
         ]}
       >
