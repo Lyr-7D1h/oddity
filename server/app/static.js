@@ -117,19 +117,20 @@ function fastifyStatic(fastify, opts, next) {
       : opts.prefix + '/'
 
   // Set the schema hide property if defined in opts or true by default
-  const schema = {
+  const routeOptions = {
     schema: {
       hide: true
-    }
+    },
+    permissions: fastify.PERMISSIONS.NONE
   }
 
   // Serve
   if (opts.serve !== false) {
     if (opts.wildcard === undefined || opts.wildcard === true) {
-      fastify.get(prefix + '*', schema, function(req, reply) {
+      fastify.get(prefix + '*', routeOptions, function(req, reply) {
         pumpSendToReply(req, reply, '/' + req.params['*'])
       })
-      fastify.head(prefix + '*', schema, function(req, reply) {
+      fastify.head(prefix + '*', routeOptions, function(req, reply) {
         reply.send() // TODO: should return content-length
       })
       //   fastify.get(prefix, schema, function(req, reply) {
@@ -155,7 +156,7 @@ function fastifyStatic(fastify, opts, next) {
             .replace(sendOptions.root.replace(/\\/g, '/'), '')
             .replace(/^\//, '')
           const route = (prefix + file).replace(/\/\//g, '/')
-          fastify.get(route, schema, function(req, reply) {
+          fastify.get(route, routeOptions, function(req, reply) {
             pumpSendToReply(req, reply, '/' + file)
           })
 
@@ -167,12 +168,12 @@ function fastifyStatic(fastify, opts, next) {
           const pathname = dirname + (dirname.endsWith('/') ? '' : '/')
           const file = '/' + pathname.replace(prefix, '')
 
-          fastify.get(pathname, schema, function(req, reply) {
+          fastify.get(pathname, routeOptions, function(req, reply) {
             pumpSendToReply(req, reply, file)
           })
 
           if (opts.redirect === true) {
-            fastify.get(pathname.replace(/\/$/, ''), schema, function(
+            fastify.get(pathname.replace(/\/$/, ''), routeOptions, function(
               req,
               reply
             ) {

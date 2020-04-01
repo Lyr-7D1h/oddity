@@ -63,6 +63,8 @@ module.exports = async (fastify, opts) => {
       dir: path.join(__dirname, '../plugins'),
       options: Object.assign({}, opts)
     })
+
+    // Session Storage to Postgres
     .register(
       fp(
         (instance, opts, done) => {
@@ -90,6 +92,7 @@ module.exports = async (fastify, opts) => {
     // Load models
     .register(fp(require('../db/models'), { name: 'models' }))
 
+    // Syncronize modules_imports with db
     .register(require('./modules_sync'))
 
     // Autoload Routes

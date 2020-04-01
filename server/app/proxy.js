@@ -40,14 +40,24 @@ module.exports = async function(fastify, opts) {
     done(null, req)
   }
 
-  fastify.all(
-    '/',
-    { schema: { hide: true }, preHandler, config: opts.config || {} },
-    reply
-  )
+  // fastify.all(
+  //   '/',
+  //   {
+  //     schema: { hide: true },
+  //     permissions: fastify.PERMISSIONS.NONE,
+  //     preHandler,
+  //     config: opts.config || {}
+  //   },
+  //   reply
+  // )
   fastify.all(
     '/*',
-    { schema: { hide: true }, preHandler, config: opts.config || {} },
+    {
+      schema: { hide: true },
+      permissions: fastify.PERMISSIONS.NONE,
+      preHandler,
+      config: opts.config || {}
+    },
     reply
   )
 

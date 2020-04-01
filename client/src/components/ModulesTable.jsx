@@ -80,6 +80,7 @@ export default connect(state => ({
         })
         .catch(err => {
           console.error(err)
+          setChanges([])
           notificationHandler.error('Could not update routes', err.message)
         })
     })

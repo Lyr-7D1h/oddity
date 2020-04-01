@@ -20,7 +20,8 @@ module.exports = fp(async instance => {
                 { identifier: basicCredentials.name },
                 { email: basicCredentials.name }
               ]
-            }
+            },
+            include: [{ model: instance.models.role }]
           })
           .then(user => {
             if (user) {
@@ -28,8 +29,20 @@ module.exports = fp(async instance => {
                 .validate(basicCredentials.pass, user.password)
                 .then(isValid => {
                   if (isValid) {
-                    request.user = { id: user.id }
-                    resolve()
+                    const authorizedRoute = instance.permissions.authorizeRoute(
+                      request.raw.url,
+                      request.raw.method,
+                      instance.permissions.calcPermission(
+                        user.permissions,
+                        user.role.permissions
+                      )
+                    )
+                    if (authorizedRoute) {
+                      request.user = { id: user.id }
+                      resolve()
+                    } else {
+                      reject(new Unauthorized())
+                    }
                   } else {
                     reject(new Unauthorized())
                   }
@@ -63,11 +76,15 @@ module.exports = fp(async instance => {
             })
             .then(user => {
               if (user) {
-                const hasPermsUser = instance.permissions.validateRouteAuth(
+                const authorizedRoute = instance.permissions.authorizeRoute(
                   request.raw.url,
-                  user.permissions | user.role.permissions
+                  request.raw.method,
+                  instance.permissions.calcPermission(
+                    user.role.permissions,
+                    user.permissions
+                  )
                 )
-                if (hasPermsUser) {
+                if (authorizedRoute) {
                   resolve()
                 } else {
                   reject(new Unauthorized())

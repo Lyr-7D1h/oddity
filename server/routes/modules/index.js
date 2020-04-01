@@ -30,6 +30,7 @@ module.exports = async fastify => {
           required: ['route']
         }
       },
+      permissions: fastify.PERMISSIONS.ADMIN,
       preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
     (request, reply) => {
