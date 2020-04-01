@@ -63,7 +63,7 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
 
   const defaultRoutes = [
     { path: '/login', component: LoginPage },
-    { path: '/account', component: AccountPage },
+    { path: '/settings', component: AccountPage },
     { path: '/register', component: RegisterPage },
     { path: '/tos', component: TermsOfServicePage },
     { path: '/u/:identifier', component: ProfilePage }
