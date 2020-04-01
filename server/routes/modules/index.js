@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = async fastify => {
-  fastify.get('/modules', (request, reply) => {
+  fastify.get('/modules', function(request, reply) {
     fastify.models.module
       .findAll({
         attributes: { exclude: ['createdAt', 'updatedAt'] }
@@ -53,8 +53,8 @@ module.exports = async fastify => {
   fastify.patch(
     '/modules/:id/enabled',
     {
-      schema: { params: 'id#' },
-      preHandler: [fastify.auth([fastify.authentication.cookie])]
+      schema: { params: 'id#' }
+      // preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
     (request, reply) => {
       if (!request.body) return reply.badRequest()
@@ -66,9 +66,9 @@ module.exports = async fastify => {
         )
         .then(([amountModified, mod]) => {
           if (amountModified === 0) {
-            return reply.noChange()
+            reply.noChange()
           } else {
-            return reply.send(mod)
+            reply.send(mod)
           }
         })
     }
