@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import requester from '@helpers/requester'
 import notificationHandler from '@helpers/notificationHandler'
-import { Table, Tag, Button, Input, notification } from 'antd'
+import { Table, Tag, Button, Input } from 'antd'
 import { RollbackOutlined } from '@ant-design/icons'
 
 import moduleLoaderImports from '../../module_loader_imports'

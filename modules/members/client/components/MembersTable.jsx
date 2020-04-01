@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import requester from "@helpers/requester";
 import notificationHandler from "@helpers/notificationHandler";
 import { Table, Avatar } from "antd";
+import { Redirect } from "react-router-dom";
+import "../styling/membersTable.less";
 
 const columns = [
   {
@@ -46,6 +48,7 @@ const columns = [
 export default () => {
   const [members, setMembers] = useState([]);
   const [roles, setRoles] = useState([]);
+  const [redirectUrl, setRedirectUrl] = useState("");
 
   useEffect(() => {
     requester
@@ -75,11 +78,19 @@ export default () => {
     });
   }
 
+  if (redirectUrl) {
+    return <Redirect to={redirectUrl} />;
+  }
+
   return (
     <Table
       columns={columns}
       rowClassName="oddity-row"
+      onRow={(record, rowIndex) => ({
+        onClick: event => setRedirectUrl(`/u/${record.identifier}`)
+      })}
       dataSource={data}
+      pagination={false}
       rowKey="id"
     />
   );
