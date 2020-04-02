@@ -18,7 +18,7 @@ Requirements
 - node installed (V13.1 used)
 - postgresql (V12.2 used)
 
-### Linux Based Systems With Bash Installed (or in Windows WLS)
+### Linux Based Systems (or in Windows WLS)
 
 run `./setup.sh`
 
