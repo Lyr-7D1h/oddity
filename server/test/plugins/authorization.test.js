@@ -28,7 +28,8 @@ const basicTest = app => {
     fastify.get(
       '/test',
       {
-        preHandler: app.auth([app.authentication.basic])
+        preHandler: app.auth([app.authentication.basic]),
+        permissions: 1
       },
       (request, reply) => {
         reply.send(request.user.id)
