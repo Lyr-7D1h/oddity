@@ -113,7 +113,7 @@ module.exports = fp(async (instance) => {
 
   const addPermission = (name) => {
     PERMISSIONS[name.toUpperCase()] = getHighestPermission() * 2
-    instance.decorate('PERMISSIONS', PERMISSIONS)
+    // instance.decorate('PERMISSIONS', PERMISSIONS)
   }
 
   instance.decorate('PERMISSIONS', PERMISSIONS)
