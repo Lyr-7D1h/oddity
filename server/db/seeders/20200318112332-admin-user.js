@@ -2,7 +2,7 @@
 
 const bcrypt = require('bcrypt')
 
-const hash = bcrypt.hashSync('admin', 12)
+const hash = bcrypt.hashSync('root', 12)
 
 module.exports = {
   up: queryInterface => {
@@ -14,13 +14,13 @@ module.exports = {
             return queryInterface
               .bulkInsert('users', [
                 {
-                  username: 'Admin',
-                  identifier: 'admin',
+                  username: 'Root',
+                  identifier: 'root',
                   password: hash,
-                  email: 'admin@admin.com',
+                  email: 'root@root.com',
                   roleId: roles[0].id,
                   ip: '0:0:0:0',
-                  permissions: 0x1,
+                  permissions: 0x2,
                   createdAt: new Date(),
                   updatedAt: new Date()
                 }
@@ -36,6 +36,6 @@ module.exports = {
   },
 
   down: queryInterface => {
-    return queryInterface.bulkDelete('users', { identifier: 'admin' }, {})
+    return queryInterface.bulkDelete('users', { identifier: 'root' }, {})
   }
 }

@@ -3,18 +3,20 @@ const pump = require('pump')
 
 const ResourceDir = __dirname + '/../../../resources/'
 
-module.exports = async fastify => {
+module.exports = async (fastify) => {
   fastify.post(
     '/resources/users/:id',
     {
       schema: {
-        params: 'id#'
-      }
+        params: 'id#',
+      },
+      preHandler: fastify.auth([fastify.authentication.cookie]),
+      permissions: fastify.PERMISSIONS.NONE,
     },
     (request, reply) => {
       fastify.models.user
         .findOne({ where: { id: request.params.id } })
-        .then(user => {
+        .then((user) => {
           if (!user) {
             return reply.notFound('User not found')
           }
@@ -37,7 +39,7 @@ module.exports = async fastify => {
             }
           }
 
-          const done = err => {
+          const done = (err) => {
             if (!reply.sent) {
               if (err) {
                 fastify.log.error(err)
@@ -50,10 +52,10 @@ module.exports = async fastify => {
                 .save()
                 .then(() => {
                   return reply.send({
-                    url: avatar
+                    url: avatar,
                   })
                 })
-                .catch(err => {
+                .catch((err) => {
                   fastify.log.error(err)
                   fastify.sentry.captureException(err)
                   return reply.internalServerError()
@@ -75,7 +77,7 @@ module.exports = async fastify => {
             return reply.badRequest('Maximim number of fields reached')
           })
         })
-        .catch(err => {
+        .catch((err) => {
           fastify.log.error(err)
           fastify.sentry.captureException(err)
           reply.internalServerError()

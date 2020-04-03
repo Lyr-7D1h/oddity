@@ -13,7 +13,8 @@ module.exports = fastify => {
           },
           required: ['username', 'password', 'email']
         }
-      }
+      },
+      permissions: fastify.PERMISSIONS.NON_SET
     },
     (request, reply) => {
       fastify.models.role

@@ -1,6 +1,8 @@
 const path = require('path')
 const fs = require('fs')
 
+// TODO: Add plugin directories
+
 const serverImportPath = path.join(__dirname, '..', 'module_loader_imports.js')
 const serverImportData = {
   modules: [],

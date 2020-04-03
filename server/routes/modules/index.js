@@ -1,19 +1,25 @@
 'use strict'
 
-module.exports = async fastify => {
-  fastify.get('/modules', function(request, reply) {
-    fastify.models.module
-      .findAll({
-        attributes: { exclude: ['createdAt', 'updatedAt'] }
-      })
-      .then(modules => {
-        return reply.send(modules)
-      })
-      .catch(err => {
-        fastify.log.error(err)
-        return reply.internalServerError()
-      })
-  })
+module.exports = async (fastify) => {
+  fastify.get(
+    '/modules',
+    {
+      permissions: fastify.PERMISSIONS.NON_SET,
+    },
+    function (request, reply) {
+      fastify.models.module
+        .findAll({
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+        })
+        .then((modules) => {
+          return reply.send(modules)
+        })
+        .catch((err) => {
+          fastify.log.error(err)
+          return reply.internalServerError()
+        })
+    }
+  )
 
   fastify.patch(
     '/modules/:id/route',
@@ -24,14 +30,14 @@ module.exports = async fastify => {
           type: 'object',
           properties: {
             route: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
-          required: ['route']
-        }
+          required: ['route'],
+        },
       },
-      permissions: fastify.PERMISSIONS.ADMIN,
-      preHandler: [fastify.auth([fastify.authentication.cookie])]
+      permissions: fastify.PERMISSIONS.ROOT,
+      preHandler: [fastify.auth([fastify.authentication.cookie])],
     },
     (request, reply) => {
       if (!request.body) return reply.badRequest()
@@ -54,8 +60,12 @@ module.exports = async fastify => {
   fastify.patch(
     '/modules/:id/enabled',
     {
-      schema: { params: 'id#' }
-      // preHandler: [fastify.auth([fastify.authentication.cookie])]
+      schema: { params: 'id#' },
+      preHandler: [fastify.auth([fastify.authentication.cookie])],
+      permissions: [
+        fastify.PERMISSIONS.ROOT,
+        fastify.PERMISSIONS.MANAGE_MODULES,
+      ],
     },
     (request, reply) => {
       if (!request.body) return reply.badRequest()

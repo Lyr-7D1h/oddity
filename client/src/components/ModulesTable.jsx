@@ -54,14 +54,18 @@ export default connect(state => ({
         return mod
       })
     )
-    setChanges(
-      changes.concat([
-        {
-          id: id,
-          route: value
-        }
-      ])
-    )
+    let shouldAdd = true
+    const routeChanges = changes.map(change => {
+      if (change.id === id) {
+        shouldAdd = false
+        return { id: id, route: value }
+      } else {
+        return change
+      }
+    })
+    if (shouldAdd) routeChanges.push({ id, route: value })
+
+    setChanges(routeChanges)
   }
 
   const handleSave = () => {

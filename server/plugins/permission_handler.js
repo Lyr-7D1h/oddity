@@ -1,16 +1,17 @@
 const fp = require('fastify-plugin')
 
 const PERMISSIONS = {
-  NONE: 0x1,
-  ADMIN: 0x2,
+  NON_SET: 0x0,
+  NONE: 0x1, // Default for users
+  ROOT: 0x2, // Used to identify someone with access to everything
   MANAGE_ROLES: 0x4,
-  MANAGE_MODULES: 0x8
+  MANAGE_MODULES: 0x8,
 }
 
 // Add Permission to schema summary of route
 const addPermissionToDocumentation = (routeOptions, permission) => {
   const permissionStrings = Object.keys(PERMISSIONS).filter(
-    key => PERMISSIONS[key] & permission
+    (key) => PERMISSIONS[key] & permission
   )
   if (permissionStrings.length === 0) {
     permissionStrings.push('NONE')
@@ -32,10 +33,10 @@ const addPermissionToDocumentation = (routeOptions, permission) => {
     : permissionMessage
 }
 
-const getPermission = permissions => {
+const getPermission = (permissions) => {
   if (Array.isArray(permissions)) {
     let permission = 0
-    permissions.forEach(perm => (permission += perm))
+    permissions.forEach((perm) => (permission += perm))
     return permission
   } else if (permissions !== null || permissions !== undefined) {
     return permissions
@@ -44,17 +45,34 @@ const getPermission = permissions => {
   }
 }
 
-module.exports = fp(async instance => {
+const getHighestPermission = () => {
+  let highest = 0
+  Object.keys(PERMISSIONS).forEach((key) => {
+    if (highest < PERMISSIONS[key]) highest = PERMISSIONS[key]
+  })
+  return highest
+}
+
+module.exports = fp(async (instance) => {
   /**
    * Check permissions for each route
    */
   const routes = {}
-  instance.addHook('onRoute', opts => {
+  instance.addHook('onRoute', (opts) => {
     const permission = getPermission(opts.permissions)
     const methods = Array.isArray(opts.method) ? opts.method : [opts.method]
+
+    if ((!opts.preHandler || opts.preHandler.length === 0) && permission > 0) {
+      instance.log.warn(
+        `Permission set but no preHandler for route: ${methods.join(', ')}: ${
+          opts.path
+        }`
+      )
+    }
+
     if (permission !== undefined) {
       addPermissionToDocumentation(opts, permission)
-      methods.forEach(method => {
+      methods.forEach((method) => {
         routes[method + ':' + opts.path] = permission
       })
     } else {
@@ -65,6 +83,11 @@ module.exports = fp(async instance => {
   })
 
   const authorizeRoute = (url, method, permission) => {
+    // if root always true
+    if (permission & PERMISSIONS.ROOT) {
+      return true
+    }
+
     // get permissions for the base route (/forum/test would be forum)
     const routePermission = routes[`${method}:${url}`]
 
@@ -88,9 +111,15 @@ module.exports = fp(async instance => {
     return result
   }
 
+  const addPermission = (name) => {
+    PERMISSIONS[name.toUpperCase()] = getHighestPermission() * 2
+    instance.decorate('PERMISSIONS', PERMISSIONS)
+  }
+
   instance.decorate('PERMISSIONS', PERMISSIONS)
   instance.decorate('permissions', {
     calcPermission,
-    authorizeRoute
+    authorizeRoute,
+    addPermission,
   })
 })

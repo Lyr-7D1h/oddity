@@ -1,13 +1,14 @@
-module.exports = fastify => {
+module.exports = (fastify) => {
   fastify.get(
     '/auth/logout',
     {
       schema: {
-        hide: true // hide from docs
-      }
+        hide: true, // hide from docs
+      },
+      permissions: fastify.PERMISSIONS.NON_SET,
     },
     (request, reply) => {
-      request.destroySession(err => {
+      request.destroySession((err) => {
         if (err) {
           fastify.log.error(err)
           fastify.sentry.captureException(err)

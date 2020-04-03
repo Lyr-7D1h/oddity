@@ -65,7 +65,7 @@ const Nav = ({ modules, title, user, updateUser, location }) => {
               </Menu.Item>
             )}
 
-            {user.username && user.identifier !== 'admin' && (
+            {user.username && (user.permissions & 0x2) === 0 && (
               <Menu.SubMenu style={{ float: 'right' }} title={user.username}>
                 <Menu.ItemGroup title="Account">
                   <Menu.Item key="profile">
@@ -83,7 +83,7 @@ const Nav = ({ modules, title, user, updateUser, location }) => {
               </Menu.SubMenu>
             )}
 
-            {user.identifier === 'admin' && (
+            {user.permissions & 0x2 && (
               <Menu.Item
                 style={{ float: 'right' }}
                 onClick={handleLogout}
@@ -92,7 +92,7 @@ const Nav = ({ modules, title, user, updateUser, location }) => {
                 <Typography.Text type="danger">Logout</Typography.Text>
               </Menu.Item>
             )}
-            {user.permissions === 1 && (
+            {user.permissions & 0x2 && (
               <Menu.Item style={{ float: 'right' }} key="admin">
                 <Link to="/admin">Admin</Link>
               </Menu.Item>

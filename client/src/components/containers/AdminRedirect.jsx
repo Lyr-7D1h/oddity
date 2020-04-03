@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
  * Used to check if someone is logged in otherwise will redirect to home page
  */
 const AdminRedirect = ({ children, permissions }) => {
-  if (permissions === 1) {
+  if (permissions & 0x2) {
     return children
   } else {
     return <Redirect to="/" />

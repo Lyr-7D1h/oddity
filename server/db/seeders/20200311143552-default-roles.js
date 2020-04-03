@@ -15,7 +15,7 @@ module.exports = {
         name: 'Admin',
         isDefault: false,
         color: 0xf00,
-        permissions: 1,
+        permissions: 2,
         createdAt: new Date(),
         updatedAt: new Date()
       }

@@ -303,6 +303,7 @@ module.exports = async fastify => {
           type: "array"
         }
       },
+
       preHandler: [fastify.auth([fastify.authentication.cookie])]
     },
     (request, reply) => {

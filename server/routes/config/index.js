@@ -1,17 +1,21 @@
-module.exports = async fastify => {
+module.exports = async (fastify) => {
   // Get Default Config (NOT USED)
-  fastify.get('/config', (request, reply) => {
-    fastify.models.config
-      .findOne({ where: { isActive: true } })
-      .then(config => {
-        reply.send(config)
-      })
-      .catch(err => {
-        fastify.log.error(err)
-        fastify.sentry.captureException(err)
-        reply.internalServerError()
-      })
-  })
+  fastify.get(
+    '/config',
+    { permissions: fastify.PERMISSIONS.NON_SET },
+    (request, reply) => {
+      fastify.models.config
+        .findOne({ where: { isActive: true } })
+        .then((config) => {
+          reply.send(config)
+        })
+        .catch((err) => {
+          fastify.log.error(err)
+          fastify.sentry.captureException(err)
+          reply.internalServerError()
+        })
+    }
+  )
 
   fastify.patch(
     '/config/title',
@@ -21,24 +25,25 @@ module.exports = async fastify => {
           type: 'object',
           properties: {
             title: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
-          required: ['title']
-        }
+          required: ['title'],
+        },
       },
-      preHandler: [fastify.auth([fastify.authentication.cookie])]
+      preHandler: [fastify.auth([fastify.authentication.cookie])],
+      permissions: [fastify.PERMISSIONS.ROOT],
     },
     (request, reply) => {
       fastify.models.config
         .update(
           {
-            title: request.body.title
+            title: request.body.title,
           },
           { where: { isActive: true }, returning: true }
         )
-        .then(result => reply.send(result[1][0]))
-        .catch(err => {
+        .then((result) => reply.send(result[1][0]))
+        .catch((err) => {
           fastify.log.error(err)
           fastify.sentry.captureException(err)
           reply.internalServerError()
