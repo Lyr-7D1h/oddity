@@ -142,6 +142,7 @@ const buildOpts = (route, model, instance) => {
     url: path.join('/api/', route.path), //route.route || tableName + idParam),
     preHandler: route.preHandler,
     schema: route.schema,
+    permissions: route.permissions,
     handler: getHandler(route, model, instance),
   }
 }
@@ -172,6 +173,9 @@ const validateOptions = (options) => {
   options.routes.forEach((route) => {
     if (!route.method) {
       throw new Error(`No method defined for route ${route}`)
+    }
+    if (route.permissions === null || route.permissions === undefined) {
+      throw new Error('No permissions given')
     }
 
     route.method = route.method.toUpperCase()
@@ -210,14 +214,14 @@ module.exports = fp(async (instance) => {
      *
      * @param {string} options.model - Sequelize Model
      * @param {array} options.routes - Routes to use
+     * @param {function|array} options.preHandler - Prehandler to use for all routes
      * @param {string} options.routes.method - get || delete || post || put
      * @param {boolean} options.routes.multiple - does this route have multiple (/tests) ? otherwise it uses an id in path (/tests/:id)
-     * @param {function|array} options.routes.auth - function for authentication preHandling
-     * @param {array} options.columns - columns to add or remove
+     * @param {function|array} options.routes.preHandler - function for authentication preHandling
      * @param {array} options.columns.include - Array of strings with columns to include
      * @param {array} options.columns.exclude - Array of strings with columns to exclude
      */
-    async (options) => {
+    (options) => {
       options = validateOptions(options)
 
       options.routes.forEach((route) => {

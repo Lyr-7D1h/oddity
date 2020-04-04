@@ -1,29 +1,43 @@
 'use strict'
 
-module.exports = async fastify => {
+module.exports = async (fastify) => {
   const roleRoute = {
     model: fastify.models.role,
     routes: [
       {
         method: 'get',
-        multiple: true
+        multiple: true,
+        permissions: fastify.PERMISSIONS.NON_SET,
       },
       {
-        method: 'get'
+        method: 'get',
+        permissions: fastify.PERMISSIONS.NON_SET,
       },
       {
         method: 'post',
-        auth: fastify.authentication.cookie
+        preHandler: fastify.authentication.cookie,
+        permissions: [
+          fastify.PERMISSIONS.ROOT,
+          fastify.PERMISSIONS.MANAGE_ROLES,
+        ],
       },
       {
         method: 'delete',
-        auth: fastify.authentication.cookie
+        preHandler: fastify.authentication.cookie,
+        permissions: [
+          fastify.PERMISSIONS.ROOT,
+          fastify.PERMISSIONS.MANAGE_ROLES,
+        ],
       },
       {
         method: 'patch',
-        auth: fastify.authentication.cookie
-      }
-    ]
+        preHandler: fastify.authentication.cookie,
+        permissions: [
+          fastify.PERMISSIONS.ROOT,
+          fastify.PERMISSIONS.MANAGE_ROLES,
+        ],
+      },
+    ],
   }
   fastify.routeGen(roleRoute)
 }

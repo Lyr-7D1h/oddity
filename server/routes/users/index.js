@@ -1,18 +1,16 @@
 'use strict'
 
-module.exports = async fastify => {
+module.exports = async (fastify) => {
   require('./identifier')(fastify)
 
-  const columns = {
-    exclude: [
-      'password',
-      'ip',
-      'email',
-      'createdAt',
-      'updatedAt',
-      'permissions'
-    ]
-  }
+  const excludeAttributes = [
+    'password',
+    'ip',
+    'email',
+    'createdAt',
+    'updatedAt',
+    'permissions',
+  ]
 
   const userRoute = {
     model: fastify.models.user,
@@ -20,13 +18,15 @@ module.exports = async fastify => {
       {
         method: 'get',
         multiple: true,
-        columns: columns
+        exclude: excludeAttributes,
+        permissions: fastify.PERMISSIONS.NON_SET,
       },
       {
         method: 'get',
-        columns: columns
-      }
-    ]
+        exclude: excludeAttributes,
+        permissions: fastify.PERMISSIONS.NON_SET,
+      },
+    ],
   }
   fastify.routeGen(userRoute)
 }
