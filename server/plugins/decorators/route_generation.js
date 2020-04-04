@@ -179,7 +179,14 @@ const validateOptions = (options) => {
     }
 
     route.method = route.method.toUpperCase()
-    route.preHandler = Array.isArray(route.preHandler) ? route.preHandler : []
+    // make sure preHandler is an array
+    if (options.preHandler) {
+      if (!Array.isArray(options.preHandler)) {
+        route.preHandler = [options.preHandler]
+      }
+    } else {
+      options.preHandler = []
+    }
     route.schema = {}
     route.path = route.path || options.model.getTableName()
 

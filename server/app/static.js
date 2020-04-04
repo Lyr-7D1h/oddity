@@ -32,7 +32,7 @@ function fastifyStatic(fastify, opts, next) {
     immutable: opts.immutable,
     index: opts.index,
     lastModified: opts.lastModified,
-    maxAge: opts.maxAge
+    maxAge: opts.maxAge,
   }
 
   // User for DecorateReply and Serve
@@ -40,11 +40,11 @@ function fastifyStatic(fastify, opts, next) {
     const stream = send(request.raw, pathname, sendOptions)
     var resolvedFilename
 
-    stream.on('file', function(file) {
+    stream.on('file', function (file) {
       resolvedFilename = file
     })
 
-    stream.on('error', function(err) {
+    stream.on('error', function (err) {
       if (err) {
         if (err.code === 'ENOENT') {
           // check if file has filename extension
@@ -68,7 +68,7 @@ function fastifyStatic(fastify, opts, next) {
           reply.send('')
         }
         cb()
-      }
+      },
     })
 
     wrap.getHeader = reply.getHeader.bind(reply)
@@ -79,7 +79,7 @@ function fastifyStatic(fastify, opts, next) {
     Object.defineProperty(wrap, 'filename', {
       get() {
         return resolvedFilename
-      }
+      },
     })
     Object.defineProperty(wrap, 'statusCode', {
       get() {
@@ -87,10 +87,10 @@ function fastifyStatic(fastify, opts, next) {
       },
       set(code) {
         reply.code(code)
-      }
+      },
     })
 
-    wrap.on('pipe', function() {
+    wrap.on('pipe', function () {
       reply.send(wrap)
     })
 
@@ -99,7 +99,7 @@ function fastifyStatic(fastify, opts, next) {
     }
 
     if (opts.redirect === true) {
-      stream.on('directory', function(res, path) {
+      stream.on('directory', function (res, path) {
         const parsed = url.parse(request.raw.url)
         reply.redirect(301, parsed.pathname + '/' + (parsed.search || ''))
       })
@@ -119,18 +119,18 @@ function fastifyStatic(fastify, opts, next) {
   // Set the schema hide property if defined in opts or true by default
   const routeOptions = {
     schema: {
-      hide: true
+      hide: true,
     },
-    permissions: fastify.PERMISSIONS.NONE
+    permissions: fastify.PERMISSIONS.NON_SET,
   }
 
   // Serve
   if (opts.serve !== false) {
     if (opts.wildcard === undefined || opts.wildcard === true) {
-      fastify.get(prefix + '*', routeOptions, function(req, reply) {
+      fastify.get(prefix + '*', routeOptions, function (req, reply) {
         pumpSendToReply(req, reply, '/' + req.params['*'])
       })
-      fastify.head(prefix + '*', routeOptions, function(req, reply) {
+      fastify.head(prefix + '*', routeOptions, function (req, reply) {
         reply.send() // TODO: should return content-length
       })
       //   fastify.get(prefix, schema, function(req, reply) {
@@ -139,7 +139,7 @@ function fastifyStatic(fastify, opts, next) {
     } else {
       const globPattern =
         typeof opts.wildcard === 'string' ? opts.wildcard : '**/*'
-      glob(path.join(sendOptions.root, globPattern), { nodir: true }, function(
+      glob(path.join(sendOptions.root, globPattern), { nodir: true }, function (
         err,
         files
       ) {
@@ -156,7 +156,7 @@ function fastifyStatic(fastify, opts, next) {
             .replace(sendOptions.root.replace(/\\/g, '/'), '')
             .replace(/^\//, '')
           const route = (prefix + file).replace(/\/\//g, '/')
-          fastify.get(route, routeOptions, function(req, reply) {
+          fastify.get(route, routeOptions, function (req, reply) {
             pumpSendToReply(req, reply, '/' + file)
           })
 
@@ -164,16 +164,16 @@ function fastifyStatic(fastify, opts, next) {
             indexDirs.add(path.posix.dirname(route))
           }
         }
-        indexDirs.forEach(function(dirname) {
+        indexDirs.forEach(function (dirname) {
           const pathname = dirname + (dirname.endsWith('/') ? '' : '/')
           const file = '/' + pathname.replace(prefix, '')
 
-          fastify.get(pathname, routeOptions, function(req, reply) {
+          fastify.get(pathname, routeOptions, function (req, reply) {
             pumpSendToReply(req, reply, file)
           })
 
           if (opts.redirect === true) {
-            fastify.get(pathname.replace(/\/$/, ''), routeOptions, function(
+            fastify.get(pathname.replace(/\/$/, ''), routeOptions, function (
               req,
               reply
             ) {
@@ -223,5 +223,5 @@ function checkRootPathForErrors(fastify, rootPath) {
 
 module.exports = fp(fastifyStatic, {
   fastify: '>=2.0.0',
-  name: 'fastify-static'
+  name: 'fastify-static',
 })

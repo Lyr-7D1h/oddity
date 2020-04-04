@@ -2,7 +2,7 @@
 
 const From = require('fastify-reply-from')
 
-module.exports = async function(fastify, opts) {
+module.exports = async function (fastify, opts) {
   if (!opts.upstream) {
     throw new Error('upstream must be specified')
   }
@@ -16,7 +16,7 @@ module.exports = async function(fastify, opts) {
 
   const oldRewriteHeaders = (opts.replyOptions || {}).rewriteHeaders
   const replyOpts = Object.assign({}, opts.replyOptions, {
-    rewriteHeaders
+    rewriteHeaders,
   })
   fromOpts.rewriteHeaders = rewriteHeaders
 
@@ -54,9 +54,9 @@ module.exports = async function(fastify, opts) {
     '/*',
     {
       schema: { hide: true },
-      permissions: fastify.PERMISSIONS.NONE,
+      permissions: fastify.PERMISSIONS.NON_SET,
       preHandler,
-      config: opts.config || {}
+      config: opts.config || {},
     },
     reply
   )

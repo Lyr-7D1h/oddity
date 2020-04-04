@@ -1,7 +1,13 @@
 "use strict";
 
-module.exports = async fastify => {
-  fastify.get("/example", async (request, reply) => {
-    reply.example();
-  });
+module.exports = async (fastify) => {
+  fastify.get(
+    "/example",
+    {
+      permissions: fastify.PERMISSIONS.NON_SET,
+    },
+    async (request, reply) => {
+      reply.example();
+    }
+  );
 };

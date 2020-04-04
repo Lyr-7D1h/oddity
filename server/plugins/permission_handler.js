@@ -14,7 +14,7 @@ const addPermissionToDocumentation = (routeOptions, permission) => {
     (key) => PERMISSIONS[key] & permission
   )
   if (permissionStrings.length === 0) {
-    permissionStrings.push('NONE')
+    return
   }
 
   let permissionMessage = `[${permissionStrings.join(' | ')}]`

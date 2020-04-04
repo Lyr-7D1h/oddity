@@ -17,23 +17,23 @@ module.exports = async (fastify, opts) => {
           title: 'Oddity OpenAPI Documenation',
           description:
             'Here you have a good overview of our current API and how you could use it',
-          version: '0.1.0'
+          version: '0.1.0',
         },
         externalDocs: {
           url: 'https://oddityservers.com/developer',
-          description: 'Find more info here'
+          description: 'Find more info here',
         },
         servers: [
           {
             url:
               fastify.config.NODE_ENV === 'development'
                 ? 'http://localhost:5000'
-                : '/'
-          }
+                : '/',
+          },
         ],
         consumes: ['application/json'],
-        produces: ['application/json']
-      }
+        produces: ['application/json'],
+      },
     })
 
     .register(require('fastify-sensible'))
@@ -48,12 +48,12 @@ module.exports = async (fastify, opts) => {
         fields: 10, // Max number of non-file fields
         fileSize: 1000000, // For multipart forms, the max file size
         files: 1, // Max number of file fields
-        headerPairs: 2000 // Max number of header key=>value pairs
-      }
+        headerPairs: 2000, // Max number of header key=>value pairs
+      },
     })
 
     .register(require('fastify-cors'), {
-      origin: 'http://localhost:3000'
+      origin: 'http://localhost:3000',
     })
 
     .register(require('fastify-auth'))
@@ -61,7 +61,7 @@ module.exports = async (fastify, opts) => {
     // Autoload Plugins
     .register(fastifyAutoload, {
       dir: path.join(__dirname, '../plugins'),
-      options: Object.assign({}, opts)
+      options: Object.assign({}, opts),
     })
 
     // Session Storage to Postgres
@@ -70,13 +70,13 @@ module.exports = async (fastify, opts) => {
         (instance, opts, done) => {
           opts.store = new SequelizeStore({
             db: instance.db,
-            modelKey: 'session'
+            modelKey: 'session',
           })
           session(instance, opts, done)
           opts.store.sync()
         },
         {
-          dependencies: ['sequelize']
+          dependencies: ['sequelize'],
         }
       ),
       {
@@ -84,8 +84,8 @@ module.exports = async (fastify, opts) => {
         cookie: {
           httpOnly: !(fastify.config.NODE_ENV === 'development'), // set httpOnly and secure off when in dev
           secure: !(fastify.config.NODE_ENV === 'development'),
-          expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // session is valid for 14 days
-        }
+          expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // session is valid for 14 days
+        },
       }
     )
 
@@ -100,25 +100,25 @@ module.exports = async (fastify, opts) => {
       dir: path.join(__dirname, '../routes'),
       options: Object.assign(
         {
-          prefix: '/api'
+          prefix: '/api',
         },
         opts
-      )
+      ),
     })
 
-    .register(require('fastify-static'), {
+    .register(require('./static'), {
       prefix: '/resources',
       decorateReply: false,
-      root: path.join(__dirname, '../../resources')
+      root: path.join(__dirname, '../../resources'),
     })
 
-  routesDirectories.forEach(dir => {
+  routesDirectories.forEach((dir) => {
     fastify.register(fastifyAutoload, {
       dir: dir,
       options: Object.assign({
         prefix: '/api',
-        opts
-      })
+        opts,
+      }),
     })
   })
 
@@ -131,11 +131,11 @@ module.exports = async (fastify, opts) => {
     fastify.register(require('./proxy'), {
       upstream: 'http://localhost:3000',
       prefix: '/',
-      http2: false
+      http2: false,
     })
   } else {
     fastify.register(require('./static'), {
-      root: path.join(__dirname, '../../client/build')
+      root: path.join(__dirname, '../../client/build'),
     })
   }
 

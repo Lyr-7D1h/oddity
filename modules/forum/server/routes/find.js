@@ -1,4 +1,4 @@
-module.exports = async fastify => {
+module.exports = async (fastify) => {
   fastify.get(
     "/forum/find/:categoryTitle/:threadTitle/:postTitle",
     {
@@ -8,9 +8,10 @@ module.exports = async fastify => {
         properties: {
           categoryTitle: { type: "string" },
           threadTitle: { type: "string" },
-          postTitle: { type: "string" }
-        }
-      }
+          postTitle: { type: "string" },
+        },
+      },
+      permissions: fastify.PERMISSIONS.NON_SET,
     },
     (request, reply) => {
       fastify.models.forumCategory
@@ -32,17 +33,17 @@ module.exports = async fastify => {
                   {
                     model: fastify.models.user,
                     as: "author",
-                    attributes: ["identifier", "username"]
-                  }
-                ]
-              }
-            }
-          ]
+                    attributes: ["identifier", "username"],
+                  },
+                ],
+              },
+            },
+          ],
         })
-        .then(category => {
+        .then((category) => {
           return reply.send(category);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
           fastify.log.error(err);
           return reply.internalServerError(err.message);
@@ -57,9 +58,10 @@ module.exports = async fastify => {
         required: ["categoryTitle", "threadTitle"],
         properties: {
           categoryTitle: { type: "string" },
-          threadTitle: { type: "string" }
-        }
-      }
+          threadTitle: { type: "string" },
+        },
+      },
+      permissions: fastify.PERMISSIONS.NON_SET,
     },
     (request, reply) => {
       fastify.models.forumCategory
@@ -83,19 +85,19 @@ module.exports = async fastify => {
                     include: [
                       {
                         model: fastify.models.role,
-                        as: "role"
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          ]
+                        as: "role",
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
         })
-        .then(category => {
+        .then((category) => {
           return reply.send(category);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
           fastify.log.error(err);
           return reply.internalServerError(err.message);
@@ -109,9 +111,10 @@ module.exports = async fastify => {
         type: "object",
         required: ["categoryTitle"],
         properties: {
-          categoryTitle: { type: "string" }
-        }
-      }
+          categoryTitle: { type: "string" },
+        },
+      },
+      permissions: fastify.PERMISSIONS.NON_SET,
     },
     (request, reply) => {
       fastify.models.forumCategory
@@ -129,18 +132,18 @@ module.exports = async fastify => {
                   {
                     model: fastify.models.user,
                     as: "author",
-                    attributes: ["identifier", "username"]
-                  }
+                    attributes: ["identifier", "username"],
+                  },
                 ],
-                limit: 1
-              }
-            }
-          ]
+                limit: 1,
+              },
+            },
+          ],
         })
-        .then(category => {
+        .then((category) => {
           return reply.send(category);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
           fastify.log.error(err);
           return reply.internalServerError(err.message);

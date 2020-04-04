@@ -1,105 +1,26 @@
 "use strict";
 
-module.exports = async fastify => {
-  fastify.get("/forum", (request, reply) => {
-    fastify.models.forumCategory
-      .findAll({
-        attributes: {
-          exclude: ["createdAt", "updatedAt"]
-        },
-        order: [["order", "ASC"]],
-        include: [
-          {
-            model: fastify.models.forumThread,
-            as: "threads",
-            order: [["order", "ASC"]],
-            attributes: {
-              exclude: ["createdAt", "updatedAt"]
-            },
-            include: {
-              model: fastify.models.forumPost,
-              as: "latestPost",
-              order: [["createdAt", "ASC"]],
-              include: [
-                {
-                  model: fastify.models.user,
-                  as: "author",
-                  attributes: ["identifier", "username", "roleId"]
-                }
-              ],
-              limit: 1
-            }
-          }
-        ]
-      })
-      .then(result => {
-        return reply.send(result);
-      })
-      .catch(err => {
-        fastify.log.error(err);
-        fastify.sentry.captureException(err);
-        return reply.internalServerError();
-      });
-  });
-
-  fastify.get("/forum/categories", (request, reply) => {
-    fastify.models.forumCategory
-      .findAll({
-        attributes: {
-          exclude: ["createdAt", "updatedAt"]
-        },
-        order: [["order", "ASC"]]
-      })
-      .then(categories => {
-        return reply.send(categories);
-      })
-      .catch(err => {
-        fastify.log.error(err);
-        fastify.sentry.captureException(err);
-        return reply.internalServerError();
-      });
-  });
-
-  fastify.get("/forum/threads", (request, reply) => {
-    fastify.models.forumThread
-      .findAll({
-        attributes: {
-          exclude: ["createdAt", "updatedAt"]
-        },
-        order: [["order", "ASC"]]
-      })
-      .then(threads => {
-        return reply.send(threads);
-      })
-      .catch(err => {
-        fastify.log.error(err);
-        fastify.sentry.captureException(err);
-        return reply.internalServerError();
-      });
-  });
-
+module.exports = async (fastify) => {
   fastify.get(
-    "/forum/categories/:id",
+    "/forum",
     {
-      schema: {
-        params: "id#"
-      }
+      permissions: fastify.PERMISSIONS.NON_SET,
     },
     (request, reply) => {
       fastify.models.forumCategory
-        .findOne({
-          where: { id: request.params.id },
+        .findAll({
           attributes: {
-            exclude: ["createdAt", "updatedAt"]
+            exclude: ["createdAt", "updatedAt"],
           },
           order: [["order", "ASC"]],
           include: [
             {
               model: fastify.models.forumThread,
-              attributes: {
-                exclude: ["createdAt", "updatedAt"]
-              },
               as: "threads",
+              order: [["order", "ASC"]],
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
               include: {
                 model: fastify.models.forumPost,
                 as: "latestPost",
@@ -108,18 +29,18 @@ module.exports = async fastify => {
                   {
                     model: fastify.models.user,
                     as: "author",
-                    attributes: ["identifier", "username"]
-                  }
+                    attributes: ["identifier", "username", "roleId"],
+                  },
                 ],
-                limit: 1
-              }
-            }
-          ]
+                limit: 1,
+              },
+            },
+          ],
         })
-        .then(category => {
-          return reply.send(category);
+        .then((result) => {
+          return reply.send(result);
         })
-        .catch(err => {
+        .catch((err) => {
           fastify.log.error(err);
           fastify.sentry.captureException(err);
           return reply.internalServerError();
@@ -127,91 +48,191 @@ module.exports = async fastify => {
     }
   );
 
-  fastify.get(
-    "/forum/threads/:id",
-    {
-      schema: {
-        params: "id#"
-      }
-    },
-    (request, reply) => {
-      fastify.models.forumThread
-        .findOne({
-          where: { id: request.params.id },
-          attributes: {
-            exclude: ["createdAt", "updatedAt"]
-          },
-          order: [["order", "ASC"]],
-          include: {
-            model: fastify.models.forumPost,
-            as: "posts",
-            order: [["createdAt", "ASC"]],
-            include: [
-              {
-                model: fastify.models.user,
-                as: "author",
-                attributes: ["identifier", "username", "avatar"],
-                include: { model: fastify.models.role, attributes: ["name"] }
-              }
-            ]
-          }
-        })
-        .then(threads => {
-          reply.send(threads);
-        })
-        .catch(err => {
-          fastify.log.error(err);
-          fastify.sentry.captureException(err);
-          reply.internalServerError();
-        });
-    }
-  );
+  // fastify.get(
+  //   "/forum/categories",
+  //   {
+  //     permissions: fastify.PERMISSIONS.NON_SET,
+  //   },
+  //   (request, reply) => {
+  //     fastify.models.forumCategory
+  //       .findAll({
+  //         attributes: {
+  //           exclude: ["createdAt", "updatedAt"],
+  //         },
+  //         order: [["order", "ASC"]],
+  //       })
+  //       .then((categories) => {
+  //         return reply.send(categories);
+  //       })
+  //       .catch((err) => {
+  //         fastify.log.error(err);
+  //         fastify.sentry.captureException(err);
+  //         return reply.internalServerError();
+  //       });
+  //   }
+  // );
 
-  fastify.get(
-    "/forum/posts/:id",
-    {
-      params: "id#"
-    },
-    (request, reply) => {
-      fastify.models.forumPost
-        .findOne({
-          where: {
-            id: request.params.id
-          },
-          include: [
-            {
-              model: fastify.models.user,
-              as: "author",
-              attributes: ["identifier", "username", "roleId"]
-            }
-          ]
-        })
-        .then(posts => {
-          reply.send(posts);
-        })
-        .catch(err => {
-          fastify.log.error(err);
-          fastify.sentry.captureException(err);
-          reply.internalServerError();
-        });
-    }
-  );
+  // fastify.get(
+  //   "/forum/threads",
+  //   {
+  //     permissions: fastify.PERMISSIONS.NON_SET,
+  //   },
+  //   (request, reply) => {
+  //     fastify.models.forumThread
+  //       .findAll({
+  //         attributes: {
+  //           exclude: ["createdAt", "updatedAt"],
+  //         },
+  //         order: [["order", "ASC"]],
+  //       })
+  //       .then((threads) => {
+  //         return reply.send(threads);
+  //       })
+  //       .catch((err) => {
+  //         fastify.log.error(err);
+  //         fastify.sentry.captureException(err);
+  //         return reply.internalServerError();
+  //       });
+  //   }
+  // );
+
+  // fastify.get(
+  //   "/forum/categories/:id",
+  //   {
+  //     schema: {
+  //       params: "id#",
+  //     },
+  //     permissions: fastify.PERMISSIONS.NON_SET,
+  //   },
+  //   (request, reply) => {
+  //     fastify.models.forumCategory
+  //       .findOne({
+  //         where: { id: request.params.id },
+  //         attributes: {
+  //           exclude: ["createdAt", "updatedAt"],
+  //         },
+  //         order: [["order", "ASC"]],
+  //         include: [
+  //           {
+  //             model: fastify.models.forumThread,
+  //             attributes: {
+  //               exclude: ["createdAt", "updatedAt"],
+  //             },
+  //             as: "threads",
+  //             include: {
+  //               model: fastify.models.forumPost,
+  //               as: "latestPost",
+  //               order: [["createdAt", "ASC"]],
+  //               include: [
+  //                 {
+  //                   model: fastify.models.user,
+  //                   as: "author",
+  //                   attributes: ["identifier", "username"],
+  //                 },
+  //               ],
+  //               limit: 1,
+  //             },
+  //           },
+  //         ],
+  //       })
+  //       .then((category) => {
+  //         return reply.send(category);
+  //       })
+  //       .catch((err) => {
+  //         fastify.log.error(err);
+  //         fastify.sentry.captureException(err);
+  //         return reply.internalServerError();
+  //       });
+  //   }
+  // );
+
+  // fastify.get(
+  //   "/forum/threads/:id",
+  //   {
+  //     schema: {
+  //       params: "id#",
+  //     },
+  //     permissions: fastify.PERMISSIONS.NON_SET
+  //   },
+  //   (request, reply) => {
+  //     fastify.models.forumThread
+  //       .findOne({
+  //         where: { id: request.params.id },
+  //         attributes: {
+  //           exclude: ["createdAt", "updatedAt"],
+  //         },
+  //         order: [["order", "ASC"]],
+  //         include: {
+  //           model: fastify.models.forumPost,
+  //           as: "posts",
+  //           order: [["createdAt", "ASC"]],
+  //           include: [
+  //             {
+  //               model: fastify.models.user,
+  //               as: "author",
+  //               attributes: ["identifier", "username", "avatar"],
+  //               include: { model: fastify.models.role, attributes: ["name"] },
+  //             },
+  //           ],
+  //         },
+  //       })
+  //       .then((threads) => {
+  //         reply.send(threads);
+  //       })
+  //       .catch((err) => {
+  //         fastify.log.error(err);
+  //         fastify.sentry.captureException(err);
+  //         reply.internalServerError();
+  //       });
+  //   }
+  // );
+
+  // fastify.get(
+  //   "/forum/posts/:id",
+  //   {
+  //     params: "id#",
+  //   },
+  //   (request, reply) => {
+  //     fastify.models.forumPost
+  //       .findOne({
+  //         where: {
+  //           id: request.params.id,
+  //         },
+  //         include: [
+  //           {
+  //             model: fastify.models.user,
+  //             as: "author",
+  //             attributes: ["identifier", "username", "roleId"],
+  //           },
+  //         ],
+  //       })
+  //       .then((posts) => {
+  //         reply.send(posts);
+  //       })
+  //       .catch((err) => {
+  //         fastify.log.error(err);
+  //         fastify.sentry.captureException(err);
+  //         reply.internalServerError();
+  //       });
+  //   }
+  // );
 
   fastify.post(
     "/forum/categories",
     {
       schema: {
-        type: "object"
+        type: "object",
       },
-      preHandler: [fastify.auth([fastify.authentication.cookie])]
+      permissions: fastify.PERMISSIONS.ROOT,
+      preHandler: [fastify.auth([fastify.authentication.cookie])],
     },
     (request, reply) => {
       fastify.models.forumCategory
         .create(request.body)
-        .then(category => {
+        .then((category) => {
           reply.send(category);
         })
-        .catch(err => {
+        .catch((err) => {
           fastify.log.error(err);
           fastify.sentry.captureException(err);
           reply.internalServerError();
@@ -222,17 +243,18 @@ module.exports = async fastify => {
     "/forum/threads",
     {
       schema: {
-        type: "object"
+        type: "object",
       },
-      preHandler: [fastify.auth([fastify.authentication.cookie])]
+      permissions: fastify.PERMISSIONS.ROOT,
+      preHandler: [fastify.auth([fastify.authentication.cookie])],
     },
     (request, reply) => {
       fastify.models.forumThread
         .create(request.body)
-        .then(thread => {
+        .then((thread) => {
           reply.send(thread);
         })
-        .catch(err => {
+        .catch((err) => {
           fastify.log.error(err);
           fastify.sentry.captureException(err);
           reply.internalServerError();
@@ -245,48 +267,49 @@ module.exports = async fastify => {
     {
       schema: {
         body: {
-          type: "array"
-        }
+          type: "array",
+        },
       },
-      preHandler: [fastify.auth([fastify.authentication.cookie])]
+      permissions: fastify.PERMISSIONS.ROOT,
+      preHandler: [fastify.auth([fastify.authentication.cookie])],
     },
     (request, reply) => {
-      fastify.models.forumCategory.findAll().then(categories => {
+      fastify.models.forumCategory.findAll().then((categories) => {
         const promises = [];
 
         // TODO: Fix loop updating
-        categories.forEach(category => {
+        categories.forEach((category) => {
           // if cant find delete category
           if (
             !request.body.includes(
-              reqCategory => reqCategory.id && reqCategory.id === category.id
+              (reqCategory) => reqCategory.id && reqCategory.id === category.id
             )
           ) {
             promises.push(
               fastify.models.forumThread.destroy({
-                where: { categoryId: category.id }
+                where: { categoryId: category.id },
               })
             );
             promises.push(
               fastify.models.forumCategory.destroy({
-                where: { id: category.id }
+                where: { id: category.id },
               })
             );
           }
         });
 
-        request.body.forEach(category => {
+        request.body.forEach((category) => {
           promises.push(
             fastify.models.forumCategory.upsert(category, { returning: true })
           );
         });
 
         Promise.all(promises)
-          .then(results => {
-            results = results.filter(result => isNaN(result) && result); // filter out results of delete
-            reply.send(results.map(result => result[0]));
+          .then((results) => {
+            results = results.filter((result) => isNaN(result) && result); // filter out results of delete
+            reply.send(results.map((result) => result[0]));
           })
-          .catch(err => {
+          .catch((err) => {
             fastify.log.error(err);
             fastify.sentry.captureException(err);
             reply.internalServerError();
@@ -300,20 +323,20 @@ module.exports = async fastify => {
     {
       schema: {
         body: {
-          type: "array"
-        }
+          type: "array",
+        },
       },
-
-      preHandler: [fastify.auth([fastify.authentication.cookie])]
+      permissions: fastify.PERMISSIONS.ROOT,
+      preHandler: [fastify.auth([fastify.authentication.cookie])],
     },
     (request, reply) => {
-      fastify.models.forumThread.findAll().then(threads => {
+      fastify.models.forumThread.findAll().then((threads) => {
         const promises = [];
 
         // check if same title in same category
         const temp = [];
-        request.body.forEach(thread => {
-          temp.forEach(tempThread => {
+        request.body.forEach((thread) => {
+          temp.forEach((tempThread) => {
             if (
               thread.title === tempThread.title &&
               tempThread.categoryId === thread.categoryId
@@ -327,11 +350,11 @@ module.exports = async fastify => {
         });
 
         // check if it needs to be deleted
-        threads.forEach(thread => {
+        threads.forEach((thread) => {
           // if cant find delete thread
           if (
             !request.body.includes(
-              reqThread => reqThread.id && reqThread.id === thread.id
+              (reqThread) => reqThread.id && reqThread.id === thread.id
             )
           )
             promises.push(
@@ -341,18 +364,18 @@ module.exports = async fastify => {
 
         // update or create if not exists
         // TODO: Fix loop updating
-        request.body.forEach(thread => {
+        request.body.forEach((thread) => {
           promises.push(
             fastify.models.forumThread.upsert(thread, { returning: true })
           );
         });
 
         Promise.all(promises)
-          .then(results => {
-            results = results.filter(result => isNaN(result) && result); // filter out results of delete
-            reply.send(results.map(result => result[0]));
+          .then((results) => {
+            results = results.filter((result) => isNaN(result) && result); // filter out results of delete
+            reply.send(results.map((result) => result[0]));
           })
-          .catch(err => {
+          .catch((err) => {
             fastify.log.error(err);
             fastify.sentry.captureException(err);
             reply.internalServerError();
@@ -366,18 +389,19 @@ module.exports = async fastify => {
     {
       schema: {
         body: {
-          type: "object"
-        }
+          type: "object",
+        },
       },
-      preHandler: [fastify.auth([fastify.authentication.cookie])]
+      permissions: [fastify.PERMISSIONS.ROOT, fastify.PERMISSIONS.NONE],
+      preHandler: [fastify.auth([fastify.authentication.cookie])],
     },
     (request, reply) => {
       fastify.models.forumPost
         .create(request.body)
-        .then(post => {
+        .then((post) => {
           reply.send(post);
         })
-        .catch(err => {
+        .catch((err) => {
           fastify.log.error(err);
           fastify.sentry.captureException(err);
           reply.badRequest(err.message);
