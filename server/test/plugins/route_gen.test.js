@@ -1,29 +1,29 @@
 'use strict'
 
 const Fastify = require('fastify')
-const { test, only } = require('tap')
-const RouteGen = require('../../plugins/route_gen')
-const getTestModel = require('../models/test')
+const { test } = require('tap')
+const RouteGen = require('../../plugins/decorators/route_generation')
+// const getTestModel = require('../models/test')
 
 // clear all tables
 require('../db.helper')()
 
-let build = t => {
-  const app = require('../helper')(t)
+// let build = (t) => {
+//   const app = require('../helper')(t)
 
-  app.decorate('TestModel')
+//   app.decorate('TestModel')
 
-  return app
-}
+//   return app
+// }
 
-test('Empty call returns error on new instance', t => {
+test('Empty call returns error on new instance', (t) => {
   t.plan(2)
 
   const app = new Fastify()
 
   app.register(RouteGen)
 
-  app.ready(err => {
+  app.ready((err) => {
     t.error(err)
     t.rejects(app.routeGen())
   })
