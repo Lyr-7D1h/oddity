@@ -17,7 +17,7 @@ require('../db.helper')()
 // }
 
 test('Empty call returns error on new instance', (t) => {
-  t.plan(2)
+  t.plan(3)
 
   const app = new Fastify()
 
@@ -25,7 +25,12 @@ test('Empty call returns error on new instance', (t) => {
 
   app.ready((err) => {
     t.error(err)
-    t.rejects(app.routeGen())
+    try {
+      app.routeGen()
+    } catch (err) {
+      t.match(err, Error)
+      t.match(err.message, 'No options provided')
+    }
   })
 })
 
