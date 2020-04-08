@@ -149,7 +149,7 @@ const buildOpts = (route, model, instance) => {
 
 const validateOptions = (options) => {
   if (!options) {
-    throw new Error('Route gen no options provided')
+    throw new Error('No options provided')
   }
 
   if (!options.model || !options.routes || options.routes.length <= 0) {
