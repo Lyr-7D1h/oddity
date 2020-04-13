@@ -73,7 +73,7 @@ module.exports = (fastify) => {
                 } else {
                   fastify.sentry.captureException(new Error('No Default Role'))
                   fastify.log.fatal('No Default Role')
-                  reply.internalServerError()
+                  return reply.internalServerError()
                 }
               })
               .catch((err) => {

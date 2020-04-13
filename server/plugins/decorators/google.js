@@ -17,7 +17,6 @@ module.exports = fp(async (instance) => {
             } catch (err) {
               reject(err)
             }
-            console.log(data)
             if (data && data.success) {
               resolve(true)
             } else {

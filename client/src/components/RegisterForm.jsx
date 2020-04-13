@@ -15,6 +15,8 @@ export default connect((state) => ({ captcha: state.captcha }))(
     const [registered, setRegistered] = useState(false)
     const form = React.createRef()
 
+    console.log(captcha)
+
     const handleFinish = (values) => {
       requester
         .post('auth/register', values)
@@ -37,6 +39,21 @@ export default connect((state) => ({ captcha: state.captcha }))(
     }
     const handleExpireCatcha = () => {
       form.current.setFieldsValue({ captcha: null })
+    }
+
+    const preflightValidator = (field, value) => {
+      return new Promise((resolve, reject) => {
+        requester
+          .post('users/preflight', { [field]: value })
+          .then((is_taken) => {
+            if (is_taken) reject(`${value} is taken`)
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject('something went wrong')
+          })
+      })
     }
 
     const identifierHandler = (e) => {
@@ -94,12 +111,16 @@ export default connect((state) => ({ captcha: state.captcha }))(
           getValueFromEvent={identifierHandler}
           label="Username"
           name="username"
+          hasFeedback
           rules={[
             { required: true, message: 'Username is required' },
             {
               message: 'Username needs to have a length of 3-30',
               min: 3,
               max: 30,
+            },
+            {
+              validator: (_, value) => preflightValidator('username', value),
             },
           ]}
         >
@@ -109,6 +130,7 @@ export default connect((state) => ({ captcha: state.captcha }))(
         {usingIdentifier ? (
           <Form.Item
             name="identifier"
+            hasFeedback
             label={
               <span>
                 ID&nbsp;
@@ -117,6 +139,12 @@ export default connect((state) => ({ captcha: state.captcha }))(
                 </Tooltip>
               </span>
             }
+            rules={[
+              {
+                validator: (_, value) =>
+                  preflightValidator('identifier', value),
+              },
+            ]}
           >
             <Input prefix="#" disabled />
           </Form.Item>
@@ -127,9 +155,11 @@ export default connect((state) => ({ captcha: state.captcha }))(
         <Form.Item
           label="Email"
           name="email"
+          hasFeedback
           rules={[
             { type: 'email', message: 'Email is invalid' },
             { required: true, message: 'Email is required' },
+            { validator: (_, value) => preflightValidator('email', value) },
           ]}
         >
           <Input />
@@ -173,7 +203,7 @@ export default connect((state) => ({ captcha: state.captcha }))(
           <ReCAPTCHA
             onChange={handleCaptcha}
             onExpired={handleExpireCatcha}
-            sitekey={captcha}
+            sitekey={captcha ? captcha : ''}
           />
         </Form.Item>
         <Form.Item

@@ -5,7 +5,7 @@ export default (state = {}, { type, payload }) => {
     case UPDATE_CAPTCHA:
       return payload.captcha
     case FETCH_CAPTCHA:
-      return { isLoading: true }
+      return ''
     default:
       return state
   }

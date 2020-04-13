@@ -2,6 +2,7 @@
 
 module.exports = async (fastify) => {
   require('./identifier')(fastify)
+  require('./preflight')(fastify)
 
   const excludeAttributes = [
     'password',
