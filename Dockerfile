@@ -23,5 +23,6 @@ RUN npm ci --production
 RUN npm run build
 
 # Start App
+WORKDIR /usr/src/app/server
 CMD npm start
 EXPOSE 5000
