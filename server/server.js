@@ -9,7 +9,7 @@ require('dotenv').config()
 Sentry.init({
   dsn: 'https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726',
   environment:
-    process.env.NODE_ENV === 'development' ? 'development' : 'production'
+    process.env.NODE_ENV === 'development' ? 'development' : 'production',
 })
 
 // installs an 'unhandledRejection' handler
@@ -23,9 +23,9 @@ const server = Fastify({
   // ignoreTrailingSlash: true,
   logger: {
     level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-    prettyPrint: process.env.NODE_ENV === 'development'
+    prettyPrint: process.env.NODE_ENV === 'development',
   },
-  dotenv: true
+  dotenv: true,
 })
 
 const envSchema = {
@@ -39,9 +39,9 @@ const envSchema = {
     DB_LOGGING_ENABLED: { type: 'boolean' },
     SESSION_SECRET: { type: 'string' },
     PORT: { type: 'integer' },
-    NODE_ENV: { type: 'string' }
+    NODE_ENV: { type: 'string' },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 server.decorate('sentry', Sentry)
@@ -61,7 +61,13 @@ if (process.env.NODE_ENV === 'development')
     server.log.debug('\n', stdout)
   })
 
-server.listen(process.env.PORT || 5000, '0.0.0.0', err => {
+server.listen(process.env.PORT || 5000, '0.0.0.0', (err) => {
+  if (err) {
+    server.log.fatal(err)
+    server.sentry.captureException(err)
+    throw err
+  }
+
   if (server.config.NODE_ENV === 'development') {
     server.log.warn('RUNNING IN DEVELOPMENT MODE')
     server.log.info('Routes:')
@@ -72,10 +78,4 @@ server.listen(process.env.PORT || 5000, '0.0.0.0', err => {
   }
 
   // server.log.info(`Listening on http://0.0.0.0:${process.env.PORT || 5000}`)
-
-  if (err) {
-    server.log.fatal(err)
-    server.sentry.captureException(err)
-    throw err
-  }
 })
