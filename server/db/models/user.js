@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-      len: [3, 30]
+      len: [3, 30],
     },
     identifier: {
       type: DataTypes.STRING,
@@ -12,38 +12,39 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       len: [3, 30],
       isLowercase: true,
-      is: /(^[a-z0-9])\w+[a-z0-9]$/
+      is: /(^[a-z0-9])\w+[a-z0-9]$/,
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-      len: [3, 30]
+      len: [3, 30],
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-      isLowercase: true
+      isEmail: true,
+      isLowercase: true,
     },
     avatar: {
       type: DataTypes.STRING,
-      unique: true
+      unique: true,
     },
     ip: {
       type: DataTypes.STRING,
       allowNull: false,
       isLowercase: true,
-      isIP: true
+      isIP: true,
     },
     permissions: {
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
     },
     roleId: {
       type: DataTypes.INTEGER,
-      allowNull: false
-    }
+      allowNull: false,
+    },
   })
-  user.associate = models => {
+  user.associate = (models) => {
     // user.hasMany(models.forumPost, {
     //   as: 'posts',
     //   foreignKey: 'authorId'

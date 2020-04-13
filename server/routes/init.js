@@ -20,7 +20,11 @@ module.exports = async (fastify) => {
 
       Promise.all(initPromises)
         .then(([config, modules]) => {
-          reply.send({ config, modules })
+          reply.send({
+            config,
+            modules,
+            captcha: fastify.config.CAPTCHA_CLIENT,
+          })
         })
         .catch((err) => {
           fastify.log.error(err)

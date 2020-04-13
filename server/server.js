@@ -7,7 +7,7 @@ require('dotenv').config()
 
 // sentry.io
 Sentry.init({
-  dsn: 'https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726',
+  dsn: process.env.SENTRY_DSN,
   environment:
     process.env.NODE_ENV === 'development' ? 'development' : 'production',
 })
@@ -30,7 +30,14 @@ const server = Fastify({
 
 const envSchema = {
   type: 'object',
-  required: ['SESSION_SECRET', 'DB_USERNAME', 'DB_PASSWORD', 'DB_NAME'],
+  required: [
+    'SESSION_SECRET',
+    'DB_USERNAME',
+    'DB_PASSWORD',
+    'DB_NAME',
+    'CAPTCHA_CLIENT',
+    'CAPTCHA_SERVER',
+  ],
   properties: {
     DB_HOST: { type: 'string' },
     DB_NAME: { type: 'string' },
@@ -40,6 +47,8 @@ const envSchema = {
     SESSION_SECRET: { type: 'string' },
     PORT: { type: 'integer' },
     NODE_ENV: { type: 'string' },
+    CAPTCHA_CLIENT: { type: 'string' },
+    CAPTCHA_SERVER: { type: 'string' },
   },
   additionalProperties: false,
 }
@@ -63,9 +72,9 @@ if (process.env.NODE_ENV === 'development')
 
 server.listen(process.env.PORT || 5000, '0.0.0.0', (err) => {
   if (err) {
-    server.log.fatal(err)
+    server.log.error(err)
     server.sentry.captureException(err)
-    throw err
+    process.exit(1)
   }
 
   if (server.config.NODE_ENV === 'development') {
