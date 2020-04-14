@@ -38,6 +38,8 @@ jobs:
       DB_PASSWORD: test_pass
       SESSION_SECRET: kn&6Ji5#dKtF!z#*rH@u48hm22NEz&bdFJ&JzwhYVF
       SENTRY_DSN: https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726
+      CAPTCHA_CLIENT: "asdfasdfasdfasdf"
+      CAPTCHA_SERVER: "asdfasdfasdfasdf"
 
     steps:
       - name: Checkout Branch
