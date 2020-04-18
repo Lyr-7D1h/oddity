@@ -7,7 +7,7 @@ echo -e "\n\n${CYAN}SERVER: Installing dependencies${NY}" && \
 cd server && \
 npm ci && \
 
-echo -e "\n\n${CYAN}SERVER: Executing module_loader.js to load transfer DB Files${NY}" && \
+echo -e "\n\n${CYAN}SERVER: Executing module_loader to copy and paste DB Files${NY}" && \
 node module_loader && \
 
 echo -e "\n\n${CYAN}SERVER: Executing models_sync to create all tables${NY}" && \

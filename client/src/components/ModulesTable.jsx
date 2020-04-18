@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import requester from '@helpers/requester'
-import notificationHandler from '@helpers/notificationHandler'
+import requester from 'Helpers/requester'
+import notificationHandler from 'Helpers/notificationHandler'
 import { Table, Tag, Button, Input } from 'antd'
 import { RollbackOutlined } from '@ant-design/icons'
 
@@ -8,19 +8,19 @@ import moduleLoaderImports from '../../module_loader_imports'
 import { connect } from 'react-redux'
 import SavePopup from './SavePopup'
 
-export default connect(state => ({
+export default connect((state) => ({
   configId: state.config.id,
-  routes: state.modules.map(mod => mod.route)
+  routes: state.modules.map((mod) => mod.route),
 }))(({ routes, configId }) => {
   const [modules, setModules] = useState([])
   const [SettingsComponent, setSettingsComponent] = useState(null)
   const [changes, setChanges] = useState([])
 
   useEffect(() => {
-    requester.get('modules').then(modules => {
+    requester.get('modules').then((modules) => {
       modules
         .sort((a, b) => (a.enabled ? 1 : -1))
-        .map(mod => {
+        .map((mod) => {
           mod.adminPage = moduleLoaderImports.modules[mod.name].adminPage
           return mod
         })
@@ -28,13 +28,13 @@ export default connect(state => ({
     })
   }, [routes])
 
-  const setEnabled = id => {
-    const enabled = !modules.find(mod => mod.id === id).enabled
+  const setEnabled = (id) => {
+    const enabled = !modules.find((mod) => mod.id === id).enabled
     requester
       .patch(`modules/${id}/enabled`, { enabled })
       .then(() => {
         setModules(
-          modules.map(mod => {
+          modules.map((mod) => {
             if (mod.id === id) {
               mod.enabled = enabled
             }
@@ -42,20 +42,20 @@ export default connect(state => ({
           })
         )
       })
-      .catch(err => {
+      .catch((err) => {
         notificationHandler.error('Could not enable Module', err.message)
       })
   }
 
   const routeChangeHandler = (id, value) => {
     setModules(
-      modules.map(mod => {
+      modules.map((mod) => {
         if (mod.id === id) mod.route = value
         return mod
       })
     )
     let shouldAdd = true
-    const routeChanges = changes.map(change => {
+    const routeChanges = changes.map((change) => {
       if (change.id === id) {
         shouldAdd = false
         return { id: id, route: value }
@@ -69,20 +69,20 @@ export default connect(state => ({
   }
 
   const handleSave = () => {
-    changes.forEach(change => {
+    changes.forEach((change) => {
       requester
         .patch(`modules/${change.id}/route`, change)
-        .then(updatedModules => {
+        .then((updatedModules) => {
           setModules(
-            modules.map(mod => {
-              const umod = updatedModules.find(umod => umod.id === mod.id)
+            modules.map((mod) => {
+              const umod = updatedModules.find((umod) => umod.id === mod.id)
               if (umod) mod.route = umod.route
               return mod
             })
           )
           setChanges([])
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err)
           setChanges([])
           notificationHandler.error('Could not update routes', err.message)
@@ -92,10 +92,10 @@ export default connect(state => ({
 
   const columns = [
     {
-      dataIndex: 'name'
+      dataIndex: 'name',
     },
     {
-      dataIndex: 'version'
+      dataIndex: 'version',
     },
     {
       dataIndex: 'enabled',
@@ -116,7 +116,7 @@ export default connect(state => ({
           >
             Disabled
           </Tag>
-        )
+        ),
     },
     {
       dataIndex: 'route',
@@ -127,12 +127,12 @@ export default connect(state => ({
               type="text"
               prefix="/"
               placeholder="baseroute"
-              onChange={e => routeChangeHandler(record.id, e.target.value)}
+              onChange={(e) => routeChangeHandler(record.id, e.target.value)}
               value={route ? route : ''}
             />
           )
         }
-      }
+      },
     },
     {
       dataIndex: 'enabled',
@@ -150,8 +150,8 @@ export default connect(state => ({
             </>
           )
         }
-      }
-    }
+      },
+    },
   ]
 
   return (
@@ -164,7 +164,7 @@ export default connect(state => ({
               float: 'left',
               width: '25%',
               marginBottom: '10px',
-              marginRight: '10px'
+              marginRight: '10px',
             }}
             type="primary"
             onClick={() => setSettingsComponent(null)}

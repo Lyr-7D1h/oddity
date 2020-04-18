@@ -48,53 +48,53 @@ module.exports = async (fastify) => {
     }
   );
 
-  // fastify.get(
-  //   "/forum/categories",
-  //   {
-  //     permissions: fastify.PERMISSIONS.NON_SET,
-  //   },
-  //   (request, reply) => {
-  //     fastify.models.forumCategory
-  //       .findAll({
-  //         attributes: {
-  //           exclude: ["createdAt", "updatedAt"],
-  //         },
-  //         order: [["order", "ASC"]],
-  //       })
-  //       .then((categories) => {
-  //         return reply.send(categories);
-  //       })
-  //       .catch((err) => {
-  //         fastify.log.error(err);
-  //         fastify.sentry.captureException(err);
-  //         return reply.internalServerError();
-  //       });
-  //   }
-  // );
+  fastify.get(
+    "/forum/categories",
+    {
+      permissions: fastify.PERMISSIONS.NON_SET,
+    },
+    (request, reply) => {
+      fastify.models.forumCategory
+        .findAll({
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          order: [["order", "ASC"]],
+        })
+        .then((categories) => {
+          return reply.send(categories);
+        })
+        .catch((err) => {
+          fastify.log.error(err);
+          fastify.sentry.captureException(err);
+          return reply.internalServerError();
+        });
+    }
+  );
 
-  // fastify.get(
-  //   "/forum/threads",
-  //   {
-  //     permissions: fastify.PERMISSIONS.NON_SET,
-  //   },
-  //   (request, reply) => {
-  //     fastify.models.forumThread
-  //       .findAll({
-  //         attributes: {
-  //           exclude: ["createdAt", "updatedAt"],
-  //         },
-  //         order: [["order", "ASC"]],
-  //       })
-  //       .then((threads) => {
-  //         return reply.send(threads);
-  //       })
-  //       .catch((err) => {
-  //         fastify.log.error(err);
-  //         fastify.sentry.captureException(err);
-  //         return reply.internalServerError();
-  //       });
-  //   }
-  // );
+  fastify.get(
+    "/forum/threads",
+    {
+      permissions: fastify.PERMISSIONS.NON_SET,
+    },
+    (request, reply) => {
+      fastify.models.forumThread
+        .findAll({
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          order: [["order", "ASC"]],
+        })
+        .then((threads) => {
+          return reply.send(threads);
+        })
+        .catch((err) => {
+          fastify.log.error(err);
+          fastify.sentry.captureException(err);
+          return reply.internalServerError();
+        });
+    }
+  );
 
   // fastify.get(
   //   "/forum/categories/:id",
@@ -223,7 +223,7 @@ module.exports = async (fastify) => {
       schema: {
         type: "object",
       },
-      permissions: fastify.PERMISSIONS.ROOT,
+      permissions: [fastify.PERMISSIONS.ROOT, fastify.PERMISSIONS.MANAGE_FORUM],
       preHandler: [fastify.auth([fastify.authentication.cookie])],
     },
     (request, reply) => {
@@ -390,21 +390,58 @@ module.exports = async (fastify) => {
       schema: {
         body: {
           type: "object",
+          properties: {
+            content: {
+              type: "string",
+            },
+          },
+          required: ["content"],
         },
       },
-      permissions: [fastify.PERMISSIONS.ROOT, fastify.PERMISSIONS.NONE],
+      permissions: [fastify.PERMISSIONS.NONE],
+      preHandler: [fastify.auth([fastify.authentication.cookie])],
+    },
+    (request, reply) => {
+      console.log(request.body.content);
+      request.body.content = fastify.htmlSanitizer(request.body.content);
+      console.log(request.body.content);
+      fastify.models.forumPost
+        .create(request.body)
+        .then((post) => {
+          return reply.send(post);
+        })
+        .catch((err) => {
+          fastify.log.error(err);
+          fastify.sentry.captureException(err);
+          return reply.badRequest(err.message);
+        });
+    }
+  );
+
+  fastify.put(
+    "/forum/posts/:id",
+    {
+      schema: {
+        params: "id#",
+        body: {
+          type: "object",
+        },
+      },
+      permissions: [fastify.PERMISSIONS.ROOT, fastify.PERMISSIONS.MANAGE_FORUM],
       preHandler: [fastify.auth([fastify.authentication.cookie])],
     },
     (request, reply) => {
       fastify.models.forumPost
-        .create(request.body)
+        .update(request.body, {
+          where: { id: request.params.id },
+        })
         .then((post) => {
           reply.send(post);
         })
         .catch((err) => {
           fastify.log.error(err);
           fastify.sentry.captureException(err);
-          reply.badRequest(err.message);
+          return reply.badRequest(err.message);
         });
     }
   );

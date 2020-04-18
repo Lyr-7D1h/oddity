@@ -5,7 +5,7 @@ const fastifyAutoload = require('fastify-autoload')
 const fp = require('fastify-plugin')
 const session = require('fastify-session')
 const SequelizeStore = require('connect-session-sequelize')(session.Store)
-const { routesDirectories } = require('../module_loader_imports')
+const { routeDirs, pluginDirs } = require('../module_loader_imports')
 
 module.exports = async (fastify, opts) => {
   fastify
@@ -112,7 +112,15 @@ module.exports = async (fastify, opts) => {
       root: path.join(__dirname, '../../resources'),
     })
 
-  routesDirectories.forEach((dir) => {
+  pluginDirs.forEach((dir) => {
+    fastify.register(fastifyAutoload, {
+      dir: dir,
+      options: Object.assign({
+        opts,
+      }),
+    })
+  })
+  routeDirs.forEach((dir) => {
     fastify.register(fastifyAutoload, {
       dir: dir,
       options: Object.assign({

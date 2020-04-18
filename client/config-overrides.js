@@ -3,7 +3,7 @@ const {
   override,
   removeModuleScopePlugin,
   addWebpackAlias,
-  addLessLoader
+  addLessLoader,
 } = require('customize-cra')
 
 const path = require('path')
@@ -15,7 +15,7 @@ module.exports = override(
   //     style: "css"
   //   }),
   addLessLoader({
-    javascriptEnabled: true
+    javascriptEnabled: true,
     // modifyVars: {
     //   "@primary-color": "#FFFFFF"
     // }
@@ -41,8 +41,8 @@ module.exports = override(
 
   // Add alias for components to easily fetch it
   addWebpackAlias({
-    ['@components']: path.resolve(__dirname, 'src', 'components'),
-    ['@helpers']: path.resolve(__dirname, 'src', 'helpers'),
-    ['@actions']: path.resolve(__dirname, 'src', 'redux', 'actions')
+    Components: path.resolve(__dirname, 'src', 'components'),
+    Helpers: path.resolve(__dirname, 'src', 'helpers'),
+    Actions: path.resolve(__dirname, 'src', 'redux', 'actions'),
   })
 )

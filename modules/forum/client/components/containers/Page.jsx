@@ -1,7 +1,7 @@
 import React from "react";
-import Page from "@components/containers/Page";
-import Breadcrumb from "@components/Breadcrumb";
-import NotFoundPage from "@components/pages/NotFoundPage";
+import Page from "Components/containers/Page";
+import Breadcrumb from "Components/Breadcrumb";
+import NotFoundPage from "Components/pages/NotFoundPage";
 import { Card } from "antd";
 
 export default ({ children, notFound }) => {

@@ -7,11 +7,10 @@ import AdminRedirect from '../containers/AdminRedirect'
 import SubNav from '../SubNav'
 import ModulesTable from '../ModulesTable'
 import { Redirect } from 'react-router-dom'
-import ConfigForm from '@components/ConfigForm'
+import ConfigForm from 'Components/ConfigForm'
 
 export default ({ match }) => {
   const nav = ['General', 'Modules']
-
   if (!match.params.page) {
     return <Redirect to="/admin/general"></Redirect>
   }

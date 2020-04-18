@@ -12,10 +12,10 @@ import { updateUser } from '../redux/actions/userActions'
 import getUser from '../helpers/getUser'
 
 const LoginForm = ({ updateUser, ...props }) => {
-  const handleLogin = values => {
+  const handleLogin = (values) => {
     requester
       .login(values)
-      .then(isValid => {
+      .then((isValid) => {
         if (isValid) {
           updateUser(getUser())
           notificationHandler.success('Login Succeeded')
@@ -23,12 +23,12 @@ const LoginForm = ({ updateUser, ...props }) => {
           notificationHandler.error('Wrong password or username')
         }
       })
-      .catch(err => {
+      .catch((err) => {
         notificationHandler.error('Wrong password or username')
       })
   }
 
-  const handleSubmit = values => {
+  const handleSubmit = (values) => {
     const { username, password } = values
     handleLogin({ username, password })
   }
@@ -63,13 +63,13 @@ const LoginForm = ({ updateUser, ...props }) => {
   )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    user: state.user
+    user: state.user,
   }
 }
 const mapActionsToProps = {
-  updateUser
+  updateUser,
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(LoginForm)

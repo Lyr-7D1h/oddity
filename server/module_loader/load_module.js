@@ -5,7 +5,7 @@ const fs = require('fs')
 const loadClient = require('./client_importer').load
 const { load: loadServer, addModule } = require('./server_importer')
 
-module.exports = modulePath => {
+module.exports = (modulePath) => {
   return new Promise((resolve, reject) => {
     glob('?(config.js|config.json)', { cwd: modulePath }, (err, matches) => {
       if (err) reject(err)
@@ -24,7 +24,7 @@ module.exports = modulePath => {
         fs.readdir(modulePath, (err, moduleFiles) => {
           if (err) reject(err)
 
-          moduleFiles.forEach(moduleFile => {
+          moduleFiles.forEach((moduleFile) => {
             switch (moduleFile.toLowerCase()) {
               case 'config.js':
                 break
@@ -46,7 +46,7 @@ module.exports = modulePath => {
             .then(() => {
               resolve()
             })
-            .catch(err => reject(err))
+            .catch((err) => reject(err))
         })
       } else {
         reject(new Error(`Config File not found in ${modulePath}`))

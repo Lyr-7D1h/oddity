@@ -1,7 +1,7 @@
 import React from "react";
-import Page from "@components/containers/Page";
+import Page from "Components/containers/Page";
 import MembersTable from "./MembersTable";
-import Centered from "@components/containers/Centered";
+import Centered from "Components/containers/Centered";
 import { Card } from "antd";
 
 export default () => {

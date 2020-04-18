@@ -21,7 +21,7 @@ const MODULES_DIR = path.join(__dirname, '..', '..', 'modules')
 
 console.debug('==== MODULE LOADER START ====')
 
-const errHandler = err => {
+const errHandler = (err) => {
   if (err) {
     console.error(err)
     process.exit(1)
@@ -36,11 +36,12 @@ fs.readdir(MODULES_DIR, (err, moduleDirs) => {
 
   const moduleLoaders = []
 
-  moduleDirs.forEach(moduleDir => {
+  moduleDirs.forEach((moduleDir) => {
     if (
       moduleDir !== 'node_modules' &&
       moduleDir !== 'package.json' &&
-      moduleDir !== 'package-lock.json'
+      moduleDir !== 'package-lock.json' &&
+      moduleDir !== 'jsconfig.json'
     )
       moduleLoaders.push(loadModule(path.join(MODULES_DIR, moduleDir)))
   })
@@ -53,17 +54,17 @@ fs.readdir(MODULES_DIR, (err, moduleDirs) => {
             .then(() => {
               console.debug('==== MODULE LOADER END ====')
             })
-            .catch(err => {
+            .catch((err) => {
               console.error(err)
               process.exit(1)
             })
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err)
           process.exit(1)
         })
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err)
       process.exit(1)
     })

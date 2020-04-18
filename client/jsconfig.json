@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2016",
+    "jsx": "preserve",
+    "baseUrl": "./src",
+    "paths": {
+      "Components/*": ["./components/*"],
+      "Actions/*": ["./redux/actions/*"],
+      "Helpers/*": ["./helpers/*"]
+    }
+  },
+  "exclude": ["node_modules", "**/node_modules/*"]
+}

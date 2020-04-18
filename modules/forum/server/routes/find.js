@@ -53,12 +53,14 @@ module.exports = async (fastify) => {
   fastify.get(
     "/forum/find/:categoryTitle/:threadTitle",
     {
-      params: {
-        type: "object",
-        required: ["categoryTitle", "threadTitle"],
-        properties: {
-          categoryTitle: { type: "string" },
-          threadTitle: { type: "string" },
+      schema: {
+        params: {
+          type: "object",
+          required: ["categoryTitle", "threadTitle"],
+          properties: {
+            categoryTitle: { type: "string" },
+            threadTitle: { type: "string" },
+          },
         },
       },
       permissions: fastify.PERMISSIONS.NON_SET,
@@ -72,7 +74,7 @@ module.exports = async (fastify) => {
               model: fastify.models.forumThread,
               as: "threads",
               where: { title: request.params.threadTitle },
-              limit: 1,
+              // limit: 1,
               include: {
                 model: fastify.models.forumPost,
                 as: "posts",

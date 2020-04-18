@@ -3,30 +3,38 @@ const fs = require('fs')
 
 // TODO: Add plugin directories
 
-const serverImportPath = path.join(__dirname, '..', 'module_loader_imports.js')
+const serverImportPath = path.join(
+  __dirname,
+  '..',
+  '..',
+  'module_loader_imports.js'
+)
 const serverImportData = {
   modules: [],
-  routesDirectories: []
+  routeDirs: [],
+  pluginDirs: [],
 }
 const databaseFiles = {
   seeders: [],
   models: [],
-  migrations: []
+  migrations: [],
 }
 
 const load = (config, modulePath) => {
-  const loadRoutes = () => {
-    serverImportData.routesDirectories.push(
-      path.join(modulePath, 'server', 'routes')
-    )
+  const loadPlugins = () => {
+    serverImportData.pluginDirs.push(path.join(modulePath, 'server', 'plugins'))
   }
 
-  const pushDbFile = dbFolder => {
+  const loadRoutes = () => {
+    serverImportData.routeDirs.push(path.join(modulePath, 'server', 'routes'))
+  }
+
+  const pushDbFile = (dbFolder) => {
     return new Promise((resolve, reject) => {
       fs.readdir(path.join(modulePath, 'server', dbFolder), (err, matches) => {
         if (err) reject(err)
 
-        matches = matches.map(match =>
+        matches = matches.map((match) =>
           path.join(modulePath, 'server', dbFolder, match)
         )
         databaseFiles[dbFolder] = databaseFiles[dbFolder].concat(matches)
@@ -40,10 +48,13 @@ const load = (config, modulePath) => {
       if (err) reject(err)
 
       const serverLoaders = []
-      matches.forEach(match => {
+      matches.forEach((match) => {
         switch (match) {
           case 'routes':
             loadRoutes()
+            break
+          case 'plugins':
+            loadPlugins()
             break
           case 'models':
             serverLoaders.push(pushDbFile('models'))
@@ -62,11 +73,14 @@ const load = (config, modulePath) => {
   })
 }
 
+/**
+ * Write module_loader_imports.js
+ */
 const write = () => {
   return new Promise((resolve, reject) => {
     const serverFile = `module.exports = ${JSON.stringify(serverImportData)}`
     // write server import file
-    fs.writeFile(serverImportPath, serverFile, err => {
+    fs.writeFile(serverImportPath, serverFile, (err) => {
       if (err) reject(err)
 
       resolve()
@@ -86,7 +100,7 @@ const getDatabaseFiles = () => {
 const addModule = (name, version) => {
   serverImportData.modules.push({
     name,
-    version
+    version,
   })
 }
 

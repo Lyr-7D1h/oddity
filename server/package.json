@@ -41,6 +41,7 @@
     "pg-native": "^3.0.0",
     "pino-pretty": "^3.2.2",
     "pump": "^3.0.0",
+    "sanitize-html": "^1.23.0",
     "sequelize": "^5.21.3"
   },
   "devDependencies": {

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import requester from "@helpers/requester";
-import notificationHandler from "@helpers/notificationHandler";
+import requester from "Helpers/requester";
+import notificationHandler from "Helpers/notificationHandler";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Row, Col, Collapse, Input, Empty } from "antd";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DndProvider, DragSource, DropTarget } from "react-dnd";
-import SavePopup from "@components/SavePopup";
+import SavePopup from "Components/SavePopup";
 
 const RoutingTable = ({ config, updateConfig }) => {
   const [items, setItems] = useState([]);
@@ -19,9 +19,9 @@ const RoutingTable = ({ config, updateConfig }) => {
         const categories = await requester.get("forum/categories");
         const threads = await requester.get("forum/threads");
         setItems(
-          categories.map(category => {
+          categories.map((category) => {
             category.threads = threads.filter(
-              thread => thread.categoryId === category.id
+              (thread) => thread.categoryId === category.id
             );
             return category;
           })
@@ -53,14 +53,14 @@ const RoutingTable = ({ config, updateConfig }) => {
 
     requester
       .post(`forum/categories-collection`, categories)
-      .then(categories => {
+      .then((categories) => {
         requester
           .post("forum/threads-collection", threads)
-          .then(threads => {
+          .then((threads) => {
             setItems(
-              categories.map(category => {
+              categories.map((category) => {
                 category.threads = threads.filter(
-                  thread => thread.categoryId === category.id
+                  (thread) => thread.categoryId === category.id
                 );
                 return category;
               })
@@ -68,11 +68,11 @@ const RoutingTable = ({ config, updateConfig }) => {
             notificationHandler.success(`Updated Categories`);
             setHasChanges(false);
           })
-          .catch(err => {
+          .catch((err) => {
             notificationHandler.error("Updating failed", err.message);
           });
       })
-      .catch(err => {
+      .catch((err) => {
         notificationHandler.error("Updating failed", err.message);
       });
   };
@@ -92,10 +92,10 @@ const RoutingTable = ({ config, updateConfig }) => {
     if (!forumInput.current.state.value) return;
 
     const newItems = [...items];
-    newItems.map(item => {
+    newItems.map((item) => {
       if (item.title === "Uncategorized") {
         item.threads.push({
-          title: forumInput.current.state.value
+          title: forumInput.current.state.value,
         });
       }
 
@@ -112,20 +112,20 @@ const RoutingTable = ({ config, updateConfig }) => {
       .post("forum/categories", {
         title: forumInput.current.state.value,
         order: items.length + 1,
-        threads: []
+        threads: [],
       })
-      .then(category => {
+      .then((category) => {
         const newItems = [...items];
         newItems.push({
           id: category.id,
           title: forumInput.current.state.value,
           order: items.length + 1,
-          threads: []
+          threads: [],
         });
         forumInput.current.state.value = "";
         setItems(newItems);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         notificationHandler.error("Could not create category", err.message);
       });
@@ -204,11 +204,11 @@ const RoutingTable = ({ config, updateConfig }) => {
         // but it's good here for the sake of performance
         // to avoid expensive index searches.
         monitor.getItem().threadIndex = targetThreadIndex;
-      }
+      },
     },
     (connect, monitor) => ({
       connectDropTarget: connect.dropTarget(),
-      isOver: monitor.isOver()
+      isOver: monitor.isOver(),
     })
   )(
     DragSource(
@@ -218,12 +218,12 @@ const RoutingTable = ({ config, updateConfig }) => {
           dragingIndex = props.index;
           return {
             categoryIndex: props.categoryIndex,
-            threadIndex: props.threadIndex
+            threadIndex: props.threadIndex,
           };
-        }
+        },
       },
-      connect => ({
-        connectDragSource: connect.dragSource()
+      (connect) => ({
+        connectDragSource: connect.dragSource(),
       })
     )(Thread)
   );
@@ -316,13 +316,13 @@ const RoutingTable = ({ config, updateConfig }) => {
 
         setItems(newItems);
         setHasChanges(true);
-      }
+      },
     },
     (connect, monitor) => {
       return {
         connectDropTarget: connect.dropTarget(),
         itemType: monitor.getItemType(),
-        isOver: monitor.isOver()
+        isOver: monitor.isOver(),
       };
     }
   )(
@@ -332,18 +332,18 @@ const RoutingTable = ({ config, updateConfig }) => {
         beginDrag(props) {
           dragingIndex = props.index;
           return {
-            index: props.index
+            index: props.index,
           };
-        }
+        },
       },
-      connect => ({
-        connectDragSource: connect.dragSource()
+      (connect) => ({
+        connectDragSource: connect.dragSource(),
       })
     )(Category)
   );
 
   const uncategorizedIndex = items.findIndex(
-    item => item.title === "Uncategorized"
+    (item) => item.title === "Uncategorized"
   );
   return (
     <>
