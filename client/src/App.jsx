@@ -1,11 +1,5 @@
 import React from 'react'
-import {
-  BrowserRouter,
-  Route,
-  Switch,
-  Redirect,
-  useLocation,
-} from 'react-router-dom'
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
 import path from 'path'
 
 import { connect } from 'react-redux'
