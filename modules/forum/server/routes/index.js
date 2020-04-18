@@ -431,17 +431,37 @@ module.exports = async (fastify) => {
       preHandler: [fastify.auth([fastify.authentication.cookie])],
     },
     (request, reply) => {
+      if (request.body.content) {
+        request.body.content = fastify.htmlSanitizer(request.body.content);
+      }
+      console.log(request.body);
       fastify.models.forumPost
         .update(request.body, {
           where: { id: request.params.id },
+          returning: true,
         })
-        .then((post) => {
-          reply.send(post);
+        .then(([_, post]) => {
+          return reply.send(post[0]);
         })
         .catch((err) => {
           fastify.log.error(err);
           fastify.sentry.captureException(err);
           return reply.badRequest(err.message);
+        });
+    }
+  );
+
+  fastify.delete(
+    "/forum/posts/:id",
+    { schema: { params: "id#" } },
+    (request, reply) => {
+      fastify.models.forumPost
+        .destroy({ where: { id: request.params.id } })
+        .then(() => {
+          return reply.success();
+        })
+        .catch((err) => {
+          return reply.internalServerError();
         });
     }
   );

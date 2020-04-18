@@ -1,5 +1,11 @@
 import React from 'react'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Route,
+  Switch,
+  Redirect,
+  useLocation,
+} from 'react-router-dom'
 import path from 'path'
 
 import { connect } from 'react-redux'
@@ -36,13 +42,13 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
         if (mod) {
           const modRoutes = moduleLoaderImports.modules[mod.name].routes
           if (modRoutes) {
-            modRoutes.forEach(moduleRoute => {
+            modRoutes.forEach((moduleRoute) => {
               moduleRoutes.push(
                 <Route
                   path={'/' + path.join(basePath, moduleRoute.path)}
                   key={i}
                   exact
-                  render={props => {
+                  render={(props) => {
                     return React.createElement(moduleRoute.component, props)
                   }}
                 />
@@ -66,14 +72,14 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
     { path: '/settings', component: AccountPage },
     { path: '/register', component: RegisterPage },
     { path: '/tos', component: TermsOfServicePage },
-    { path: '/u/:identifier', component: ProfilePage }
+    { path: '/u/:identifier', component: ProfilePage },
   ].map((route, i) => {
     return (
       <Route
         key={i}
         exact
         path={route.path}
-        render={props => {
+        render={(props) => {
           return React.createElement(route.component, props)
         }}
       />
@@ -85,7 +91,7 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
       key={1}
       exact
       path="/admin"
-      render={props => {
+      render={(props) => {
         return <AdminPage {...props} />
       }}
     />,
@@ -93,10 +99,10 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
       key={2}
       exact
       path="/admin/:page"
-      render={props => {
+      render={(props) => {
         return <AdminPage {...props} />
       }}
-    />
+    />,
   ]
 
   return (
@@ -113,6 +119,24 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
 
           {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
 
+          {/* Remove Trailing / in url */}
+          <Route
+            path="/:url*(/+)"
+            exact
+            strict
+            render={({ location }) => (
+              <Redirect to={location.pathname.replace(/\/+$/, '')} />
+            )}
+          />
+          {/* Removes duplicate slashes in the middle of the URL */}
+          <Route
+            path="/:url(.*//+.*)"
+            exact
+            strict
+            render={({ match }) => (
+              <Redirect to={`/${match.params.url.replace(/\/\/+/, '/')}`} />
+            )}
+          />
           <Route path="*" component={NotFoundPage}></Route>
         </Switch>
         {/* )} */}
@@ -121,7 +145,7 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
   )
 }
 
-export default connect(state => {
+export default connect((state) => {
   let userNeedsSetup = false
   if (state.user.username && state.user.identifier !== 'admin') {
     if (!state.user.avatar) {
@@ -130,6 +154,6 @@ export default connect(state => {
   }
   return {
     modules: state.modules,
-    userNeedsSetup: userNeedsSetup
+    userNeedsSetup: userNeedsSetup,
   }
 })(App)

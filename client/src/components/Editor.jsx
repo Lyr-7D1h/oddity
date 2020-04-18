@@ -1,9 +1,8 @@
 import React from 'react'
 import CKEditor from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-console.log(ClassicEditor.builtinPlugins.map((plugin) => plugin.pluginName))
 
-console.log(ClassicEditor.builtinPlugins.map((plugin) => plugin.pluginName))
+// console.log(ClassicEditor.builtinPlugins.map((plugin) => plugin.pluginName))
 export default ({ onChange, data }) => {
   return (
     <CKEditor

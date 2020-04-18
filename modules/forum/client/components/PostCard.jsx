@@ -1,28 +1,100 @@
-import React, { useState } from "react";
-import { Card, Empty, Row, Col, Button } from "antd";
-import { SettingFilled } from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
+import {
+  Popconfirm,
+  Card,
+  Row,
+  Col,
+  Button,
+  Popover,
+  Space,
+  message,
+} from "antd";
+import {
+  SettingFilled,
+  EditFilled,
+  DeleteFilled,
+  AlertFilled,
+} from "@ant-design/icons";
 import ReactHtmlParser from "react-html-parser";
 import Editor from "Components/Editor";
 import requester from "Helpers/requester";
 import notificationHandler from "Helpers/notificationHandler";
+import { Redirect } from "react-router";
 
-export default ({ post }) => {
+export default ({ post: postProp }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [editPostHtml, setEditPostHtml] = useState("");
   const [editPost, setEditPost] = useState(false);
+  const [post, setPost] = useState({});
+  const [redirectToThread, setRedirectToThread] = useState(false);
+
+  useEffect(() => {
+    setPost(postProp);
+  }, [postProp]);
 
   const handleEditPostSave = () => {
     requester
       .put(`forum/posts/${post.id}`, {
         content: editPostHtml,
       })
-      .then(() => {
-        notificationHandler.success(`Modified post ${post.title}`);
+      .then((updatedPost) => {
+        message.success(`Modified Post ${post.title}`);
+        const newPost = post;
+        newPost.content = updatedPost.content;
+        setPost(newPost);
+        setEditPost(false);
       })
       .catch((err) => {
         notificationHandler.error(`Could not update post: ${err.message}`);
       });
   };
+
+  const handlePostDelete = () => {
+    requester
+      .delete(`forum/posts/${post.id}`)
+      .then(() => {
+        message.success(`${post.title} removed`);
+        setRedirectToThread(true);
+      })
+      .catch((err) => {
+        message.error(`Could not remove post: ${err.message}`);
+      });
+  };
+
+  if (redirectToThread) {
+    return <Redirect to=".." />;
+  }
+
+  const PostOptions = (
+    <Space>
+      <Button type="link" danger block>
+        <AlertFilled />
+        <s>Report</s>
+      </Button>
+      <Button
+        onClick={() => {
+          setEditPost(true);
+          setEditPostHtml(post.content);
+        }}
+        type="link"
+        block
+      >
+        <EditFilled />
+        Edit
+      </Button>
+      <Popconfirm
+        title="Are you sure you want to delete this post?"
+        onConfirm={handlePostDelete}
+        okText="Yes"
+        cancelText="No"
+      >
+        <Button type="link" danger block>
+          <DeleteFilled />
+          Delete
+        </Button>
+      </Popconfirm>
+    </Space>
+  );
 
   if (!post.title) {
     return <Card loading={true} />;
@@ -35,39 +107,33 @@ export default ({ post }) => {
               {post.title}, by {post.author.username}
             </Col>
             <Col span={12} />
-            {showSettings ? (
-              editPost ? (
-                <>
-                  <Col span={3} />
-                  <Col span={3}>
-                    <Button type="primary" onClick={handleEditPostSave} block>
-                      Save
-                    </Button>
-                  </Col>
-                </>
-              ) : (
-                <>
-                  <Col span={3}>
-                    <Button
-                      onClick={() => setEditPost(true)}
-                      type="secondary"
-                      block
-                    >
-                      Edit
-                    </Button>
-                  </Col>
-                  <Col span={3}>
-                    <Button type="danger" block>
-                      Delete
-                    </Button>
-                  </Col>
-                </>
-              )
+            {editPost ? (
+              <>
+                <Col span={3}>
+                  <Button onClick={() => setEditPost(false)} block>
+                    Cancel
+                  </Button>
+                </Col>
+                <Col span={3}>
+                  <Button type="primary" onClick={handleEditPostSave} block>
+                    Save
+                  </Button>
+                </Col>
+              </>
             ) : (
               <>
                 <Col span={5} />
                 <Col span={1}>
-                  <SettingFilled onClick={() => setShowSettings(true)} />
+                  <Popover
+                    className="clickable"
+                    placement="bottom"
+                    trigger="click"
+                    content={PostOptions}
+                    visible={showSettings}
+                    onVisibleChange={() => setShowSettings(!showSettings)}
+                  >
+                    <SettingFilled />
+                  </Popover>
                 </Col>
               </>
             )}
