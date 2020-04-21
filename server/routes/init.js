@@ -23,6 +23,7 @@ module.exports = async (fastify) => {
           reply.send({
             config,
             modules,
+            permissions: fastify.PERMISSIONS,
             captcha: fastify.config.CAPTCHA_CLIENT,
           })
         })

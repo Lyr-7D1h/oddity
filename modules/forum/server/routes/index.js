@@ -402,9 +402,7 @@ module.exports = async (fastify) => {
       preHandler: [fastify.auth([fastify.authentication.cookie])],
     },
     (request, reply) => {
-      console.log(request.body.content);
       request.body.content = fastify.htmlSanitizer(request.body.content);
-      console.log(request.body.content);
       fastify.models.forumPost
         .create(request.body)
         .then((post) => {
@@ -434,7 +432,6 @@ module.exports = async (fastify) => {
       if (request.body.content) {
         request.body.content = fastify.htmlSanitizer(request.body.content);
       }
-      console.log(request.body);
       fastify.models.forumPost
         .update(request.body, {
           where: { id: request.params.id },
@@ -453,7 +450,11 @@ module.exports = async (fastify) => {
 
   fastify.delete(
     "/forum/posts/:id",
-    { schema: { params: "id#" } },
+    {
+      schema: { params: "id#" },
+      permissions: fastify.PERMISSIONS.MANAGE_FORUM,
+      preHandler: [fastify.auth([fastify.authentication.cookie])],
+    },
     (request, reply) => {
       fastify.models.forumPost
         .destroy({ where: { id: request.params.id } })

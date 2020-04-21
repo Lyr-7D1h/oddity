@@ -19,6 +19,7 @@ import ReactHtmlParser from "react-html-parser";
 import Editor from "Components/Editor";
 import requester from "Helpers/requester";
 import notificationHandler from "Helpers/notificationHandler";
+import hasPermission from "Helpers/hasPermission";
 import { Redirect } from "react-router";
 
 export default ({ post: postProp }) => {
@@ -43,6 +44,7 @@ export default ({ post: postProp }) => {
         newPost.content = updatedPost.content;
         setPost(newPost);
         setEditPost(false);
+        setShowSettings(false);
       })
       .catch((err) => {
         notificationHandler.error(`Could not update post: ${err.message}`);
@@ -71,28 +73,34 @@ export default ({ post: postProp }) => {
         <AlertFilled />
         <s>Report</s>
       </Button>
-      <Button
-        onClick={() => {
-          setEditPost(true);
-          setEditPostHtml(post.content);
-        }}
-        type="link"
-        block
-      >
-        <EditFilled />
-        Edit
-      </Button>
-      <Popconfirm
-        title="Are you sure you want to delete this post?"
-        onConfirm={handlePostDelete}
-        okText="Yes"
-        cancelText="No"
-      >
-        <Button type="link" danger block>
-          <DeleteFilled />
-          Delete
-        </Button>
-      </Popconfirm>
+      {hasPermission("MANAGE_FORUM") ? (
+        <>
+          <Button
+            onClick={() => {
+              setEditPost(true);
+              setEditPostHtml(post.content);
+            }}
+            type="link"
+            block
+          >
+            <EditFilled />
+            Edit
+          </Button>
+          <Popconfirm
+            title="Are you sure you want to delete this post?"
+            onConfirm={handlePostDelete}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="link" danger block>
+              <DeleteFilled />
+              Delete
+            </Button>
+          </Popconfirm>{" "}
+        </>
+      ) : (
+        ""
+      )}
     </Space>
   );
 

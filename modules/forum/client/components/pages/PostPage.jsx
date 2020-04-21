@@ -54,18 +54,22 @@ export default connect((state) => ({ user: state.user }))(({ user, match }) => {
     }
   }, [match, user]);
 
+  if (match.params.post === "create" && !user.username) {
+    notificationHandler.info("Please login before creating a new post");
+  }
+
   return (
-    <ConditionalRedirect condition={!user.username} path="/login">
-      <Page notFound={notFound}>
-        {match.params.post === "create" ? (
+    <Page notFound={notFound}>
+      {match.params.post === "create" ? (
+        <ConditionalRedirect condition={!user.username} path="/login">
           <CreatePostForm
             threadId={threadId}
             threadPath={path.join(match.url, "..")}
           />
-        ) : (
-          <PostCard post={post} />
-        )}
-      </Page>
-    </ConditionalRedirect>
+        </ConditionalRedirect>
+      ) : (
+        <PostCard post={post} />
+      )}
+    </Page>
   );
 });
