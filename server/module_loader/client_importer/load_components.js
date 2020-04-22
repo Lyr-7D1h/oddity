@@ -9,9 +9,11 @@ module.exports = (config, modulePath, clientImportData) => {
   const pushRoute = (path, componentPath) => {
     clientImportData.modules[config.name].routes.push({
       path: path,
-      component: `require('${componentPath}').default`
+      component: `require('${componentPath}').default`,
     })
   }
+
+  console.debug(`${config.name}: Loading Components`)
 
   return new Promise((resolve, reject) => {
     /**
@@ -20,13 +22,13 @@ module.exports = (config, modulePath, clientImportData) => {
     if (config.routes) {
       const routesPromises = []
 
-      config.routes.forEach(route => {
+      config.routes.forEach((route) => {
         routesPromises.push(
           new Promise((resolve, reject) => {
             if (route.component.includes('/')) {
               const componentPath = path.join(modulePath, route.component)
               checkFile(componentPath)
-                .then(found => {
+                .then((found) => {
                   if (found) {
                     pushRoute(route.path, componentPath)
                     resolve()
@@ -38,7 +40,7 @@ module.exports = (config, modulePath, clientImportData) => {
                     )
                   }
                 })
-                .catch(err => reject(err))
+                .catch((err) => reject(err))
             } else {
               const componentPath = path.join(
                 modulePath,
@@ -47,7 +49,7 @@ module.exports = (config, modulePath, clientImportData) => {
                 route.component
               )
               checkFile(componentPath)
-                .then(found => {
+                .then((found) => {
                   if (found) {
                     pushRoute(route.path, componentPath)
                     resolve()
@@ -59,7 +61,7 @@ module.exports = (config, modulePath, clientImportData) => {
                     )
                   }
                 })
-                .catch(err => reject(err))
+                .catch((err) => reject(err))
             }
           })
         )
@@ -69,7 +71,7 @@ module.exports = (config, modulePath, clientImportData) => {
         .then(() => {
           resolve()
         })
-        .catch(err => reject(err))
+        .catch((err) => reject(err))
     } else {
       // Search for index if nothing defined
       const componentPath = path.join(
@@ -79,12 +81,12 @@ module.exports = (config, modulePath, clientImportData) => {
         'index'
       )
       checkFile(componentPath)
-        .then(found => {
+        .then((found) => {
           if (found) pushRoute('/', componentPath)
           // Ignore if it could not find anything
           resolve()
         })
-        .catch(err => reject(err))
+        .catch((err) => reject(err))
     }
   })
 }

@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const forumPost = sequelize.define("forumPost", {
+  const forumDraft = sequelize.define("forumDraft", {
     title: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -19,15 +19,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
   });
-  forumPost.associate = (models) => {
-    forumPost.belongsTo(models.forumThread, {
-      as: "posts",
+  forumDraft.associate = (models) => {
+    forumDraft.belongsTo(models.forumThread, {
+      as: "drafts",
       foreignKey: "threadId",
     });
-    forumPost.belongsTo(models.user, {
+    forumDraft.belongsTo(models.user, {
       as: "author",
       foreignKey: "authorId",
     });
   };
-  return forumPost;
+  return forumDraft;
 };

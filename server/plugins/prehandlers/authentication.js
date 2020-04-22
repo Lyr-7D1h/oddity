@@ -2,7 +2,7 @@ const fp = require('fastify-plugin')
 const auth = require('basic-auth')
 const { Unauthorized, InternalServerError } = require('http-errors')
 
-module.exports = fp(async instance => {
+module.exports = fp(async (instance) => {
   const basicAuth = (request, reply) => {
     return new Promise((resolve, reject) => {
       // get credentials from request
@@ -10,7 +10,7 @@ module.exports = fp(async instance => {
 
       if (basicCredentials && basicCredentials.name && basicCredentials.pass) {
         instance.log.info(
-          `Basic Authentication attempt for "${basicCredentials.name}" ${request.raw.ip} ${request.raw.hostname}`
+          `Basic Authentication attempt for "${basicCredentials.name}" ${request.raw.ip}`
         )
 
         instance.models.user
@@ -18,16 +18,16 @@ module.exports = fp(async instance => {
             where: {
               [instance.Sequelize.Op.or]: [
                 { identifier: basicCredentials.name },
-                { email: basicCredentials.name }
-              ]
+                { email: basicCredentials.name },
+              ],
             },
-            include: [{ model: instance.models.role }]
+            include: [{ model: instance.models.role }],
           })
-          .then(user => {
+          .then((user) => {
             if (user) {
               instance.crypto
                 .validate(basicCredentials.pass, user.password)
-                .then(isValid => {
+                .then((isValid) => {
                   if (isValid) {
                     const authorizedRoute = instance.permissions.authorizeRoute(
                       request.raw.url,
@@ -47,7 +47,7 @@ module.exports = fp(async instance => {
                     reject(new Unauthorized())
                   }
                 })
-                .catch(err => {
+                .catch((err) => {
                   instance.log.error(err)
                   instance.sentry.captureException(err)
                   reject(new InternalServerError())
@@ -72,9 +72,9 @@ module.exports = fp(async instance => {
           instance.models.user
             .findOne({
               where: { id: request.session.user.id },
-              include: [{ model: instance.models.role, as: 'role' }]
+              include: [{ model: instance.models.role, as: 'role' }],
             })
-            .then(user => {
+            .then((user) => {
               if (user) {
                 const authorizedRoute = instance.permissions.authorizeRoute(
                   request.raw.url,
@@ -93,7 +93,7 @@ module.exports = fp(async instance => {
                 reject(new Unauthorized())
               }
             })
-            .catch(err => {
+            .catch((err) => {
               instance.log.error(err)
               instance.sentry.captureException(err)
               reject(new InternalServerError())
@@ -109,6 +109,6 @@ module.exports = fp(async instance => {
 
   instance.decorate('authentication', {
     basic: basicAuth,
-    cookie: cookieAuth
+    cookie: cookieAuth,
   })
 })

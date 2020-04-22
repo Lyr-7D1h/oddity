@@ -16,7 +16,7 @@ import NoHomePage from './components/pages/NoHomePage'
 import AccountPage from './components/pages/AccountSettingsPage'
 // import FinishAccountPage from './components/pages/FinishAccountPage'
 
-import moduleLoaderImports from '../module_loader_imports'
+import moduleLoaderModules from '../module_loader_imports/modules'
 import ProfilePage from './components/pages/ProfilePage'
 
 const App = ({ modules, userNeedsSetup, dispatch }) => {
@@ -34,7 +34,7 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
         if (route === '') noHomeSet = false
 
         if (mod) {
-          const modRoutes = moduleLoaderImports.modules[mod.name].routes
+          const modRoutes = moduleLoaderModules[mod.name].routes
           if (modRoutes) {
             modRoutes.forEach((moduleRoute) => {
               moduleRoutes.push(

@@ -15,8 +15,6 @@ export default connect((state) => ({ captcha: state.captcha }))(
     const [registered, setRegistered] = useState(false)
     const form = React.createRef()
 
-    console.log(captcha)
-
     const handleFinish = (values) => {
       requester
         .post('auth/register', values)

@@ -6,13 +6,16 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import path from "path";
 import Editor from "Components/Editor";
+import { useForm } from "antd/lib/form/util";
 
 export default connect((state) => ({ userId: state.user.id }))(
   ({ threadId, userId, threadPath }) => {
     const [postHtml, setPostHtml] = useState([]);
-    const [createdPost, setCreatedPost] = useState(false);
+    const [redirect, setRedirect] = useState("");
 
-    const handleFinish = (values) => {
+    const [form] = Form.useForm();
+
+    const handleFinish = (values, isDraft) => {
       values = {
         ...values,
         content: postHtml,
@@ -20,14 +23,34 @@ export default connect((state) => ({ userId: state.user.id }))(
         authorId: userId,
       };
 
+      const url = isDraft ? "forum/draft" : "forum/posts";
+
       requester
-        .post(`forum/posts`, values)
+        .post(url, values)
         .then((post) => {
-          setCreatedPost(post);
+          if (isDraft) {
+            setRedirect(threadPath);
+          } else {
+            setRedirect(path.join(threadPath, post.title));
+          }
         })
         .catch((err) => {
           notificationHandler.error("Could not send post", err.message);
         });
+    };
+
+    const handleSaveAsDraft = () => {
+      form
+        .validateFields()
+        .then((values) => handleFinish(values, true))
+        .catch((err) => {
+          console.error(err);
+        });
+    };
+
+    const handleEditorChange = (html) => {
+      setPostHtml(html);
+      form.setFieldsValue({ content: html });
     };
 
     const formItemLayout = {
@@ -53,17 +76,20 @@ export default connect((state) => ({ userId: state.user.id }))(
       },
     };
 
-    if (createdPost) {
-      return <Redirect to={path.join(threadPath, createdPost.title)} />;
+    if (redirect) {
+      return <Redirect to={redirect} />;
     }
 
     return (
       <Card title={"Create new post"} onSubmit={handleFinish}>
-        <Form onFinish={handleFinish} {...formItemLayout}>
+        <Form form={form} onFinish={handleFinish} {...formItemLayout}>
           <Form.Item label="Title" name="title" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Editor onChange={(html) => setPostHtml(html)} />
+          <Editor onChange={handleEditorChange} />
+          <Form.Item name="content" rules={[{ required: true }]}>
+            <Input hidden />
+          </Form.Item>
           <Form.Item
             {...tailFormItemLayout}
             className="ant-col-lg-5"
@@ -83,7 +109,9 @@ export default connect((state) => ({ userId: state.user.id }))(
             className="ant-col-lg-5"
             style={{ marginTop: "20px", float: "right" }}
           >
-            <Button block>Save as draft</Button>
+            <Button onClick={handleSaveAsDraft} block>
+              Save as draft
+            </Button>
           </Form.Item>
         </Form>
       </Card>

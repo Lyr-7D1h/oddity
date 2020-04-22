@@ -7,41 +7,92 @@ const clientImportPath = path.join(
   '..',
   '..',
   'client',
-  'module_loader_imports.js'
+  'module_loader_imports'
 )
 const clientImportData = {
-  modules: {}
+  modules: {},
 }
 
 const loadComponents = require('./load_components')
 const loadAdminPage = require('./load_admin_page')
+const loadRedux = require('./redux')
 
 exports.load = (config, modulePath) => {
+  clientImportData.modules[config.name] = { routes: [] }
+  clientImportData.redux = { actions: [], reducers: [] }
+  console.log(`${config.name}: Loading Client`)
+
+  const clientLoaders = []
+
+  if (config.adminPage) {
+    clientLoaders.push(loadAdminPage(config, modulePath, clientImportData))
+  }
+
   return new Promise((resolve, reject) => {
-    clientImportData.modules[config.name] = { routes: [] }
-    const clientLoaders = [loadComponents(config, modulePath, clientImportData)]
+    fs.readdir(path.join(modulePath, 'client'), (err, files) => {
+      if (err) reject(err)
 
-    if (config.adminPage) {
-      clientLoaders.push(loadAdminPage(config, modulePath, clientImportData))
-    }
-
-    Promise.all(clientLoaders)
-      .then(() => {
-        resolve()
+      files.forEach((file) => {
+        switch (file.toLocaleLowerCase()) {
+          case 'components':
+            clientLoaders.push(
+              loadComponents(config, modulePath, clientImportData)
+            )
+            break
+          case 'redux':
+            clientLoaders.push(loadRedux(config, modulePath, clientImportData))
+            break
+        }
       })
-      .catch(err => reject(err))
+
+      Promise.all(clientLoaders)
+        .then(() => {
+          resolve()
+        })
+        .catch((err) => reject(err))
+    })
   })
 }
 
 exports.write = () => {
-  return new Promise((resolve, reject) => {
-    const clientFile = `module.exports = ${JSON.stringify(clientImportData)}`
-      .replace(/("require\()/g, 'require(')
-      .replace(/\).default"/g, ').default')
+  const moduleFile = `module.exports = ${JSON.stringify(
+    clientImportData.modules
+  )}`
+    .replace(/("require\()/g, 'require(')
+    .replace(/\).default"/g, ').default')
 
-    fs.writeFile(clientImportPath, clientFile, err => {
-      if (err) reject(err)
-      resolve()
-    })
-  })
+  const reduxFile = `module.exports = ${JSON.stringify(clientImportData.redux)}`
+    .replace(/("require\()/g, 'require(')
+    .replace(/\).default"/g, ').default')
+
+  Promise.all([
+    new Promise((resolve, reject) => {
+      fs.writeFile(
+        path.join(clientImportPath, 'modules.js'),
+        moduleFile,
+        (err) => {
+          if (err) reject(err)
+          console.debug(
+            'Client: /client/module_loader_imports/modules.js written'
+          )
+
+          resolve()
+        }
+      )
+    }),
+    new Promise((resolve, reject) => {
+      fs.writeFile(
+        path.join(clientImportPath, 'redux.js'),
+        reduxFile,
+        (err) => {
+          if (err) reject(err)
+          console.debug(
+            'Client: /client/module_loader_imports/redux.js written'
+          )
+
+          resolve()
+        }
+      )
+    }),
+  ])
 }

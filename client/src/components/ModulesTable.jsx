@@ -4,7 +4,7 @@ import notificationHandler from 'Helpers/notificationHandler'
 import { Table, Tag, Button, Input } from 'antd'
 import { RollbackOutlined } from '@ant-design/icons'
 
-import moduleLoaderImports from '../../module_loader_imports'
+import moduleLoaderModules from '../../module_loader_imports/modules'
 import { connect } from 'react-redux'
 import SavePopup from './SavePopup'
 
@@ -21,7 +21,7 @@ export default connect((state) => ({
       modules
         .sort((a, b) => (a.enabled ? 1 : -1))
         .map((mod) => {
-          mod.adminPage = moduleLoaderImports.modules[mod.name].adminPage
+          mod.adminPage = moduleLoaderModules.modules[mod.name].adminPage
           return mod
         })
       setModules(modules.sort((a, b) => (a === b ? 0 : a ? -1 : 1))) // sets enabled first
