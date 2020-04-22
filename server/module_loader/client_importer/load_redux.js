@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require('fs')
-const getJsFiles = require('../get_js_files')
+const getJsFiles = require('./get_js_files')
 
 /**
  * Can either be two files

@@ -15,7 +15,7 @@ const clientImportData = {
 
 const loadComponents = require('./load_components')
 const loadAdminPage = require('./load_admin_page')
-const loadRedux = require('./redux')
+const loadRedux = require('./load_redux')
 
 exports.load = (config, modulePath) => {
   clientImportData.modules[config.name] = { routes: [] }
@@ -65,34 +65,43 @@ exports.write = () => {
     .replace(/("require\()/g, 'require(')
     .replace(/\).default"/g, ').default')
 
-  Promise.all([
-    new Promise((resolve, reject) => {
-      fs.writeFile(
-        path.join(clientImportPath, 'modules.js'),
-        moduleFile,
-        (err) => {
-          if (err) reject(err)
-          console.debug(
-            'Client: /client/module_loader_imports/modules.js written'
-          )
+  return new Promise((resolve, reject) => {
+    fs.access(clientImportPath, (err) => {
+      if (err) {
+        fs.mkdirSync(clientImportPath)
+      }
+      Promise.all([
+        new Promise((resolve, reject) => {
+          fs.writeFile(
+            path.join(clientImportPath, 'modules.js'),
+            moduleFile,
+            (err) => {
+              if (err) reject(err)
+              console.debug(
+                'Client: /client/module_loader_imports/modules.js written'
+              )
 
-          resolve()
-        }
-      )
-    }),
-    new Promise((resolve, reject) => {
-      fs.writeFile(
-        path.join(clientImportPath, 'redux.js'),
-        reduxFile,
-        (err) => {
-          if (err) reject(err)
-          console.debug(
-            'Client: /client/module_loader_imports/redux.js written'
+              resolve()
+            }
           )
+        }),
+        new Promise((resolve, reject) => {
+          fs.writeFile(
+            path.join(clientImportPath, 'redux.js'),
+            reduxFile,
+            (err) => {
+              if (err) reject(err)
+              console.debug(
+                'Client: /client/module_loader_imports/redux.js written'
+              )
 
-          resolve()
-        }
-      )
-    }),
-  ])
+              resolve()
+            }
+          )
+        }),
+      ])
+        .then(() => resolve())
+        .catch((err) => reject(err))
+    })
+  })
 }
