@@ -79,7 +79,7 @@ module.exports = (fastify) => {
               .catch((err) => {
                 fastify.log.error(err)
                 fastify.sentry.captureException(err)
-                reply.internalServerError()
+                return reply.internalServerError()
               })
           } else {
             return reply.internalServerError('Invalid captcha')

@@ -25,7 +25,6 @@ module.exports = async (fastify) => {
           },
         })
         .then((user) => {
-          console.log(user)
           if (user) {
             return reply.send(true)
           } else {

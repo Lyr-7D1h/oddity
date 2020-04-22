@@ -1,12 +1,12 @@
-module.exports = async fastify => {
+module.exports = async (fastify) => {
   fastify.get(
     '/auth/login',
     {
       schema: {
-        hide: true // hide from docs
+        hide: true, // hide from docs
       },
       preHandler: fastify.auth([fastify.authentication.basic]),
-      permissions: fastify.PERMISSIONS.NONE
+      permissions: fastify.PERMISSIONS.NON_SET,
     },
     (request, reply) => {
       fastify
@@ -15,7 +15,7 @@ module.exports = async fastify => {
           request.session.user = { id: request.user.id }
           reply.send()
         })
-        .catch(err => {
+        .catch((err) => {
           fastify.log.error(err)
           fastify.sentry.captureException(err)
           reply.send(fastify.httpErrors.internalServerError())
