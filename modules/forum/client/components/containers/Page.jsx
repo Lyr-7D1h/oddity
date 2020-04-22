@@ -17,15 +17,17 @@ export default connect((state) => ({ draftCount: state.draft.draftCount }))(
     if (draftCount === null) {
       const dispatch = useDispatch();
       useEffect(() => {
-        dispatch(fetchDrafts());
         requester
           .get("forum/drafts")
           .then((drafts) => {
             dispatch(updateDrafts(drafts));
           })
           .catch((err) => {
-            console.error(err);
-            notificationHandler.error("Could not fetch drafts", err.message);
+            if (err.message !== "Could not find user") {
+              console.log(err.message);
+              console.error(err);
+              notificationHandler.error("Could not fetch drafts", err.message);
+            }
           });
       }, []);
     }

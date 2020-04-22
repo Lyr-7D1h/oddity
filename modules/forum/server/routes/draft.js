@@ -1,7 +1,7 @@
 module.exports = async (fastify) => {
   fastify.get("/forum/drafts", (request, reply) => {
     if (!request.session || !request.session.user || !request.session.user.id) {
-      return reply.send(0);
+      return reply.badRequest("Could not find user");
     }
 
     fastify.models.forumDraft

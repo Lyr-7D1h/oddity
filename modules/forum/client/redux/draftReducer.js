@@ -1,4 +1,4 @@
-import { UPDATE_DRAFTS, FETCH_DRAFTS } from "./draftActions";
+import { UPDATE_DRAFTS, PUSH_DRAFT } from "./draftActions";
 
 export default (
   state = { drafts: [], draftCount: null },
@@ -7,8 +7,10 @@ export default (
   switch (type) {
     case UPDATE_DRAFTS:
       return { drafts: payload.drafts, draftCount: payload.drafts.length };
-    case FETCH_DRAFTS:
-      return { drafts: state.drafts, draftCount: 0 };
+    case PUSH_DRAFT:
+      const drafts = state.drafts;
+      drafts.push(payload.draft);
+      return { drafts, draftCount: drafts.length };
     default:
       return state;
   }

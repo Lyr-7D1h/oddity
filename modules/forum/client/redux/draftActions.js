@@ -1,9 +1,12 @@
-export const FETCH_DRAFTS = "draft:fetchDrafts";
+export const PUSH_DRAFT = "draft:pushDraft";
 export const UPDATE_DRAFTS = "draft:updateDrafts";
 
-export const fetchDrafts = () => {
+export const pushDraft = (draft) => {
   return {
-    type: FETCH_DRAFTS,
+    type: PUSH_DRAFT,
+    payload: {
+      draft,
+    },
   };
 };
 

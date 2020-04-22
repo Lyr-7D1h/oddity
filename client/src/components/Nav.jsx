@@ -10,8 +10,9 @@ import notificationHandler from '../helpers/notificationHandler'
 
 import { connect } from 'react-redux'
 import { updateUser } from '../redux/actions/userActions'
+import { rootReset } from '../redux/actions/rootActions'
 
-const Nav = ({ modules, title, user, updateUser, location }) => {
+const Nav = ({ modules, title, user, updateUser, location, rootReset }) => {
   const [loginError, setLoginError] = useState(false)
 
   const selected = location.pathname.split('/')[1]
@@ -21,6 +22,7 @@ const Nav = ({ modules, title, user, updateUser, location }) => {
       .logout()
       .then(() => {
         updateUser({})
+        rootReset()
         notificationHandler.success('Logged out successfully')
       })
       .catch(() => {
@@ -47,7 +49,7 @@ const Nav = ({ modules, title, user, updateUser, location }) => {
             className="oddity-nav"
           >
             {modules
-              .filter(mod => mod.route !== '')
+              .filter((mod) => mod.route !== '')
               .map((mod, i) => (
                 <Menu.Item key={mod.route}>
                   <Link to={`/${mod.route}`}>{mod.name}</Link>
@@ -105,14 +107,15 @@ const Nav = ({ modules, title, user, updateUser, location }) => {
 }
 
 export default connect(
-  state => {
+  (state) => {
     return {
       user: state.user,
       modules: state.modules,
-      title: state.config.title
+      title: state.config.title,
     }
   },
   {
-    updateUser
+    updateUser,
+    rootReset,
   }
 )(withRouter(Nav))

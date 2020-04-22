@@ -95,8 +95,9 @@ module.exports = fp(async (instance) => {
       return false
     }
 
+    console.log(permission, routePermission)
     // If you want to use authentication without permissions set
-    if (permission === 0 && routePermission === 0) {
+    if (routePermission === 0) {
       return true
     }
 

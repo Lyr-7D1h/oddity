@@ -7,9 +7,9 @@ module.exports = {
         name: 'User',
         isDefault: true,
         color: 0xfff,
-        permissions: 0,
+        permissions: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
         name: 'Admin',
@@ -17,14 +17,14 @@ module.exports = {
         color: 0xf00,
         permissions: 2,
         createdAt: new Date(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     ])
   },
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkDelete('roles', {
-      [Sequelize.Op.or]: [{ name: 'User' }, { name: 'Admin' }]
+      [Sequelize.Op.or]: [{ name: 'User' }, { name: 'Admin' }],
     })
-  }
+  },
 }
