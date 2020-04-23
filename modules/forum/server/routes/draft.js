@@ -1,20 +1,28 @@
 module.exports = async (fastify) => {
-  fastify.get("/forum/drafts", (request, reply) => {
-    if (!request.session || !request.session.user || !request.session.user.id) {
-      return reply.badRequest("Could not find user");
-    }
+  fastify.get(
+    "/forum/drafts",
+    { permissions: fastify.PERMISSIONS.NONE },
+    (request, reply) => {
+      if (
+        !request.session ||
+        !request.session.user ||
+        !request.session.user.id
+      ) {
+        return reply.badRequest("Could not find user");
+      }
 
-    fastify.models.forumDraft
-      .findAll({ where: { authorId: request.session.user.id } })
-      .then((drafts) => {
-        return reply.send(drafts);
-      })
-      .catch((err) => {
-        fastify.log.error(err);
-        fastify.sentry.captureException(err);
-        return reply.internalServerError();
-      });
-  });
+      fastify.models.forumDraft
+        .findAll({ where: { authorId: request.session.user.id } })
+        .then((drafts) => {
+          return reply.send(drafts);
+        })
+        .catch((err) => {
+          fastify.log.error(err);
+          fastify.sentry.captureException(err);
+          return reply.internalServerError();
+        });
+    }
+  );
 
   fastify.post(
     "/forum/draft",

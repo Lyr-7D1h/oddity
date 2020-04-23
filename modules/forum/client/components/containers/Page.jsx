@@ -6,60 +6,61 @@ import { Card, Alert } from "antd";
 import requester from "Helpers/requester";
 import notificationHandler from "Helpers/notificationHandler";
 import { useDispatch, connect } from "react-redux";
-import { updateDrafts, fetchDrafts } from "../../redux/draftActions";
+import { updateDrafts } from "../../redux/draftActions";
 
-export default connect((state) => ({ draftCount: state.draft.draftCount }))(
-  ({ children, draftCount, notFound }) => {
-    if (notFound) {
-      return <NotFoundPage />;
-    }
-
-    if (draftCount === null) {
-      const dispatch = useDispatch();
-      useEffect(() => {
-        requester
-          .get("forum/drafts")
-          .then((drafts) => {
-            dispatch(updateDrafts(drafts));
-          })
-          .catch((err) => {
-            if (err.message !== "Could not find user") {
-              console.log(err.message);
-              console.error(err);
-              notificationHandler.error("Could not fetch drafts", err.message);
-            }
-          });
-      }, []);
-    }
-
-    return (
-      <Page>
-        {draftCount > 0 ? (
-          <div style={{ paddingLeft: "10vw", paddingRight: "10vw" }}>
-            <Alert
-              message={`You have ${draftCount} saved draft${
-                draftCount > 1 ? "s" : ""
-              }!`}
-              description={`Remove or Create a post using these draft${
-                draftCount > 1 ? "s" : ""
-              } to get rid of this message.`}
-              type="info"
-              showIcon
-              closable
-            />
-          </div>
-        ) : (
-          ""
-        )}
-        <div style={{ paddingLeft: "8vw", paddingRight: "8vw" }}>
-          <Card bodyStyle={{ paddingTop: 10, paddingBottom: 10 }}>
-            <Breadcrumb />
-          </Card>
-        </div>
-        <div style={{ paddingLeft: "10vw", paddingRight: "10vw" }}>
-          {children}
-        </div>
-      </Page>
-    );
+export default connect((state) => ({
+  draftCount: state.draft.draftCount,
+  isUser: state.user.id,
+}))(({ children, draftCount, notFound, isUser }) => {
+  if (notFound) {
+    return <NotFoundPage />;
   }
-);
+
+  if (draftCount === null && isUser) {
+    const dispatch = useDispatch();
+    useEffect(() => {
+      requester
+        .get("forum/drafts")
+        .then((drafts) => {
+          dispatch(updateDrafts(drafts));
+        })
+        .catch((err) => {
+          if (err.message !== "Could not find user") {
+            console.log(err.message);
+            console.error(err);
+            notificationHandler.error("Could not fetch drafts", err.message);
+          }
+        });
+    }, []);
+  }
+
+  return (
+    <Page>
+      {draftCount > 0 ? (
+        <div style={{ paddingLeft: "10vw", paddingRight: "10vw" }}>
+          <Alert
+            message={`You have ${draftCount} saved draft${
+              draftCount > 1 ? "s" : ""
+            }!`}
+            description={`Remove or Create a post using these draft${
+              draftCount > 1 ? "s" : ""
+            } to get rid of this message.`}
+            type="info"
+            showIcon
+            closable
+          />
+        </div>
+      ) : (
+        ""
+      )}
+      <div style={{ paddingLeft: "8vw", paddingRight: "8vw" }}>
+        <Card bodyStyle={{ paddingTop: 10, paddingBottom: 10 }}>
+          <Breadcrumb />
+        </Card>
+      </div>
+      <div style={{ paddingLeft: "10vw", paddingRight: "10vw" }}>
+        {children}
+      </div>
+    </Page>
+  );
+});
