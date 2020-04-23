@@ -1,6 +1,5 @@
 import React from 'react'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import '@ant-design/compatible/assets/index.css'
 import { Input, Button, Form } from 'antd'
 import { Link } from 'react-router-dom'
 
