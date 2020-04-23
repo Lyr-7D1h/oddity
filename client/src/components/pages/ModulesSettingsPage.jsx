@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Form, Input, Row, Col, Tooltip } from 'antd'
-import { RollbackOutlined, QuestionCircleOutlined } from '@ant-design/icons'
+import { Button, Form, Input, Row, Col } from 'antd'
+import { RollbackOutlined } from '@ant-design/icons'
 import Centered from '../containers/Centered'
 import moduleLoaderModules from '../../../module_loader_imports/modules'
 import QuestionDot from 'Components/QuestionDot'
