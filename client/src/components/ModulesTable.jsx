@@ -1,32 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import requester from 'Helpers/requester'
 import notificationHandler from 'Helpers/notificationHandler'
-import { Table, Tag, Button, Input } from 'antd'
-import { RollbackOutlined } from '@ant-design/icons'
+import { Table, Tag, Button, Input, Alert } from 'antd'
 
-import moduleLoaderModules from '../../module_loader_imports/modules'
-import { connect } from 'react-redux'
-import SavePopup from './SavePopup'
+import ModuleSettingsPage from './pages/ModulesSettingsPage'
 
-export default connect((state) => ({
-  configId: state.config.id,
-  routes: state.modules.map((mod) => mod.route),
-}))(({ routes, configId }) => {
+export default ({ modules: modulesProp }) => {
   const [modules, setModules] = useState([])
-  const [SettingsComponent, setSettingsComponent] = useState(null)
-  const [changes, setChanges] = useState([])
+  const [selectedModule, setSelectedModule] = useState(null)
 
   useEffect(() => {
-    requester.get('modules').then((modules) => {
-      modules
-        .sort((a, b) => (a.enabled ? 1 : -1))
-        .map((mod) => {
-          mod.adminPage = moduleLoaderModules.modules[mod.name].adminPage
-          return mod
-        })
-      setModules(modules.sort((a, b) => (a === b ? 0 : a ? -1 : 1))) // sets enabled first
-    })
-  }, [routes])
+    setModules(modulesProp)
+  }, [modulesProp])
 
   const setEnabled = (id) => {
     const enabled = !modules.find((mod) => mod.id === id).enabled
@@ -47,104 +32,39 @@ export default connect((state) => ({
       })
   }
 
-  const routeChangeHandler = (id, value) => {
-    setModules(
-      modules.map((mod) => {
-        if (mod.id === id) mod.route = value
-        return mod
-      })
-    )
-    let shouldAdd = true
-    const routeChanges = changes.map((change) => {
-      if (change.id === id) {
-        shouldAdd = false
-        return { id: id, route: value }
-      } else {
-        return change
-      }
-    })
-    if (shouldAdd) routeChanges.push({ id, route: value })
-
-    setChanges(routeChanges)
-  }
-
-  const handleSave = () => {
-    changes.forEach((change) => {
-      requester
-        .patch(`modules/${change.id}/route`, change)
-        .then((updatedModules) => {
-          setModules(
-            modules.map((mod) => {
-              const umod = updatedModules.find((umod) => umod.id === mod.id)
-              if (umod) mod.route = umod.route
-              return mod
-            })
-          )
-          setChanges([])
-        })
-        .catch((err) => {
-          console.error(err)
-          setChanges([])
-          notificationHandler.error('Could not update routes', err.message)
-        })
-    })
-  }
-
   const columns = [
     {
       dataIndex: 'name',
+      render: (name, record) => (
+        <>
+          {name}
+          {record.route === '' ? <Tag color="green">Home</Tag> : ''}
+        </>
+      ),
     },
     {
       dataIndex: 'version',
     },
     {
       dataIndex: 'enabled',
-      render: (enabled, record) =>
-        enabled ? (
-          <Tag
-            className="clickable"
-            onClick={() => setEnabled(record.id)}
-            color="green"
-          >
-            Enabled
-          </Tag>
-        ) : (
-          <Tag
-            className="clickable"
-            onClick={() => setEnabled(record.id)}
-            color="red"
-          >
-            Disabled
-          </Tag>
-        ),
-    },
-    {
-      dataIndex: 'route',
-      render: (route, record) => {
-        if (record.enabled) {
-          return (
-            <Input
-              type="text"
-              prefix="/"
-              placeholder="baseroute"
-              onChange={(e) => routeChangeHandler(record.id, e.target.value)}
-              value={route ? route : ''}
-            />
-          )
-        }
-      },
+      render: (enabled, record) => (
+        <Button
+          className="clickable"
+          onClick={() => setEnabled(record.id)}
+          type={enabled ? 'primary' : 'default'}
+          block
+        >
+          {enabled ? 'Enabled' : 'Disabled'}
+        </Button>
+      ),
     },
     {
       dataIndex: 'enabled',
       render: (enabled, record) => {
-        if (enabled && record.adminPage) {
+        if (enabled) {
           return (
             <>
-              <Button
-                onClick={() =>
-                  setSettingsComponent(React.createElement(record.adminPage))
-                }
-              >
+              <Button onClick={() => setSelectedModule(record)} block>
                 Settings
               </Button>
             </>
@@ -156,34 +76,23 @@ export default connect((state) => ({
 
   return (
     <div>
-      {changes.length > 0 ? <SavePopup onSave={handleSave} /> : ''}
-      {SettingsComponent ? (
-        <>
-          <Button
-            style={{
-              float: 'left',
-              width: '25%',
-              marginBottom: '10px',
-              marginRight: '10px',
-            }}
-            type="primary"
-            onClick={() => setSettingsComponent(null)}
-          >
-            <RollbackOutlined />
-            Back
-          </Button>
-          {SettingsComponent}
-        </>
-      ) : (
-        <Table
-          pagination={false}
-          showHeader={false}
-          loading={modules.length === 0}
-          columns={columns}
-          rowKey="id"
-          dataSource={modules}
+      {selectedModule !== null ? (
+        <ModuleSettingsPage
+          onClose={() => setSelectedModule(null)}
+          module={selectedModule}
         />
+      ) : (
+        <>
+          <Table
+            pagination={false}
+            showHeader={false}
+            loading={modules.length === 0}
+            columns={columns}
+            rowKey="id"
+            dataSource={modules}
+          />
+        </>
       )}
     </div>
   )
-})
+}

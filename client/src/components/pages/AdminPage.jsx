@@ -5,12 +5,12 @@ import Title from 'antd/lib/typography/Title'
 import Centered from '../containers/Centered'
 import AdminRedirect from '../containers/AdminRedirect'
 import SubNav from '../SubNav'
-import ModulesTable from '../ModulesTable'
 import { Redirect } from 'react-router-dom'
 import ConfigForm from 'Components/ConfigForm'
+import ModulesPage from './ModulesPage'
 
 export default ({ match }) => {
-  const nav = ['General', 'Modules']
+  const nav = ['General', 'Modules', 'Roles']
   if (!match.params.page) {
     return <Redirect to="/admin/general"></Redirect>
   }
@@ -20,8 +20,15 @@ export default ({ match }) => {
     case 'modules':
       Content = (
         <>
-          <Title>Modules</Title>
-          <ModulesTable />
+          <ModulesPage />
+        </>
+      )
+      break
+    case 'roles':
+      Content = (
+        <>
+          <Title>Roles</Title>
+          Coming soon
         </>
       )
       break

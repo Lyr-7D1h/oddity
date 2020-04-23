@@ -7,18 +7,19 @@ module.exports = fp(
      * TODO: use models instead of raw queries
      */
     const upsertModules = () => {
-      const mods = modules.map(mod => ({
+      const mods = modules.map((mod) => ({
         name: mod.name,
         version: mod.version,
         enabled: false,
         route: mod.name,
+        title: mod.name,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       }))
       return new Promise((resolve, reject) => {
         fastify.db
           .query('SELECT * FROM "modules" WHERE name IN (?)', {
-            replacements: [mods.map(mod => mod.name)]
+            replacements: [mods.map((mod) => mod.name)],
           })
           .then(([existingModules]) => {
             const promises = []
@@ -28,13 +29,13 @@ module.exports = fp(
                 const mod = existingModules[i]
                 promises.push(
                   fastify.db.queryInterface.bulkUpdate('modules', mod, {
-                    name: mod.name
+                    name: mod.name,
                   })
                 )
               }
 
-            const modsLeft = mods.filter(exisingMod => {
-              return !existingModules.find(mod => {
+            const modsLeft = mods.filter((exisingMod) => {
+              return !existingModules.find((mod) => {
                 return mod.name === exisingMod.name
               })
             })
@@ -42,52 +43,54 @@ module.exports = fp(
             if (modsLeft.length > 0) {
               promises.push(
                 fastify.db.queryInterface.bulkInsert('modules', modsLeft, {
-                  ignoreDuplicates: true
+                  ignoreDuplicates: true,
                 })
               )
             }
             // Return needed to fix (node:6106) Warning: a promise was created in a handler at domain.js:137:15 but was not returned from it
             return Promise.all(promises)
               .then(() => resolve())
-              .catch(err => reject(err))
+              .catch((err) => reject(err))
           })
-          .catch(err => reject(err))
+          .catch((err) => reject(err))
       })
     }
     const removeUnusedModules = () => {
       return new Promise((resolve, reject) => {
         fastify.db
           .query('SELECT id, name FROM modules WHERE NOT name IN (?)', {
-            replacements: [modules.map(mod => mod.name)]
+            replacements: [modules.map((mod) => mod.name)],
           })
           .then(([mods]) => {
             if (mods.length) {
               fastify.log.debug(
-                `Removing old modules "${mods.map(mod => mod.name).join(',')}"`
+                `Removing old modules "${mods
+                  .map((mod) => mod.name)
+                  .join(',')}"`
               )
 
-              const ids = mods.map(mod => mod.id)
+              const ids = mods.map((mod) => mod.id)
 
               fastify.db
                 .query('DELETE FROM routes WHERE "moduleId" IN (?)', {
-                  replacements: [ids]
+                  replacements: [ids],
                 })
                 .then(() => {
                   fastify.db
                     .query('DELETE FROM modules WHERE "id" IN (?)', {
-                      replacements: [ids]
+                      replacements: [ids],
                     })
                     .then(() => {
                       resolve()
                     })
-                    .catch(err => reject(err))
+                    .catch((err) => reject(err))
                 })
-                .catch(err => reject(err))
+                .catch((err) => reject(err))
             } else {
               resolve()
             }
           })
-          .catch(err => reject(err))
+          .catch((err) => reject(err))
       })
     }
     upsertModules()
@@ -96,13 +99,13 @@ module.exports = fp(
           .then(() => {
             done()
           })
-          .catch(err => done(err))
+          .catch((err) => done(err))
       })
-      .catch(err => done(err))
+      .catch((err) => done(err))
   },
   {
     name: 'modules_sync',
     decorators: ['models'],
-    dependencies: ['sequelize', 'models']
+    dependencies: ['sequelize', 'models'],
   }
 )
