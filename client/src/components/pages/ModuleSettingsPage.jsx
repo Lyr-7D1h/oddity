@@ -1,22 +1,41 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Form, Input, Row, Col } from 'antd'
+import { Button, Form, Input, Row, Col, Spin } from 'antd'
 import { RollbackOutlined } from '@ant-design/icons'
 import Centered from '../containers/Centered'
 import moduleLoaderModules from '../../../module_loader_imports/modules'
 import QuestionDot from 'Components/QuestionDot'
-import { onSave, onChange } from 'Actions/saveActions'
+import { onChange } from 'Actions/saveActions'
 import { connect } from 'react-redux'
 import AdminPage from 'Components/containers/AdminPage'
+import requester from 'Helpers/requester'
+import NotFoundPage from './NotFoundPage'
+import notificationHandler from 'Helpers/notificationHandler'
+import { Link } from 'react-router-dom'
 
-export default connect()(({ dispatch, module, onClose }) => {
+export default connect()(({ match, dispatch }) => {
   const [ImportedSettingsComponent, setImportedSettingsComponent] = useState('')
+  const [module, setModule] = useState(null)
+  const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
-    const component = moduleLoaderModules[module.name].adminPage
-    if (component) {
-      setImportedSettingsComponent(React.createElement(component))
-    }
-  }, [module])
+    requester
+      .get(`modules/identifier/${match.params.module}`)
+      .then((mod) => {
+        if (mod) {
+          setModule(mod)
+          const component = moduleLoaderModules[mod.name].adminPage
+          if (component) {
+            setImportedSettingsComponent(React.createElement(component))
+          }
+        } else {
+          setNotFound(true)
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+        notificationHandler.error('Something went wrong', err.message)
+      })
+  }, [match])
 
   const handleOnSave = () => {
     console.log('Handling save')
@@ -27,16 +46,13 @@ export default connect()(({ dispatch, module, onClose }) => {
     dispatch(onChange('ModulesSettingsPage', handleOnSave))
   }
 
-  return (
-    <AdminPage>
-      <Row>
-        <Col span={6}>
-          <Button block type="primary" onClick={() => onClose()}>
-            <RollbackOutlined />
-            Back
-          </Button>
-        </Col>
-      </Row>
+  if (notFound) {
+    return <NotFoundPage />
+  }
+
+  const Content = (
+    <>
+      {' '}
       <br />
       <Centered>
         <Form
@@ -69,8 +85,24 @@ export default connect()(({ dispatch, module, onClose }) => {
           </Form.Item>
         </Form>
       </Centered>
+    </>
+  )
+
+  return (
+    <AdminPage>
+      <Row>
+        <Col span={6}>
+          <Link to="/admin/modules">
+            <Button block type="primary">
+              <RollbackOutlined />
+              Back
+            </Button>
+          </Link>
+        </Col>
+      </Row>
+      {!module ? <Spin>{Content}</Spin> : Content}
       <br />
-      {ImportedSettingsComponent}
+      <div className={!module ? 'hidden' : ''}>{ImportedSettingsComponent}</div>
     </AdminPage>
   )
 })

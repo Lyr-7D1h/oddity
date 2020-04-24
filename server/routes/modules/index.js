@@ -21,6 +21,35 @@ module.exports = async (fastify) => {
     }
   )
 
+  fastify.get(
+    '/modules/identifier/:identifier',
+    {
+      permissions: fastify.PERMISSIONS.NON_SET,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: {
+              type: 'string',
+            },
+          },
+          required: ['identifier'],
+        },
+      },
+    },
+    (request, reply) => {
+      fastify.models.module
+        .findOne({ where: { identifier: request.params.identifier } })
+        .then((mod) => {
+          return reply.send(mod)
+        })
+        .catch((err) => {
+          fastify.log.error(err)
+          return reply.internalServerError()
+        })
+    }
+  )
+
   fastify.patch(
     '/modules/:id/route',
     {

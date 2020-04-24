@@ -5,9 +5,11 @@ module.exports = fp(
   (fastify, _, done) => {
     /**
      * TODO: use models instead of raw queries
+     * otherwise sequelize validation wont work
      */
     const upsertModules = () => {
       const mods = modules.map((mod) => ({
+        identifier: mod.name.toLocaleLowerCase(),
         name: mod.name,
         version: mod.version,
         enabled: false,

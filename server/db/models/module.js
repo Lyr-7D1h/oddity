@@ -3,6 +3,13 @@ module.exports = (sequelize, DataTypes) => {
   const module = sequelize.define(
     'module',
     {
+      identifier: {
+        type: DataTypes.STRING,
+        isLowercase: true,
+        isAlphanumeric: true,
+        unique: true,
+        allowNull: false,
+      },
       name: {
         type: DataTypes.STRING,
         unique: true,

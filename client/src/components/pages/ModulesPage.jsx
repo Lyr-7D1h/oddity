@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Title from 'antd/lib/typography/Title'
-import ModulesTable from 'Components/ModulesTable'
 import requester from 'Helpers/requester'
 import { Alert } from 'antd'
 import AdminPage from 'Components/containers/AdminPage'
+import ModulesTable from 'Components/ModulesTable'
 
 export default () => {
   const [modules, setModules] = useState([])
@@ -31,7 +31,7 @@ export default () => {
         ''
       )}
       <Title>Modules</Title>
-      {/* <ModulesTable modules={modules} /> */}
+      <ModulesTable modules={modules} />
     </AdminPage>
   )
 }

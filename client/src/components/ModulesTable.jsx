@@ -3,11 +3,10 @@ import requester from 'Helpers/requester'
 import notificationHandler from 'Helpers/notificationHandler'
 import { Table, Tag, Button } from 'antd'
 
-import ModuleSettingsPage from './pages/ModuleSettingsPage'
+import { Link, useLocation } from 'react-router-dom'
 
 export default ({ modules: modulesProp }) => {
   const [modules, setModules] = useState([])
-  const [selectedModule, setSelectedModule] = useState(null)
 
   useEffect(() => {
     setModules(modulesProp)
@@ -31,6 +30,8 @@ export default ({ modules: modulesProp }) => {
         notificationHandler.error('Could not enable Module', err.message)
       })
   }
+
+  const location = useLocation()
 
   const columns = [
     {
@@ -63,11 +64,9 @@ export default ({ modules: modulesProp }) => {
       render: (enabled, record) => {
         if (enabled) {
           return (
-            <>
-              <Button onClick={() => setSelectedModule(record)} block>
-                Settings
-              </Button>
-            </>
+            <Link to={location.pathname + '/' + record.title.toLowerCase()}>
+              <Button block>Settings</Button>
+            </Link>
           )
         }
       },
@@ -76,23 +75,14 @@ export default ({ modules: modulesProp }) => {
 
   return (
     <div>
-      {selectedModule !== null ? (
-        <ModuleSettingsPage
-          onClose={() => setSelectedModule(null)}
-          module={selectedModule}
-        />
-      ) : (
-        <>
-          <Table
-            pagination={false}
-            showHeader={false}
-            loading={modules.length === 0}
-            columns={columns}
-            rowKey="id"
-            dataSource={modules}
-          />
-        </>
-      )}
+      <Table
+        pagination={false}
+        showHeader={false}
+        loading={modules.length === 0}
+        columns={columns}
+        rowKey="id"
+        dataSource={modules}
+      />
     </div>
   )
 }
