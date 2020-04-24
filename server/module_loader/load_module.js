@@ -12,9 +12,20 @@ module.exports = (modulePath) => {
 
       let config = matches[0]
       if (config && matches.length === 1) {
+        try {
+          config = require(path.join(modulePath, config))
+        } catch (err) {
+          throw Error(`Could not read: ${path.join(modulePath, config)}`)
+        }
+
         // Fetch config
-        config = require(path.join(modulePath, config))
         const { name, version } = config
+
+        if (!name || !version) {
+          throw Error(
+            `No name or version in ${path.join(modulePath, matches[0])}`
+          )
+        }
 
         console.debug(`Loading module ${name}\t(${version})`)
         addModule(name, version)
