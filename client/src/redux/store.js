@@ -8,6 +8,7 @@ import moduleReducer from './reducers/modulesReducer'
 
 import redux from '../../module_loader_imports/redux'
 import { RESET } from 'Actions/rootActions'
+import saveReducer from './reducers/saveReducer'
 
 const reducers = {
   config: configReducer,
@@ -15,6 +16,7 @@ const reducers = {
   modules: moduleReducer,
   captcha: captchaReducer,
   permissions: permissionReducer,
+  save: saveReducer,
 }
 
 redux.reducers.forEach((reducer) => {

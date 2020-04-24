@@ -128,17 +128,22 @@ blockquote p {
   transform: translate(-50%);
   bottom: 40px;
   position: fixed;
-  width: 400px;
-  background-color: fade(#000, 80%);
+  width: 500px;
+  padding: 15px;
+  background-color: fade(rgb(255, 255, 255), 85%);
+  vertical-align: middle;
   left: 50vw;
-  color: #fff;
-  button {
-    background-color: @success-color;
-    border-color: #333;
-    &:hover {
-      background-color: fade(@success-color, 80%);
-    }
-  }
+  color: rgb(0, 0, 0);
+  border: 1px solid rgba(50,50,50, 0.5)
+  // button {
+  //   background-color: @success-color;
+  //   color: #fff;
+  //   border-color: #333;
+  //   &:hover {
+  //     background-color: fade(@success-color, 80%);
+  //     color: #fff;
+  //   }
+  // }
 }
 
 .ant-table-tbody > .oddity-row:hover > td {
@@ -165,7 +170,7 @@ blockquote p {
 .ant-card {
   margin: 10px !important;
 }
-.ant-btn:hover {
+.ant-btn:not(.ant-btn-link):hover {
   color: black;
   background-color: white;
 }

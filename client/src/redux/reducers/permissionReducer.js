@@ -8,7 +8,7 @@ export default (state = {}, { type, payload }) => {
     case UPDATE_PERMISSIONS:
       return payload.permissions
     case FETCH_PERMISSIONS:
-      return ''
+      return { isLoading: true }
     default:
       return state
   }

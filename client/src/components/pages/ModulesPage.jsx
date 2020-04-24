@@ -3,6 +3,7 @@ import Title from 'antd/lib/typography/Title'
 import ModulesTable from 'Components/ModulesTable'
 import requester from 'Helpers/requester'
 import { Alert } from 'antd'
+import AdminPage from 'Components/containers/AdminPage'
 
 export default () => {
   const [modules, setModules] = useState([])
@@ -15,7 +16,7 @@ export default () => {
   }, [])
 
   return (
-    <>
+    <AdminPage>
       {-1 === modules.indexOf((mod) => mod.route === '') ? (
         <>
           <Alert
@@ -30,7 +31,7 @@ export default () => {
         ''
       )}
       <Title>Modules</Title>
-      <ModulesTable modules={modules} />
-    </>
+      {/* <ModulesTable modules={modules} /> */}
+    </AdminPage>
   )
 }

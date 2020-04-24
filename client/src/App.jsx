@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import notificationHandler from './helpers/notificationHandler'
 
 import LoginPage from './components/pages/LoginPage'
-import AdminPage from './components/pages/AdminPage'
+import AdminSettingsPage from './components/pages/AdminSettingsPage'
 import ConfigLoader from './components/containers/ConfigLoader'
 import RegisterPage from './components/pages/RegisterPage'
 import TermsOfServicePage from './components/pages/TermsOfServicePage'
@@ -18,6 +18,8 @@ import AccountPage from './components/pages/AccountSettingsPage'
 
 import moduleLoaderModules from '../module_loader_imports/modules'
 import ProfilePage from './components/pages/ProfilePage'
+import ModulesPage from 'Components/pages/ModulesPage'
+import ModuleSettingsPage from 'Components/pages/ModuleSettingsPage'
 
 const App = ({ modules, userNeedsSetup, dispatch }) => {
   let noHomeSet = true
@@ -82,21 +84,42 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
 
   const adminRoutes = [
     <Route
-      key={1}
+      key={0}
       exact
       path="/admin"
+      render={() => <Redirect to="admin/general" />}
+    />,
+    <Route
+      key={1}
+      exact
+      path="/admin/general"
       render={(props) => {
-        return <AdminPage {...props} />
+        return <AdminSettingsPage {...props} />
       }}
     />,
     <Route
       key={2}
+      path="/admin/modules"
       exact
-      path="/admin/:page"
       render={(props) => {
-        return <AdminPage {...props} />
+        return <ModulesPage {...props} />
       }}
     />,
+    <Route
+      key={3}
+      path="/admin/modules/:module"
+      exact
+      render={(props) => {
+        return <ModuleSettingsPage {...props} />
+      }}
+    />,
+    // <Route
+    //   key={3}
+    //   path="/admin/:page"
+    //   render={(props) => {
+    //     return <AdminPage {...props} />
+    //   }}
+    // />,
   ]
 
   return (

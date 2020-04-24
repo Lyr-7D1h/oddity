@@ -1,16 +1,37 @@
 import React from 'react'
-import { Card, Button } from 'antd'
+import { Button, Row, Col } from 'antd'
+import { connect } from 'react-redux'
 
-export default ({ onSave, isInvalid }) => {
-  return (
-    <Card className="oddity-notification">
-      <div>
-        <div style={{ marginBottom: 15 }}>You have unsaved changes</div>
+/**
+ * Make sure to only implement this once!
+ * preferably on highest level / Page level
+ */
+export default connect(
+  (state) => ({ show: state.save.showSavePopup }),
+  {}
+)(({ onSave, isInvalid, onReset, show }) => {
+  if (show) {
+    return (
+      <div className="oddity-notification">
+        <Row type="flex" style={{ alignItems: 'center' }}>
+          <Col span={14}>
+            <b>You have unsaved changes!</b>
+          </Col>
 
-        <Button disabled={isInvalid} type="oddity" onClick={onSave} block>
-          Save Changes
-        </Button>
+          <Col span={4}>
+            <Button type="link" disabled={isInvalid} onClick={onReset} block>
+              Reset
+            </Button>
+          </Col>
+          <Col span={6}>
+            <Button type="primary" disabled={isInvalid} onClick={onSave} block>
+              Save Changes
+            </Button>
+          </Col>
+        </Row>
       </div>
-    </Card>
-  )
-}
+    )
+  } else {
+    return ''
+  }
+})

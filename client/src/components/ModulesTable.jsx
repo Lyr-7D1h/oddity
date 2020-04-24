@@ -3,7 +3,7 @@ import requester from 'Helpers/requester'
 import notificationHandler from 'Helpers/notificationHandler'
 import { Table, Tag, Button } from 'antd'
 
-import ModuleSettingsPage from './pages/ModulesSettingsPage'
+import ModuleSettingsPage from './pages/ModuleSettingsPage'
 
 export default ({ modules: modulesProp }) => {
   const [modules, setModules] = useState([])

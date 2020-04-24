@@ -4,8 +4,11 @@ import { RollbackOutlined } from '@ant-design/icons'
 import Centered from '../containers/Centered'
 import moduleLoaderModules from '../../../module_loader_imports/modules'
 import QuestionDot from 'Components/QuestionDot'
+import { onSave, onChange } from 'Actions/saveActions'
+import { connect } from 'react-redux'
+import AdminPage from 'Components/containers/AdminPage'
 
-export default ({ module, onClose }) => {
+export default connect()(({ dispatch, module, onClose }) => {
   const [ImportedSettingsComponent, setImportedSettingsComponent] = useState('')
 
   useEffect(() => {
@@ -15,51 +18,17 @@ export default ({ module, onClose }) => {
     }
   }, [module])
 
-  // const routeChangeHandler = (id, value) => {
-  //   setModules(
-  //     modules.map((mod) => {
-  //       if (mod.id === id) mod.route = value
-  //       return mod
-  //     })
-  //   )
-  //   let shouldAdd = true
-  //   const routeChanges = changes.map((change) => {
-  //     if (change.id === id) {
-  //       shouldAdd = false
-  //       return { id: id, route: value }
-  //     } else {
-  //       return change
-  //     }
-  //   })
-  //   if (shouldAdd) routeChanges.push({ id, route: value })
+  const handleOnSave = () => {
+    console.log('Handling save')
+  }
 
-  //   setChanges(routeChanges)
-  // }
-
-  // const handleSave = () => {
-  //   changes.forEach((change) => {
-  //     requester
-  //       .patch(`modules/${change.id}/route`, change)
-  //       .then((updatedModules) => {
-  //         setModules(
-  //           modules.map((mod) => {
-  //             const umod = updatedModules.find((umod) => umod.id === mod.id)
-  //             if (umod) mod.route = umod.route
-  //             return mod
-  //           })
-  //         )
-  //         setChanges([])
-  //       })
-  //       .catch((err) => {
-  //         console.error(err)
-  //         setChanges([])
-  //         notificationHandler.error('Could not update routes', err.message)
-  //       })
-  //   })
-  // }
+  const handleOnChange = () => {
+    console.log('on change')
+    dispatch(onChange('ModulesSettingsPage', handleOnSave))
+  }
 
   return (
-    <>
+    <AdminPage>
       <Row>
         <Col span={6}>
           <Button block type="primary" onClick={() => onClose()}>
@@ -74,6 +43,7 @@ export default ({ module, onClose }) => {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 16 }}
           initialValues={module}
+          onValuesChange={handleOnChange}
         >
           <Form.Item
             label={
@@ -101,6 +71,6 @@ export default ({ module, onClose }) => {
       </Centered>
       <br />
       {ImportedSettingsComponent}
-    </>
+    </AdminPage>
   )
-}
+})
