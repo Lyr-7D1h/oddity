@@ -3,8 +3,8 @@ import Page from './Page'
 import SubNav from 'Components/SubNav'
 import Centered from './Centered'
 import { Card } from 'antd'
-// import ConditionalRedirect from './ConditionalRedirect'
-// import hasPermission from 'Helpers/hasPermission'
+import ConditionalRedirect from './ConditionalRedirect'
+import hasPermission from 'Helpers/hasPermission'
 
 export default ({ children }) => {
   const nav = ['General', 'Modules', 'Roles']
