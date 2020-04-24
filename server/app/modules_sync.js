@@ -1,92 +1,70 @@
-const { modules } = require('../module_loader_imports')
+let { modules } = require('../module_loader_imports')
 const fp = require('fastify-plugin')
 
+modules = modules.map((mod) => ({
+  identifier: mod.name.toLowerCase(),
+  name: mod.name,
+  version: mod.version,
+  enabled: false,
+  route: mod.name,
+  title: mod.name,
+}))
+
 module.exports = fp(
-  (fastify, _, done) => {
-    /**
-     * TODO: use models instead of raw queries
-     * otherwise sequelize validation wont work
-     */
+  async (fastify, _, done) => {
     const upsertModules = () => {
-      const mods = modules.map((mod) => ({
-        identifier: mod.name.toLocaleLowerCase(),
-        name: mod.name,
-        version: mod.version,
-        enabled: false,
-        route: mod.name,
-        title: mod.name,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }))
       return new Promise((resolve, reject) => {
-        fastify.db
-          .query('SELECT * FROM "modules" WHERE name IN (?)', {
-            replacements: [mods.map((mod) => mod.name)],
-          })
-          .then(([existingModules]) => {
-            const promises = []
+        const promises = []
 
-            if (existingModules)
-              for (const i in existingModules) {
-                const mod = existingModules[i]
-                promises.push(
-                  fastify.db.queryInterface.bulkUpdate('modules', mod, {
-                    name: mod.name,
-                  })
-                )
-              }
+        // console.log('FOUND MODULES: ', modules)
 
-            const modsLeft = mods.filter((exisingMod) => {
-              return !existingModules.find((mod) => {
-                return mod.name === exisingMod.name
-              })
+        modules.forEach((mod) => {
+          promises.push(
+            fastify.models.module.upsert(mod, {
+              where: { identifier: mod.identifier },
+              returning: true,
             })
+          )
+        })
 
-            if (modsLeft.length > 0) {
-              promises.push(
-                fastify.db.queryInterface.bulkInsert('modules', modsLeft, {
-                  ignoreDuplicates: true,
-                })
-              )
-            }
-            // Return needed to fix (node:6106) Warning: a promise was created in a handler at domain.js:137:15 but was not returned from it
-            return Promise.all(promises)
-              .then(() => resolve())
-              .catch((err) => reject(err))
+        // Return needed to fix (node:6106) Warning: a promise was created in a handler at domain.js:137:15 but was not returned from it
+        return Promise.all(promises)
+          .then((rows) => {
+            rows = rows
+              .filter((mod) => mod[1])
+              .map((mod) => mod[0].name)
+              .join(', ')
+
+            if (rows)
+              fastify.log.debug(`Modules Sync: Created "${rows}" modules`)
+            resolve()
           })
           .catch((err) => reject(err))
       })
     }
+
     const removeUnusedModules = () => {
       return new Promise((resolve, reject) => {
         fastify.db
-          .query('SELECT id, name FROM modules WHERE NOT name IN (?)', {
-            replacements: [modules.map((mod) => mod.name)],
-          })
+          .query(
+            'SELECT id, identifier, name FROM modules WHERE NOT identifier IN (?)',
+            {
+              replacements: [modules.map((mod) => mod.identifier)],
+            }
+          )
           .then(([mods]) => {
-            if (mods.length) {
+            if (mods.length > 0) {
               fastify.log.debug(
-                `Removing old modules "${mods
+                `Modules Sync: Removing old modules "${mods
                   .map((mod) => mod.name)
                   .join(',')}"`
               )
 
               const ids = mods.map((mod) => mod.id)
 
-              fastify.db
-                .query('DELETE FROM routes WHERE "moduleId" IN (?)', {
-                  replacements: [ids],
-                })
-                .then(() => {
-                  fastify.db
-                    .query('DELETE FROM modules WHERE "id" IN (?)', {
-                      replacements: [ids],
-                    })
-                    .then(() => {
-                      resolve()
-                    })
-                    .catch((err) => reject(err))
-                })
+              return fastify.models.module
+                .destroy({ where: { id: ids } })
+                .then(() => resolve())
                 .catch((err) => reject(err))
             } else {
               resolve()
