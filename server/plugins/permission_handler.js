@@ -53,77 +53,83 @@ const getHighestPermission = () => {
   return highest
 }
 
-module.exports = fp(async (instance) => {
-  /**
-   * Check permissions for each route
-   */
-  const routes = {}
-  instance.addHook('onRoute', (opts) => {
-    const permission = getPermission(opts.permissions)
-    const methods = Array.isArray(opts.method) ? opts.method : [opts.method]
+module.exports = fp(
+  async (instance) => {
+    /**
+     * Check permissions for each route
+     */
+    const routes = {}
+    instance.addHook('onRoute', (opts) => {
+      const permission = getPermission(opts.permissions)
+      const methods = Array.isArray(opts.method) ? opts.method : [opts.method]
 
-    if ((!opts.preHandler || opts.preHandler.length === 0) && permission > 0) {
-      instance.log.warn(
-        `Permission set but no preHandler for route: ${methods.join(', ')}: ${
-          opts.path
-        }`
-      )
-    }
+      if (
+        (!opts.preHandler || opts.preHandler.length === 0) &&
+        permission > 0
+      ) {
+        instance.log.warn(
+          `Permission set but no preHandler for route: ${methods.join(', ')}: ${
+            opts.path
+          }`
+        )
+      }
 
-    if (permission !== undefined) {
-      addPermissionToDocumentation(opts, permission)
-      methods.forEach((method) => {
-        routes[method + ':' + opts.path] = permission
-      })
-    } else {
-      instance.log.warn(
-        `No permissions set for route: ${methods.join(', ')}: ${opts.path}`
-      )
-    }
-  })
+      if (permission !== undefined) {
+        addPermissionToDocumentation(opts, permission)
+        methods.forEach((method) => {
+          routes[method + ':' + opts.path] = permission
+        })
+      } else {
+        instance.log.warn(
+          `No permissions set for route: ${methods.join(', ')}: ${opts.path}`
+        )
+      }
+    })
 
-  const authorizeRoute = (url, method, permission) => {
-    // if root always true
-    if (permission & PERMISSIONS.ROOT) {
-      return true
-    }
+    const authorizeRoute = (url, method, permission) => {
+      // if root always true
+      if (permission & PERMISSIONS.ROOT) {
+        return true
+      }
 
-    // get permissions for the base route (/forum/test would be forum)
-    const routePermission = routes[`${method}:${url}`]
+      // get permissions for the base route (/forum/test would be forum)
+      const routePermission = routes[`${method}:${url}`]
 
-    if (routePermission === null || routePermission === undefined) {
+      if (routePermission === null || routePermission === undefined) {
+        return false
+      }
+
+      // If you want to use authentication without permissions set
+      if (routePermission === 0) {
+        return true
+      }
+
+      // check permission with an bitwise AND operation
+      if (permission & routePermission) {
+        return true
+      }
+
       return false
     }
 
-    // If you want to use authentication without permissions set
-    if (routePermission === 0) {
-      return true
+    const calcPermission = (...perms) => {
+      let result = 0
+      for (let i in perms) {
+        result = result | perms[i]
+      }
+      return result
     }
 
-    // check permission with an bitwise AND operation
-    if (permission & routePermission) {
-      return true
+    const addPermission = (name) => {
+      PERMISSIONS[name.toUpperCase()] = getHighestPermission() * 2
     }
 
-    return false
-  }
-
-  const calcPermission = (...perms) => {
-    let result = 0
-    for (let i in perms) {
-      result = result | perms[i]
-    }
-    return result
-  }
-
-  const addPermission = (name) => {
-    PERMISSIONS[name.toUpperCase()] = getHighestPermission() * 2
-  }
-
-  instance.decorate('PERMISSIONS', PERMISSIONS)
-  instance.decorate('permissions', {
-    calcPermission,
-    authorizeRoute,
-    addPermission,
-  })
-})
+    instance.decorate('PERMISSIONS', PERMISSIONS)
+    instance.decorate('permissions', {
+      calcPermission,
+      authorizeRoute,
+      addPermission,
+    })
+  },
+  { name: 'permission_handler' }
+)
