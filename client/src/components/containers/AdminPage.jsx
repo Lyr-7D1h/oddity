@@ -10,13 +10,13 @@ export default ({ children }) => {
   const nav = ['General', 'Modules', 'Roles']
 
   return (
-    // <ConditionalRedirect condition={!hasPermission('ROOT')}>
-    <Page selected="admin">
-      <SubNav items={nav} />
-      <Centered>
-        <Card>{children}</Card>
-      </Centered>
-    </Page>
-    // </ConditionalRedirect>
+    <ConditionalRedirect condition={!hasPermission('ROOT')}>
+      <Page selected="admin">
+        <SubNav items={nav} />
+        <Centered>
+          <Card>{children}</Card>
+        </Centered>
+      </Page>
+    </ConditionalRedirect>
   )
 }

@@ -3,19 +3,19 @@ import { Input, Button } from 'antd'
 import { Form } from 'antd'
 
 import { connect } from 'react-redux'
-import { updateConfig } from '../redux/actions/configActions'
+import { updateConfig } from '../redux/actions/initActions'
 import requester from '../helpers/requester'
 import notificationHandler from '../helpers/notificationHandler'
 
 const ConfigForm = ({ dispatch, config, ...props }) => {
-  const handleFinish = values => {
+  const handleFinish = (values) => {
     requester
       .patch('config/title', values)
-      .then(resultConfig => {
+      .then((resultConfig) => {
         config.title = resultConfig.title
         dispatch(updateConfig(config))
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err)
         notificationHandler.error('Could not update Configuration', err.message)
       })
@@ -40,8 +40,8 @@ const ConfigForm = ({ dispatch, config, ...props }) => {
   )
 }
 
-const mapToProps = state => {
-  return { config: state.config }
+const mapToProps = (state) => {
+  return { config: state.init.config }
 }
 
 export default connect(mapToProps)(ConfigForm)

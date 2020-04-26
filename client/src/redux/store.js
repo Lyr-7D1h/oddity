@@ -1,22 +1,17 @@
 import { createStore, combineReducers } from 'redux'
 
-import captchaReducer from './reducers/captchaReducer'
-import configReducer from './reducers/configReducer'
-import userReducer from './reducers/userReducer'
-import permissionReducer from './reducers/permissionReducer'
-import moduleReducer from './reducers/modulesReducer'
-
 import redux from '../../module_loader_imports/redux'
+
 import { RESET } from 'Actions/rootActions'
+
 import saveReducer from './reducers/saveReducer'
+import initReducer from './reducers/initReducer'
+import userReducer from './reducers/userReducer'
 
 const reducers = {
-  config: configReducer,
   user: userReducer,
-  modules: moduleReducer,
-  captcha: captchaReducer,
-  permissions: permissionReducer,
   save: saveReducer,
+  init: initReducer,
 }
 
 redux.reducers.forEach((reducer) => {

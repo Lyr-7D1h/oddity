@@ -110,8 +110,8 @@ export default connect(
   (state) => {
     return {
       user: state.user,
-      modules: state.modules,
-      title: state.config.title,
+      modules: state.init.modules,
+      title: state.init.config.title,
     }
   },
   {

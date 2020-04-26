@@ -69,6 +69,6 @@
 // }
 
 // export default connect(state => ({
-//   configId: state.config.id,
-//   modules: state.modules
+//   configId: state.init.config.id,
+//   modules: state.init.modules
 // }))(RoutingTable)

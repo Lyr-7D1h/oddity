@@ -14,7 +14,6 @@ export default (
       const callers = Object.assign({}, state.callers, {
         [payload.caller]: payload.handler,
       })
-      console.log(payload)
       return Object.assign({}, state, { showSavePopup: true, callers })
     case SAVE_ON_SAVE:
       return {}

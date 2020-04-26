@@ -9,7 +9,7 @@ import requester from '../helpers/requester'
 import { useState } from 'react'
 import { connect } from 'react-redux'
 
-export default connect((state) => ({ captcha: state.captcha }))(
+export default connect((state) => ({ captcha: state.init.captcha }))(
   ({ captcha }) => {
     const [usingIdentifier, setUsingIdentifier] = useState(false)
     const [registered, setRegistered] = useState(false)

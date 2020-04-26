@@ -8,7 +8,7 @@ import notificationHandler from './helpers/notificationHandler'
 
 import LoginPage from './components/pages/LoginPage'
 import AdminSettingsPage from './components/pages/AdminSettingsPage'
-import ConfigLoader from './components/containers/ConfigLoader'
+import InitLoader from './components/containers/InitLoader'
 import RegisterPage from './components/pages/RegisterPage'
 import TermsOfServicePage from './components/pages/TermsOfServicePage'
 import NotFoundPage from './components/pages/NotFoundPage'
@@ -124,7 +124,7 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
 
   return (
     <BrowserRouter>
-      <ConfigLoader>
+      <InitLoader>
         {/* {userNeedsSetup ? (
           <FinishAccountPage />
         ) : ( */}
@@ -157,7 +157,7 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
           <Route path="*" component={NotFoundPage}></Route>
         </Switch>
         {/* )} */}
-      </ConfigLoader>
+      </InitLoader>
     </BrowserRouter>
   )
 }
@@ -170,7 +170,7 @@ export default connect((state) => {
     }
   }
   return {
-    modules: state.modules,
+    modules: state.init.modules,
     userNeedsSetup: userNeedsSetup,
   }
 })(App)
