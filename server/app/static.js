@@ -10,18 +10,7 @@ const send = require('send')
 
 const fp = require('fastify-plugin')
 
-function fastifyStatic(fastify, opts, next) {
-  //#region Validation
-  const error = checkRootPathForErrors(fastify, opts.root)
-  if (error !== undefined) return next(error)
-
-  const setHeaders = opts.setHeaders
-
-  if (setHeaders !== undefined && typeof setHeaders !== 'function') {
-    return next(new TypeError('The `setHeaders` option must be a function'))
-  }
-  //#endregion
-
+async function fastifyStatic(fastify, opts, next) {
   const sendOptions = {
     root: opts.root,
     acceptRanges: opts.acceptRanges,
@@ -94,10 +83,6 @@ function fastifyStatic(fastify, opts, next) {
       reply.send(wrap)
     })
 
-    if (setHeaders !== undefined) {
-      stream.on('headers', setHeaders)
-    }
-
     if (opts.redirect === true) {
       stream.on('directory', function (res, path) {
         const parsed = url.parse(request.raw.url)
@@ -126,99 +111,18 @@ function fastifyStatic(fastify, opts, next) {
 
   // Serve
   if (opts.serve !== false) {
-    if (opts.wildcard === undefined || opts.wildcard === true) {
-      fastify.get(prefix + '*', routeOptions, function (req, reply) {
-        pumpSendToReply(req, reply, '/' + req.params['*'])
-      })
-      fastify.head(prefix + '*', routeOptions, function (req, reply) {
-        reply.send() // TODO: should return content-length
-      })
-      //   fastify.get(prefix, schema, function(req, reply) {
-      //     pumpSendToReply(req, reply, '/' + req.params['*'])
-      //   })
-    } else {
-      const globPattern =
-        typeof opts.wildcard === 'string' ? opts.wildcard : '**/*'
-      glob(path.join(sendOptions.root, globPattern), { nodir: true }, function (
-        err,
-        files
-      ) {
-        if (err) {
-          return next(err)
-        }
-        const indexDirs = new Set()
-        const indexes =
-          typeof opts.index === 'undefined'
-            ? ['index.html']
-            : [].concat(opts.index || [])
-        for (let file of files) {
-          file = file
-            .replace(sendOptions.root.replace(/\\/g, '/'), '')
-            .replace(/^\//, '')
-          const route = (prefix + file).replace(/\/\//g, '/')
-          fastify.get(route, routeOptions, function (req, reply) {
-            pumpSendToReply(req, reply, '/' + file)
-          })
+    fastify.get(prefix + '*', routeOptions, function (req, reply) {
+      pumpSendToReply(req, reply, '/' + req.params['*'])
+    })
+    // fastify.head(prefix + '*', routeOptions, function (req, reply) {
+    //   reply.send()
+    // })
 
-          if (indexes.includes(path.posix.basename(route))) {
-            indexDirs.add(path.posix.dirname(route))
-          }
-        }
-        indexDirs.forEach(function (dirname) {
-          const pathname = dirname + (dirname.endsWith('/') ? '' : '/')
-          const file = '/' + pathname.replace(prefix, '')
-
-          fastify.get(pathname, routeOptions, function (req, reply) {
-            pumpSendToReply(req, reply, file)
-          })
-
-          if (opts.redirect === true) {
-            fastify.get(pathname.replace(/\/$/, ''), routeOptions, function (
-              req,
-              reply
-            ) {
-              pumpSendToReply(req, reply, file.replace(/\/$/, ''))
-            })
-          }
-        })
-        next()
-      })
-
-      // return early to avoid calling next afterwards
-      return
-    }
+    // return early to avoid calling next afterwards
+    return
   }
 
   next()
-}
-
-function checkRootPathForErrors(fastify, rootPath) {
-  if (rootPath === undefined) {
-    return new Error('"root" option is required')
-  }
-  if (typeof rootPath !== 'string') {
-    return new Error('"root" option must be a string')
-  }
-  if (path.isAbsolute(rootPath) === false) {
-    return new Error('"root" option must be an absolute path')
-  }
-
-  var pathStat
-
-  try {
-    pathStat = statSync(rootPath)
-  } catch (e) {
-    if (e.code === 'ENOENT') {
-      fastify.log.warn(`"root" path "${rootPath}" must exist`)
-      return
-    }
-
-    return e
-  }
-
-  if (pathStat.isDirectory() === false) {
-    return new Error('"root" option must point to a directory')
-  }
 }
 
 module.exports = fp(fastifyStatic, {
