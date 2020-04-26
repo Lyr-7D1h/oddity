@@ -102,8 +102,6 @@ module.exports = fp(
     const proxyHandler = (request, reply) => {
       const path = request.params['*']
 
-      console.log(init)
-
       http
         .get(
           `http://localhost:3000/${path}`,
@@ -215,14 +213,8 @@ module.exports = fp(
           return response.statusCode
         },
         set(code) {
-          // reply.code(code)
-          console.log(code)
           response.statusCode = code
         },
-      })
-
-      wrap.on('error', (err) => {
-        console.error('ERROR', err)
       })
 
       // reply.send sends no reply when data has been transformed
@@ -230,7 +222,6 @@ module.exports = fp(
     }
     const staticHandler = (request, reply) => {
       const path = '/' + request.params['*']
-      console.log(path, request.params)
       sendFile(request, reply, path)
     }
 
