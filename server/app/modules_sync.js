@@ -17,27 +17,50 @@ module.exports = fp(
         const promises = []
 
         // console.log('FOUND MODULES: ', modules)
-
-        modules.forEach((mod) => {
-          promises.push(
-            fastify.models.module.upsert(mod, {
-              where: { identifier: mod.identifier },
-              returning: true,
-            })
+        fastify.db
+          .query(
+            'SELECT id, identifier, name FROM modules WHERE identifier IN (?)',
+            {
+              replacements: [modules.map((mod) => mod.identifier)],
+            }
           )
-        })
+          .then(([mods]) => {
+            // Make sure existing modules settings isn't overwritten
+            modules = modules.map((mod) => {
+              if (
+                -1 !==
+                mods.indexOf((existingMod) => existingMod.name === mod.name)
+              ) {
+                return {
+                  identifier: mod.identifier,
+                  name: mod.name,
+                  version: mod.version,
+                }
+              }
+            })
 
-        // Return needed to fix (node:6106) Warning: a promise was created in a handler at domain.js:137:15 but was not returned from it
-        return Promise.all(promises)
-          .then((rows) => {
-            rows = rows
-              .filter((mod) => mod[1])
-              .map((mod) => mod[0].name)
-              .join(', ')
+            modules.forEach((mod) => {
+              promises.push(
+                fastify.models.module.upsert(mod, {
+                  where: { identifier: mod.identifier },
+                  returning: true,
+                })
+              )
+            })
 
-            if (rows)
-              fastify.log.debug(`Modules Sync: Created "${rows}" modules`)
-            resolve()
+            // Return needed to fix (node:6106) Warning: a promise was created in a handler at domain.js:137:15 but was not returned from it
+            return Promise.all(promises)
+              .then((rows) => {
+                rows = rows
+                  .filter((mod) => mod[1])
+                  .map((mod) => mod[0].name)
+                  .join(', ')
+
+                if (rows)
+                  fastify.log.debug(`Modules Sync: Created "${rows}" modules`)
+                resolve()
+              })
+              .catch((err) => reject(err))
           })
           .catch((err) => reject(err))
       })
