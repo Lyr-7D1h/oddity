@@ -5,20 +5,22 @@ module.exports = {
     return queryInterface.bulkInsert("modules", [
       {
         name: "Home",
+        title: "Home",
+        identifier: "home",
         enabled: true,
         version: "0.0.1",
         route: "",
         createdAt: new Date(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     ]);
   },
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkDelete("modules", [
       {
-        name: "Home"
-      }
+        name: "Home",
+      },
     ]);
-  }
+  },
 };

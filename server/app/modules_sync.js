@@ -28,8 +28,10 @@ module.exports = fp(
             // Make sure existing modules settings isn't overwritten
             modules = modules.map((mod) => {
               if (
-                -1 !==
-                mods.indexOf((existingMod) => existingMod.name === mod.name)
+                -1 ===
+                mods.indexOf(
+                  (existingMod) => existingMod.identifier === mod.identifier
+                )
               ) {
                 return {
                   identifier: mod.identifier,
@@ -37,6 +39,7 @@ module.exports = fp(
                   version: mod.version,
                 }
               }
+              return mod
             })
 
             modules.forEach((mod) => {
