@@ -2,25 +2,60 @@ import {
   SAVE_ON_SAVE,
   SAVE_ON_RESET,
   SAVE_ON_ESCAPE,
-  SAVE_ON_CHANGE,
+  SAVE_SET_CALLER,
+  SAVE_REMOVE_CALLER,
+  SAVE_SET_CALLER_ERROR,
 } from 'Actions/saveActions'
 
-export default (
-  state = { showSavePopup: false, callers: {} },
-  { type, payload }
-) => {
+const initialState = {
+  escapeAttempt: 0,
+  saveAttempt: null,
+  callers: [],
+  errors: [],
+}
+
+export default (state = initialState, { type, payload }) => {
+  let callers
+  let errors
   switch (type) {
-    case SAVE_ON_CHANGE:
-      const callers = Object.assign({}, state.callers, {
-        [payload.caller]: payload.handler,
-      })
-      return Object.assign({}, state, { showSavePopup: true, callers })
+    case SAVE_SET_CALLER:
+      callers = Object.assign([], state.callers)
+      callers.push(payload.caller)
+      return Object.assign({}, state, { saveAttempt: 0, callers })
+
+    case SAVE_REMOVE_CALLER:
+      callers = Object.assign([], state.callers)
+      callers = callers.filter((caller) => caller !== payload.caller)
+
+      errors = Object.assign([], state.error)
+      errors.filter((errorCaller) => errorCaller !== payload.caller)
+
+      if (errors.length === 0 && callers.length === 0) {
+        return initialState
+      } else {
+        return Object.assign({}, state, {
+          callers,
+          errors,
+        })
+      }
+
+    case SAVE_SET_CALLER_ERROR:
+      errors = Object.assign([], state.errors)
+      errors.push(payload.caller)
+      return Object.assign({}, state, { errors })
+
     case SAVE_ON_SAVE:
-      return {}
+      state = Object.assign({}, state, { saveAttempt: state.saveAttempt + 1 })
+      return state
+
     case SAVE_ON_RESET:
-      return {}
+      return Object.assign({}, state, initialState)
+
     case SAVE_ON_ESCAPE:
-      return {}
+      return Object.assign({}, state, {
+        escapeAttempt: state.escapeAttempt + 1,
+      })
+
     default:
       return state
   }

@@ -5,6 +5,7 @@ import Centered from './Centered'
 import { Card } from 'antd'
 import ConditionalRedirect from './ConditionalRedirect'
 import hasPermission from 'Helpers/hasPermission'
+import SavePopup from 'Components/SavePopup'
 
 export default ({ children }) => {
   const nav = ['General', 'Modules', 'Roles']
@@ -17,6 +18,7 @@ export default ({ children }) => {
           <Card>{children}</Card>
         </Centered>
       </Page>
+      <SavePopup context="admin" />
     </ConditionalRedirect>
   )
 }

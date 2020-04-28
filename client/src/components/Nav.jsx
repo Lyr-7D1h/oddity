@@ -52,7 +52,7 @@ const Nav = ({ modules, title, user, updateUser, location, rootReset }) => {
               .filter((mod) => mod.route !== '')
               .map((mod, i) => (
                 <Menu.Item key={mod.route}>
-                  <Link to={`/${mod.route}`}>{mod.name}</Link>
+                  <Link to={`/${mod.route}`}>{mod.title}</Link>
                 </Menu.Item>
               ))}
 

@@ -39,7 +39,13 @@ export default ({ modules: modulesProp }) => {
       render: (name, record) => (
         <>
           {name}
-          {record.route === '' ? <Tag color="green">Home</Tag> : ''}
+          {record.route === '' ? (
+            <Tag style={{ marginLeft: '15px' }} color="default">
+              Home
+            </Tag>
+          ) : (
+            ''
+          )}
         </>
       ),
     },
@@ -64,7 +70,7 @@ export default ({ modules: modulesProp }) => {
       render: (enabled, record) => {
         if (enabled) {
           return (
-            <Link to={location.pathname + '/' + record.title.toLowerCase()}>
+            <Link to={location.pathname + '/' + record.name.toLowerCase()}>
               <Button block>Settings</Button>
             </Link>
           )

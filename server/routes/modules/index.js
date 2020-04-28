@@ -22,7 +22,7 @@ module.exports = async (fastify) => {
   )
 
   fastify.get(
-    '/modules/identifier/:identifier',
+    '/modules/identifier/:identifier/enabled',
     {
       permissions: fastify.PERMISSIONS.NON_SET,
       schema: {
@@ -39,7 +39,9 @@ module.exports = async (fastify) => {
     },
     (request, reply) => {
       fastify.models.module
-        .findOne({ where: { identifier: request.params.identifier } })
+        .findOne({
+          where: { identifier: request.params.identifier, enabled: true },
+        })
         .then((mod) => {
           return reply.send(mod)
         })
@@ -51,18 +53,12 @@ module.exports = async (fastify) => {
   )
 
   fastify.patch(
-    '/modules/:id/route',
+    '/modules/:id',
     {
       schema: {
         params: 'id#',
         body: {
           type: 'object',
-          properties: {
-            route: {
-              type: 'string',
-            },
-          },
-          required: ['route'],
         },
       },
       permissions: fastify.PERMISSIONS.ROOT,
@@ -72,10 +68,10 @@ module.exports = async (fastify) => {
       if (!request.body) return reply.badRequest()
 
       fastify.models.module
-        .update(
-          { route: request.body.route },
-          { where: { id: request.params.id }, returning: true }
-        )
+        .update(request.body, {
+          where: { id: request.params.id },
+          returning: true,
+        })
         .then(([amountModified, mod]) => {
           if (amountModified === 0) {
             return reply.noChange()
