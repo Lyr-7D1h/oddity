@@ -5,12 +5,7 @@ const Fastify = require('fastify')
 
 const envSchema = {
   type: 'object',
-  required: [
-    'SESSION_SECRET',
-    'DB_USERNAME',
-    'DB_PASSWORD',
-    'DB_NAME'
-  ],
+  required: ['SESSION_SECRET', 'DB_USERNAME', 'DB_PASSWORD', 'DB_NAME'],
   properties: {
     DB_HOST: { type: 'string' },
     DB_NAME: { type: 'string' },
@@ -19,19 +14,26 @@ const envSchema = {
     DB_LOGGING_ENABLED: { type: 'boolean' },
     SESSION_SECRET: { type: 'string' },
     PORT: { type: 'integer' },
-    NODE_ENV: { type: 'string' }
+    NODE_ENV: { type: 'string' },
   },
-  additionalProperties: false
+  additionalProperties: false,
 }
 
 // automatically build and tear down our instance
-module.exports = t => {
+module.exports = (t) => {
   const app = Fastify()
 
   // Set Fastify Env with env variables defined here
   app.register(require('fastify-env'), {
     schema: envSchema,
-    data: require('./config.helper')()
+    data: require('./config.helper')(),
+  })
+
+  // Create test sentry
+  app.decorate('sentry', {
+    captureException: (err) => {
+      console.error(err)
+    },
   })
 
   // fastify-plugin ensures that all decorators
@@ -39,7 +41,7 @@ module.exports = t => {
   // different from the production setup
   app.register(fp(require('../app')), { disableConfig: true })
 
-  process.on('uncaughtException', err => () => {
+  process.on('uncaughtException', (err) => () => {
     console.log('UNCAUGHT ERROR')
     t.error(err)
   })

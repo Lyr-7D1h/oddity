@@ -50,8 +50,8 @@ const buildInit = (instance) => {
 
     Promise.all(initPromises)
       .then(([config, modules]) => {
-        initObject.config = config.dataValues
-        initObject.modules = modules.map((mod) => mod.dataValues)
+        initObject.config = config ? config.dataValues : {}
+        initObject.modules = modules ? modules.map((mod) => mod.dataValues) : []
         instance.log.debug('Forwarder: updating init')
         init = `<script>window.init=${JSON.stringify(initObject)}</script>`
         resolve()
