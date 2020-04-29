@@ -28,8 +28,8 @@ module.exports = fp(
             // Make sure existing modules settings isn't overwritten
             modules = modules.map((mod) => {
               if (
-                -1 ===
-                mods.indexOf(
+                -1 !==
+                mods.findIndex(
                   (existingMod) => existingMod.identifier === mod.identifier
                 )
               ) {

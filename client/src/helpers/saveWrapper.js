@@ -4,6 +4,11 @@ import { connect } from 'react-redux'
 import notificationHandler from './notificationHandler'
 
 export default (Component, id) => {
+  if (!id) {
+    console.error('No id set')
+    return
+  }
+
   let saveHandler
   let resetHandler
   let hasChanges
@@ -12,12 +17,17 @@ export default (Component, id) => {
     ({ dispatch, saveAttempt, ...props }) => {
       const [initialValues, setInitialValues] = useState(null)
 
-      props.setSaveHandler = (promise) => {
+      /**
+       * callback: callback for a promise
+       * resolve and reject as parameters
+       */
+      props.setSaveHandler = (callback) => {
         // prevent multiple call
         if (!saveHandler) {
-          saveHandler = promise
+          saveHandler = callback
         } else {
-          console.error('Save Handler already set')
+          saveHandler = callback
+          console.warn(`${id}: Save Handler already set`)
         }
       }
 
@@ -25,7 +35,8 @@ export default (Component, id) => {
         if (!resetHandler) {
           resetHandler = callback
         } else {
-          console.error('Reset Handler already set')
+          resetHandler = callback
+          console.warn(`${id}: Reset Handler already set`)
         }
       }
 
@@ -33,15 +44,17 @@ export default (Component, id) => {
       // when this is called the component is registered
       props.setHasChanges = () => {
         if (!saveHandler) {
-          return console.error(
+          console.error(
             `${id}: Trying to call setHasChanges but no saveHandler has been set`
           )
+          return
         }
 
         if (!resetHandler) {
-          return console.error(
+          console.error(
             `${id}: Trying to call setHasChanges but no resetHandler has been set`
           )
+          return
         }
 
         if (!hasChanges) {
@@ -67,25 +80,17 @@ export default (Component, id) => {
             console.error(`No save handler set for ${id}, removing caller`)
             dispatch(removeCaller(id))
           } else {
-            const promise = saveHandler()
-            if (promise instanceof Promise) {
-              promise
-                .then((newInitialValues) => {
-                  hasChanges = false
-                  setInitialValues(newInitialValues)
-                  dispatch(removeCaller(id))
-                })
-                .catch((err) => {
-                  console.error(`Error in saveHandler for ${id}`, err)
-                  notificationHandler.error(
-                    'Could not save changes',
-                    err.message
-                  )
-                  dispatch(setCallerError(id))
-                })
-            } else {
-              console.error(`${id}: saveHandler does not return a promise`)
-            }
+            new Promise(saveHandler)
+              .then((newInitialValues) => {
+                hasChanges = false
+                setInitialValues(newInitialValues)
+                dispatch(removeCaller(id))
+              })
+              .catch((err) => {
+                console.error(`Error in saveHandler for ${id}`, err)
+                notificationHandler.error('Could not save changes', err.message)
+                dispatch(setCallerError(id))
+              })
           }
         }
       }, [saveAttempt, dispatch, initialValues])

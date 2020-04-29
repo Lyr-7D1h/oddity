@@ -67,11 +67,11 @@ blockquote p {
 
   .oddity-collapsable-disabled-header {
     padding: 10px;
-    color: @text-color;
+    color: @text-color-inverse;
     padding-right: 25px;
-    background-color: fade(@primary-color, 10%);
+    background-color: fade(@primary-color, 90%);
     &:hover {
-      background-color: fade(@primary-color, 30%) !important;
+      background-color: fade(@primary-color, 80%) !important;
     }
     cursor: default;
   }
@@ -79,10 +79,11 @@ blockquote p {
   .oddity-collapsable-custom-header {
     padding: 10px;
     padding-right: 25px;
-    background-color: fade(@primary-color, 10%);
+    background-color: @primary-color;
+    color: @text-color-inverse;
     cursor: move;
     &:hover {
-      background-color: fade(@primary-color, 30%) !important;
+      background-color: fade(@primary-color, 80%) !important;
     }
   }
 
@@ -97,18 +98,21 @@ blockquote p {
   }
 
   .oddity-dnd-select {
-    background-color: fade(@primary-color, 30%) !important;
+    background-color: fade(@background-color-light, 30%) !important;
   }
   .oddity-dnd-downward {
-    border-bottom: 2px dashed @primary-color;
+    border-bottom: 2px dashed @text-color-inverse;
   }
   .oddity-dnd-upward {
-    border-top: 2px dashed @primary-color;
+    border-top: 2px dashed @text-color-inverse;
   }
 
   .ant-collapse-header {
     padding: 0 !important;
     margin: 0 !important;
+  }
+  .ant-collapse-arrow {
+    color: @text-color-inverse !important;
   }
 }
 
@@ -130,11 +134,11 @@ blockquote p {
   transition-duration: 1s;
   z-index: 5;
   transform: translate(-50%);
-  bottom: 40px;
+  bottom: 15px;
   position: fixed;
   width: 500px;
   padding: 15px;
-  background-color: @primary-color;
+  background-color: fade(@primary-color, 95%);
   vertical-align: middle;
   left: 50vw;
   color: @text-color-inverse;

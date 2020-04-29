@@ -10,14 +10,14 @@ export default () => {
 
   useEffect(() => {
     requester.get('modules').then((modules) => {
-      modules.sort((a, b) => (a.enabled ? 1 : -1))
       setModules(modules.sort((a, b) => (a === b ? 0 : a ? -1 : 1))) // sets enabled first
     })
   }, [])
 
   return (
     <AdminPage>
-      {-1 === modules.indexOf((mod) => mod.route === '') ? (
+      {-1 === modules.findIndex((mod) => mod.route === '') &&
+      modules.length > 0 ? (
         <>
           <Alert
             message="No home module set"

@@ -24,31 +24,6 @@ const Page = ({
   const [notFound, setNotFound] = useState(false)
   const [form] = Form.useForm()
 
-  const setSaveHandlers = (mod) => {
-    setInitialValues(mod)
-    setResetHandler((mod) => {
-      form.setFieldsValue(mod)
-    })
-    setSaveHandler(
-      () =>
-        new Promise((resolve, reject) => {
-          setTimeout(() => {
-            form
-              .validateFields()
-              .then((values) => {
-                requester
-                  .patch(`modules/${mod.id}`, values)
-                  .then((module) => {
-                    resolve(module)
-                  })
-                  .catch((err) => reject(err))
-              })
-              .catch((err) => reject(err))
-          }, 2000)
-        })
-    )
-  }
-
   useEffect(() => {
     if (!mod) {
       requester
@@ -59,7 +34,23 @@ const Page = ({
             if (component) {
               setImportedSettingsComponent(React.createElement(component))
             }
-            setSaveHandlers(mod)
+            setInitialValues(mod)
+            setResetHandler((mod) => {
+              form.setFieldsValue(mod)
+            })
+            setSaveHandler((resolve, reject) =>
+              form
+                .validateFields()
+                .then((values) => {
+                  requester
+                    .patch(`modules/${mod.id}`, values)
+                    .then((module) => {
+                      resolve(module)
+                    })
+                    .catch((err) => reject(err))
+                })
+                .catch((err) => reject(err))
+            )
           } else {
             setNotFound(true)
           }
@@ -69,7 +60,7 @@ const Page = ({
           notificationHandler.error('Something went wrong', err.message)
         })
     }
-  }, [match, form, setSaveHandler, mod, setInitialValues, setResetHandler])
+  }, [mod, match, form, setInitialValues, setResetHandler, setSaveHandler])
 
   const Content = (
     <>

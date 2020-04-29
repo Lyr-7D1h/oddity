@@ -230,12 +230,12 @@ module.exports = async (fastify) => {
       fastify.models.forumCategory
         .create(request.body)
         .then((category) => {
-          reply.send(category);
+          return reply.send(category);
         })
         .catch((err) => {
           fastify.log.error(err);
           fastify.sentry.captureException(err);
-          reply.internalServerError();
+          return reply.internalServerError();
         });
     }
   );
