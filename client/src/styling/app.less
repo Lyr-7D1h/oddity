@@ -131,7 +131,7 @@ blockquote p {
   ODDITY NOTIFICATION
 */
 .oddity-notification {
-  transition-duration: 1s;
+  transition-duration: 0.5s;
   z-index: 5;
   transform: translate(-50%);
   bottom: 15px;
@@ -152,6 +152,7 @@ blockquote p {
   }
 }
 .oddity-notification.error {
+  transition-duration: 0.3s;
   background-color: fade(@error-color, 85%);
 }
 .ant-btn-inverse {

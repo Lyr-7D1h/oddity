@@ -1,6 +1,5 @@
 export const SAVE_ON_RESET = 'save:onReset'
 export const SAVE_ON_SAVE = 'save:onSave'
-export const SAVE_ON_ESCAPE = 'save:onEscape'
 export const SAVE_SET_CALLER = 'save:setCaller'
 export const SAVE_REMOVE_CALLER = 'save:removeCaller'
 export const SAVE_SET_CALLER_ERROR = 'save:setCallerError'
@@ -27,5 +26,3 @@ export const setCallerError = (caller) => ({
 })
 
 export const onReset = () => ({ type: SAVE_ON_RESET })
-
-export const onEscape = () => ({ type: SAVE_ON_ESCAPE })

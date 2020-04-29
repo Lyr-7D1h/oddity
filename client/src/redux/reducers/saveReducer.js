@@ -1,14 +1,12 @@
 import {
   SAVE_ON_SAVE,
   SAVE_ON_RESET,
-  SAVE_ON_ESCAPE,
   SAVE_SET_CALLER,
   SAVE_REMOVE_CALLER,
   SAVE_SET_CALLER_ERROR,
 } from 'Actions/saveActions'
 
 const initialState = {
-  escapeAttempt: 0,
   saveAttempt: null,
   callers: [],
   errors: [],
@@ -50,11 +48,6 @@ export default (state = initialState, { type, payload }) => {
 
     case SAVE_ON_RESET:
       return Object.assign({}, state, initialState)
-
-    case SAVE_ON_ESCAPE:
-      return Object.assign({}, state, {
-        escapeAttempt: state.escapeAttempt + 1,
-      })
 
     default:
       return state
