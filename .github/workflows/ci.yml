@@ -9,9 +9,6 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  IMAGE_NAME: oddity:${{ github.ref }}
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -77,6 +74,10 @@ jobs:
     steps:
       - name: Checkout Branch
         uses: actions/checkout@v1
+      - name: Setting Image Name
+        run: |
+          IMAGE_NAME=oddity:$(date +%s)
+          echo $IMAGE_NAME
       - name: Docker Login
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
       - name: Build Docker Image
