@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  IMAGE_NAME: oddity:$(date +%s)
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -77,6 +80,6 @@ jobs:
       - name: Docker Login
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
       - name: Build Docker Image
-        run: docker build . --tag oddity:$(date +%s)
+        run: docker build . --tag $IMAGE_NAME
       - name: Push Docker Image
-        run: docker push oddity:$(date +%s)
+        run: docker push $IMAGE_NAME
