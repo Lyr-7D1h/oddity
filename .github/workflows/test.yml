@@ -67,6 +67,8 @@ jobs:
       - name: Test Client
         run: npm test
         working-directory: client
+      - name: Docker Login
+        run: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USER" --password-stdin
       - name: Build Docker Image
         run: docker build . --file Dockerfile --tag oddity:$(date +%s)
       - name: Push Docker Image
