@@ -10,63 +10,68 @@ on:
     branches: [master]
 
 jobs:
-  test:
+#   test:
+#     runs-on: ubuntu-latest
+#     container: cypress/base:13.6.0
+
+#     services:
+#       postgres:
+#         image: postgres:latest
+#         env:
+#           POSTGRES_DB: testing
+#           POSTGRES_USER: test
+#           POSTGRES_PASSWORD: test_pass
+#         options: >-
+#           --health-cmd pg_isready
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
+
+#     strategy:
+#       matrix:
+#         node-version: ["12.x", "10.x"]
+
+#     env:
+#       DB_HOST: postgres
+#       DB_NAME: testing
+#       DB_USERNAME: test
+#       DB_PASSWORD: test_pass
+#       SESSION_SECRET: kn&6Ji5#dKtF!z#*rH@u48hm22NEz&bdFJ&JzwhYVF
+#       SENTRY_DSN: https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726
+#       CAPTCHA_CLIENT: "asdfasdfasdfasdf"
+#       CAPTCHA_SERVER: "asdfasdfasdfasdf"
+
+#     steps:
+#       - name: Checkout Branch
+#         uses: actions/checkout@v1
+#       - name: Use Node.js ${{ matrix.node-version }}
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#       - name: Build Server
+#         run: |
+#           npm ci
+#           node module_loader
+#           node models_sync
+#         working-directory: server
+#       - name: Load Modules
+#         run: ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/"
+#       - name: Build Client
+#         working-directory: client
+#         run: |
+#           npm ci
+#           npm run build
+#       - name: Test Server
+#         run: npm test
+#         working-directory: server
+#       - name: Test Client
+#         run: npm test
+#         working-directory: client
+  docker:
+#     needs: test
     runs-on: ubuntu-latest
-    container: cypress/base:13.6.0
-
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: testing
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test_pass
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    strategy:
-      matrix:
-        node-version: ["12.x", "10.x"]
-
-    env:
-      DB_HOST: postgres
-      DB_NAME: testing
-      DB_USERNAME: test
-      DB_PASSWORD: test_pass
-      SESSION_SECRET: kn&6Ji5#dKtF!z#*rH@u48hm22NEz&bdFJ&JzwhYVF
-      SENTRY_DSN: https://ac8fa8071ed5482c8d559a8acb51f8fc@sentry.io/1886726
-      CAPTCHA_CLIENT: "asdfasdfasdfasdf"
-      CAPTCHA_SERVER: "asdfasdfasdfasdf"
-
+    
     steps:
-      - name: Checkout Branch
-        uses: actions/checkout@v1
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Build Server
-        run: |
-          npm ci
-          node module_loader
-          node models_sync
-        working-directory: server
-      - name: Load Modules
-        run: ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/"
-      - name: Build Client
-        working-directory: client
-        run: |
-          npm ci
-          npm run build
-      - name: Test Server
-        run: npm test
-        working-directory: server
-      - name: Test Client
-        run: npm test
-        working-directory: client
       - name: Docker Login
         run: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USER" --password-stdin
       - name: Build Docker Image
