@@ -14,6 +14,7 @@ module.exports = async (fastify) => {
       permissions: fastify.PERMISSIONS.NONE,
     },
     (request, reply) => {
+      console.log('RECEIVED')
       fastify.models.user
         .findOne({ where: { id: request.params.id } })
         .then((user) => {
@@ -80,7 +81,7 @@ module.exports = async (fastify) => {
         .catch((err) => {
           fastify.log.error(err)
           fastify.sentry.captureException(err)
-          reply.internalServerError()
+          return reply.internalServerError()
         })
     }
   )

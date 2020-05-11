@@ -2,46 +2,22 @@ import React, { useState } from 'react'
 import Centered from '../containers/Centered'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { InboxOutlined, LeftOutlined, RightOutlined, UploadOutlined } from '@ant-design/icons';
-import { Steps, Upload, Avatar, Row, Col, Button, Card, Typography, Layout } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import { Steps, Row, Col, Button, Card, Typography, Layout, Menu } from 'antd'
 import notificationHandler from '../../helpers/notificationHandler'
 import { updateUser } from '../../redux/actions/userActions'
+import ImageUpload from 'Components/ImageUpload'
+import Title from 'antd/lib/typography/Title'
+import Paragraph from 'antd/lib/typography/Paragraph'
+import requester from 'Helpers/requester'
+import { rootReset } from 'Actions/rootActions'
 
 const { Step } = Steps
 
-const FinishAccountPage = ({ user, dispatch }) => {
-  const [imgUrl, setImgUrl] = useState('')
-  const [currentStep, setCurrentStep] = useState(1)
-
-  const props = {
-    name: 'file',
-    multiple: false,
-    accept: 'image/jpeg, image/png',
-    showUploadList: false,
-    action: `api/resources/users/${user.id}`,
-
-    onChange(info) {
-      const { status } = info.file
-      if (status !== 'uploading') {
-      }
-      if (status === 'done') {
-        setImgUrl(info.file.response.url)
-        notificationHandler.success('Uploaded Profile Picture successfully')
-      } else if (status === 'error') {
-        notificationHandler.error(
-          `file upload failed.`,
-          info.file.response.message || ''
-        )
-      }
-    }
-  }
+const FinishAccountPage = ({ user, title, dispatch }) => {
+  const [currentStep, setCurrentStep] = useState(0)
 
   const next = () => {
-    if (currentStep + 1 === 3) {
-      const newUser = { ...user }
-      newUser.avatar = imgUrl
-      dispatch(updateUser(newUser))
-    }
     setCurrentStep(currentStep + 1)
   }
 
@@ -49,49 +25,19 @@ const FinishAccountPage = ({ user, dispatch }) => {
     setCurrentStep(currentStep - 1)
   }
 
-  const ImageUpload =
-    imgUrl.length > 0 ? (
-      <>
-        <Row style={{ marginBottom: 50 }}>
-          <Col span={8}>
-            <Avatar size={200} shape="square" src={imgUrl} />
-          </Col>
-          <Col span={6}>
-            <Avatar size={120} shape="square" src={imgUrl} />
-          </Col>
-          <Col span={6}>
-            <Avatar size={75} src={imgUrl} />
-          </Col>
-          <Col span={4}>
-            <Avatar size={50} src={imgUrl} />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <Upload {...props} style={{ width: '100vw' }}>
-              <Button type="secundary">
-                <UploadOutlined /> Upload other image
-              </Button>
-            </Upload>
-          </Col>
-          <Col span={12}>
-            <Button type="primary" onClick={next} block>
-              Next <RightOutlined />
-            </Button>
-          </Col>
-        </Row>
-      </>
-    ) : (
-      <Upload.Dragger {...props}>
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
-        </p>
-        <p className="ant-upload-text">
-          Click or drag file to this area to upload
-        </p>
-        <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-      </Upload.Dragger>
-    )
+  const handleLogout = () => {
+    requester
+      .logout()
+      .then(() => {
+        dispatch(updateUser({}))
+        dispatch(rootReset())
+        notificationHandler.success('Logged out successfully')
+      })
+      .catch(() => {
+        dispatch(updateUser({})) // remove user from state
+        notificationHandler.error('Something went wrong')
+      })
+  }
 
   const ConnectThirdParty = (
     <>
@@ -118,38 +64,105 @@ const FinishAccountPage = ({ user, dispatch }) => {
           </Card>
         </Col>
       </Row>
-      <Row>
-        <Col span={12}>
-          <Button onClick={previous} block>
-            <LeftOutlined /> Back
-          </Button>
-        </Col>
-        <Col span={12}>
-          <Button type="primary" onClick={next} block>
-            Finish <RightOutlined />
-          </Button>
-        </Col>
-      </Row>
     </>
   )
 
+  let Content
+  switch (currentStep) {
+    case 0:
+      Content = (
+        <>
+          <Title>Welcome to {title}!</Title>
+          <Paragraph>
+            Before you enter this wonderfull community we would like you to go
+            through these steps for creating a more complete account.
+            <br /> By completing these steps you'll make it easier for others to
+            recognize you and you'll show that you're an actual real person!
+          </Paragraph>
+        </>
+      )
+      break
+    case 1:
+      Content = <ImageUpload url={`/api/resources/users/${user.id}`} />
+      break
+    case 2:
+      Content = <ConnectThirdParty />
+      break
+    default:
+      Content = <Redirect to="/account" />
+      break
+  }
+
   return (
-    <Layout style={{ padding: '10px' }}>
-      <Typography.Title style={{ marginBottom: '50px', textAlign: 'center' }}>
-        Finish Account
-      </Typography.Title>
-      <Steps progressDot style={{ marginBottom: 50 }} current={currentStep}>
-        <Step title="Created Account" />
-        <Step title="Upload Profile Picture" />
-        <Step title="Connect to third parties" />
-      </Steps>
-      <Centered>
-        {currentStep === 1 && ImageUpload}
-        {currentStep === 2 && ConnectThirdParty}
-        {currentStep === 3 && <Redirect to="/account"></Redirect>}
-      </Centered>
-    </Layout>
+    <>
+      <Layout theme="light" style={{ padding: '10px', minHeight: '100vh' }}>
+        <Menu
+          selectable={false}
+          theme="light"
+          style={{
+            border: 'none',
+            paddingLeft: '15px',
+            paddingRight: '15px',
+          }}
+        >
+          <Menu.Item style={{ float: 'left' }}>
+            {user.username} ({user.email})
+          </Menu.Item>
+          <Menu.Item
+            style={{ color: 'red', float: 'right' }}
+            onClick={handleLogout}
+          >
+            Logout
+          </Menu.Item>
+        </Menu>
+        <Card bordered={false} bodyStyle={{ minHeight: '80vh' }}>
+          <Steps style={{ marginBottom: 50 }} current={currentStep}>
+            <Step title="Created Account" />
+            <Step title="Upload Profile Picture" />
+            <Step title="Connect to third parties" />
+          </Steps>
+          <Row
+            align="middle"
+            gutter="15"
+            justify="space-around"
+            style={{ textAlign: 'center' }}
+          >
+            <Col span={24} style={{ marginBottom: '15px' }}>
+              <Centered>{Content}</Centered>
+            </Col>
+            <div
+              style={{
+                padding: '15px',
+                position: 'absolute',
+                bottom: '15px',
+                width: '100%',
+              }}
+            >
+              <Row>
+                <Col span={6}>
+                  {currentStep > 0 ? (
+                    <Button size="large" onClick={previous} block>
+                      <LeftOutlined /> Back
+                    </Button>
+                  ) : (
+                    ''
+                  )}
+                </Col>
+                <Col offset={12} span={6}>
+                  <Button size="large" type="primary" onClick={next} block>
+                    Next <RightOutlined />
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </Row>
+        </Card>
+      </Layout>
+    </>
   )
 }
 
-export default connect(state => ({ user: state.user }))(FinishAccountPage)
+export default connect((state) => ({
+  user: state.user,
+  title: state.init.config.title,
+}))(FinishAccountPage)

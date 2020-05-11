@@ -3,14 +3,14 @@ const Sequelize = require('sequelize')
 
 module.exports = fp(
   (instance, opts, done) => {
-    const HOST = instance.config.DB_HOST || 'localhost'
+    const HOST = 'localhost' // instance.config.DB_HOST || 'localhost'
     const DATABASE = instance.config.DB_NAME || 'oddity'
-    const USERNAME = instance.config.DB_USERNAME || 'oddity'
-    const PASSWORD = instance.config.DB_PASSWORD
+    const USERNAME = 'oddity' //instance.config.DB_USERNAME || 'oddity'
+    const PASSWORD = 'aa' //instance.config.DB_PASSWORD
 
     const sequelizeOpts = {
       host: HOST,
-      dialect: 'postgres'
+      dialect: 'postgres',
     }
 
     if (
@@ -29,24 +29,21 @@ module.exports = fp(
         instance.decorate('db', sequelize)
         instance.decorate('Sequelize', Sequelize)
         instance.addHook('onClose', (fastify, done) => {
-          fastify.db
-            .close()
-            .then(done)
-            .catch(done)
+          fastify.db.close().then(done).catch(done)
         })
         instance.log.info(
           `Connected to Postgres postgresql://${USERNAME}:{PASSWORD}@${HOST}/${DATABASE}`
         )
         done()
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err)
         instance.log.fatal(err)
         throw err
       })
   },
   {
-    name: 'sequelize'
+    name: 'sequelize',
     // dependencies: ['modules_sync']
   }
 )

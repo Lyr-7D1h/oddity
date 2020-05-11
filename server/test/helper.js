@@ -32,7 +32,7 @@ module.exports = (t) => {
   // Create test sentry
   app.decorate('sentry', {
     captureException: (err) => {
-      console.error(err)
+      throw err
     },
   })
 

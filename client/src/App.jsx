@@ -14,7 +14,7 @@ import TermsOfServicePage from './components/pages/TermsOfServicePage'
 import NotFoundPage from './components/pages/NotFoundPage'
 import NoHomePage from './components/pages/NoHomePage'
 import AccountPage from './components/pages/AccountSettingsPage'
-// import FinishAccountPage from './components/pages/FinishAccountPage'
+import FinishAccountPage from './components/pages/FinishAccountPage'
 
 import moduleLoaderModules from '../module_loader_imports/modules'
 import ProfilePage from './components/pages/ProfilePage'
@@ -125,38 +125,38 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
   return (
     <BrowserRouter>
       <InitLoader>
-        {/* {userNeedsSetup ? (
+        {userNeedsSetup ? (
           <FinishAccountPage />
-        ) : ( */}
-        <Switch>
-          {defaultRoutes}
-          {adminRoutes}
+        ) : (
+          <Switch>
+            {defaultRoutes}
+            {adminRoutes}
 
-          {getModuleRoutes()}
+            {getModuleRoutes()}
 
-          {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
+            {noHomeSet && <Route exact path="/" component={NoHomePage}></Route>}
 
-          {/* Remove Trailing / in url */}
-          <Route
-            path="/:url*(/+)"
-            exact
-            strict
-            render={({ location }) => (
-              <Redirect to={location.pathname.replace(/\/+$/, '')} />
-            )}
-          />
-          {/* Removes duplicate slashes in the middle of the URL */}
-          <Route
-            path="/:url(.*//+.*)"
-            exact
-            strict
-            render={({ match }) => (
-              <Redirect to={`/${match.params.url.replace(/\/\/+/, '/')}`} />
-            )}
-          />
-          <Route path="*" component={NotFoundPage}></Route>
-        </Switch>
-        {/* )} */}
+            {/* Remove Trailing / in url */}
+            <Route
+              path="/:url*(/+)"
+              exact
+              strict
+              render={({ location }) => (
+                <Redirect to={location.pathname.replace(/\/+$/, '')} />
+              )}
+            />
+            {/* Removes duplicate slashes in the middle of the URL */}
+            <Route
+              path="/:url(.*//+.*)"
+              exact
+              strict
+              render={({ match }) => (
+                <Redirect to={`/${match.params.url.replace(/\/\/+/, '/')}`} />
+              )}
+            />
+            <Route path="*" component={NotFoundPage}></Route>
+          </Switch>
+        )}
       </InitLoader>
     </BrowserRouter>
   )
