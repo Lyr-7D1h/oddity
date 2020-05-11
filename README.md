@@ -1,6 +1,6 @@
 # ODDITY
 
-![Tests](https://github.com/OddityServers/oddity/workflows/Tests/badge.svg)
+![CI](https://github.com/OddityServers/oddity/workflows/CI/badge.svg)
 
 ## Introduction
 
