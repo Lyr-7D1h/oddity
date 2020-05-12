@@ -1,5 +1,6 @@
 # ODDITY
 A completely modulare web application, aimed for gaming communities.  Let your community flourish and reach its full potential by using this application. Our main priorities are ease of use and developer friendliness. We use the most recent and modern technologies available to us for a very fast and stable environment.
+
 ![CI](https://github.com/OddityServers/oddity/workflows/CI/badge.svg)
 
 ## Introduction
