@@ -1,5 +1,5 @@
 # ODDITY
-
+A completely modulare web application, aimed for gaming communities.  Let your community flourish and reach its full potential by using this application. Our main priorities are ease of use and developer friendliness. We use the most recent and modern technologies available to us for a very fast and stable environment.
 ![CI](https://github.com/OddityServers/oddity/workflows/CI/badge.svg)
 
 ## Introduction
@@ -8,7 +8,7 @@ This is the base of the project. Web interface (client) + API (server)
 
 - As a database we use PostgreSQL
 - We have a client for user interacting with the API this is a react app.
-- We have a server for inter-domain communications this is an API made with Fasitfy this is what communicates with the Database
+- We have a server for inter-domain communications this is an API made with Fasitfy
 
 ## Setup
 
