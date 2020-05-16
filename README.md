@@ -19,6 +19,21 @@ Requirements
 - node installed (V13.1 used)
 - postgresql (V12.2 used)
 
+### Environment Variables
+Required:
+
+DB_NAME - Name of the Postgres database\
+DB_USERNAME - Name of the Postgres user\
+DB_PASSWORD - Password of the Postgres user\
+SESSION_SECRET - The secret used to create sessions MUST BE 32+ CHARACTERS\
+CAPTCHA_CLIENT - Captcha V2 checkbox Site key (https://www.google.com/recaptcha/admin/create)\
+CAPTCHA_SERVER - Captcha V2 checkbox Secret key (https://www.google.com/recaptcha/admin/create) (you can also fill in a random string but then captcha will not work)\
+
+Optional:
+
+DB_HOST=localhost - Host of the Postgres database, can be either an IP or Domain Name\
+DB_LOGGING_ENABLED=false - Show queries in the logs
+
 ### Linux Based Systems (or in Windows WLS)
 
 run `./setup.sh`
