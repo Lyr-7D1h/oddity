@@ -6,7 +6,7 @@ const RouteGen = require('../../plugins/decorators/route_generation')
 // const getTestModel = require('../models/test')
 
 // clear all tables
-require('../db.helper')()
+require('../db.helper').clear()
 
 // let build = (t) => {
 //   const app = require('../helper')(t)

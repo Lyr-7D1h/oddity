@@ -4,13 +4,13 @@ const bcrypt = require('bcrypt')
 const test = t.test
 
 // clear all tables
-require('../db.helper')()
+require('../db.helper').clear()
 
-const build = require('../helper')
+const build = require('../build.helper')
 
 const testRole = {
   name: 'Test',
-  permissions: 1
+  permissions: 1,
 }
 
 const hash = bcrypt.hashSync('test', 12)
@@ -20,16 +20,16 @@ const testUser = {
   email: 'test@test.com',
   roleId: 1,
   password: hash,
-  ip: '127.0.0.1'
+  ip: '127.0.0.1',
 }
 
-const basicTest = app => {
-  app.register(async fastify => {
+const basicTest = (app) => {
+  app.register(async (fastify) => {
     fastify.get(
       '/test',
       {
         preHandler: app.auth([app.authentication.basic]),
-        permissions: 1
+        permissions: 1,
       },
       (request, reply) => {
         reply.send(request.user.id)
@@ -38,19 +38,19 @@ const basicTest = app => {
   })
 }
 
-test('Can not authorize without credentials USING BASIC', t => {
+test('Can not authorize without credentials USING BASIC', (t) => {
   t.plan(5)
 
   const app = build(t)
 
   basicTest(app)
 
-  app.ready(err => {
+  app.ready((err) => {
     t.error(err)
 
     app.inject(
       {
-        url: '/test'
+        url: '/test',
       },
       (err, res) => {
         t.error(err)
@@ -64,26 +64,26 @@ test('Can not authorize without credentials USING BASIC', t => {
         t.deepEqual(JSON.parse(res.body), {
           statusCode: 401,
           error: 'Unauthorized',
-          message: 'Unauthorized'
+          message: 'Unauthorized',
         })
       }
     )
   })
 })
 
-test('Can authorize USING BASIC', t => {
+test('Can authorize USING BASIC', (t) => {
   t.plan(4)
 
   const app = build(t)
 
   basicTest(app)
 
-  app.ready(err => {
+  app.ready((err) => {
     t.error(err)
 
     app.models.role
       .create(testRole)
-      .then(role => {
+      .then((role) => {
         testUser.roleId = role.id
 
         app.models.user
@@ -94,8 +94,8 @@ test('Can authorize USING BASIC', t => {
                 url: '/test',
                 headers: {
                   Authorization:
-                    'Basic ' + Buffer.from('test:test').toString('base64') // Base64 admin:admin
-                }
+                    'Basic ' + Buffer.from('test:test').toString('base64'), // Base64 admin:admin
+                },
               },
               (err, res) => {
                 t.error(err)
@@ -106,32 +106,32 @@ test('Can authorize USING BASIC', t => {
               }
             )
           })
-          .catch(err => {
+          .catch((err) => {
             t.error(err)
           })
       })
-      .catch(err => {
+      .catch((err) => {
         t.error(err)
       })
   })
 })
 
-test('Can not authorize with wrong credentials USING BASIC', t => {
+test('Can not authorize with wrong credentials USING BASIC', (t) => {
   t.plan(5)
 
   const app = build(t)
 
   basicTest(app)
 
-  app.ready(err => {
+  app.ready((err) => {
     t.error(err)
 
     app.inject(
       {
         url: '/test',
         headers: {
-          Authorization: 'Basic ' + Buffer.from('test:asdf').toString('base64')
-        }
+          Authorization: 'Basic ' + Buffer.from('test:asdf').toString('base64'),
+        },
       },
       (err, res) => {
         t.error(err)
@@ -145,7 +145,7 @@ test('Can not authorize with wrong credentials USING BASIC', t => {
         t.deepEqual(JSON.parse(res.body), {
           statusCode: 401,
           error: 'Unauthorized',
-          message: 'Unauthorized'
+          message: 'Unauthorized',
         })
       }
     )

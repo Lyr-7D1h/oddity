@@ -1,7 +1,10 @@
 module.exports = async (fastify) => {
   fastify.get(
     "/forum/drafts",
-    { permissions: fastify.PERMISSIONS.NONE },
+    {
+      permissions: fastify.PERMISSIONS.NONE,
+      preHandler: fastify.auth([fastify.authentication.cookie]),
+    },
     (request, reply) => {
       if (
         !request.session ||

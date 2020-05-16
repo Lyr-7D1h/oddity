@@ -1,16 +1,16 @@
 'use strict'
 
 const { test } = require('tap')
-const build = require('../helper')
+const build = require('../build.helper')
 
-test('API: default root route', t => {
+test('API: default root route', (t) => {
   t.plan(3)
 
   const fastify = build(t)
 
   fastify.inject(
     {
-      url: '/api/'
+      url: '/api/',
     },
     (err, res) => {
       t.error(err)
@@ -20,14 +20,14 @@ test('API: default root route', t => {
   )
 })
 
-test('REACT: default root route', t => {
+test('REACT: default root route', (t) => {
   t.plan(3)
 
   const fastify = build(t)
 
   fastify.inject(
     {
-      url: '/'
+      url: '/',
     },
     (err, res) => {
       t.error(err)

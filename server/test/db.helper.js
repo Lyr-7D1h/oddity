@@ -5,10 +5,10 @@ const {
   DB_HOST,
   DB_NAME,
   DB_USERNAME,
-  DB_PASSWORD
+  DB_PASSWORD,
 } = require('./config.helper')()
 
-module.exports = () => {
+const clear = () => {
   const client = new Client()
 
   client.connectSync(
@@ -22,7 +22,11 @@ module.exports = () => {
   require('child_process').execSync(
     `DB_HOST=${DB_HOST} DB_NAME=${DB_NAME} DB_USERNAME=${DB_USERNAME} DB_PASSWORD=${DB_PASSWORD} node models_sync`,
     {
-      cwd: require('path').join(__dirname, '..')
+      cwd: require('path').join(__dirname, '..'),
     }
   )
+}
+
+module.exports = {
+  clear,
 }
