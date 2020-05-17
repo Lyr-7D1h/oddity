@@ -10,7 +10,7 @@ export default ({ user }) => {
       <Card>
         <Layout>
           <Header className="component-background" style={{ fontSize: '20px' }}>
-            <Avatar /> {user.username} (#{user.identifier})
+            <Avatar src={user.avatar} /> {user.username} (#{user.identifier})
           </Header>
         </Layout>
       </Card>

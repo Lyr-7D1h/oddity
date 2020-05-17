@@ -9,14 +9,23 @@ const columns = [
   {
     title: "",
     dataIndex: "avatar",
-    render: (usernameLetter) => (
-      <Avatar
-        style={{ backgroundColor: "#333", verticalAlign: "middle" }}
-        size="large"
-      >
-        {usernameLetter}
-      </Avatar>
-    ),
+    render: (avatar, record) => {
+      if (avatar) {
+        return (
+          <Avatar
+            style={{ verticalAlign: "middle" }}
+            size="large"
+            src={avatar}
+          ></Avatar>
+        );
+      } else {
+        return (
+          <Avatar style={{ verticalAlign: "middle", backgroundColor: "#332" }}>
+            {record.username.slice(0, 1).toUpperCase()}
+          </Avatar>
+        );
+      }
+    },
   },
   {
     title: "Username",
@@ -73,7 +82,7 @@ export default () => {
   if (members.length > 0 && roles.length > 0) {
     data = members.map((member) => {
       member.role = roles.find((role) => role.id === member.roleId).name;
-      member.avatar = member.username.slice(0, 1).toUpperCase();
+      // member.avatar =
       return member;
     });
   }

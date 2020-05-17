@@ -166,6 +166,10 @@ export default connect((state) => {
   return {
     modules: state.init.modules,
     userNeedsSetup:
-      state.user.id && !state.user.hasFinishedAccount ? true : false,
+      state.user.id &&
+      !state.user.hasFinishedAccount &&
+      state.user.identifier !== 'root'
+        ? true
+        : false,
   }
 })(App)
