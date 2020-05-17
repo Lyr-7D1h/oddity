@@ -11,7 +11,7 @@ const config = {
   database: DATABASE,
   host: HOST,
   port: 5432,
-  dialect: 'postgres'
+  dialect: 'postgres',
 }
 
 // Only using one database at all times credentials may change of db when testing or in dev
@@ -19,5 +19,5 @@ module.exports = {
   development: config,
   production: config,
   test: config,
-  testing: config
+  testing: config,
 }

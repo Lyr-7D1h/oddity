@@ -79,7 +79,7 @@ server.listen(process.env.PORT || 5000, '0.0.0.0', (err) => {
 
   if (server.config.NODE_ENV === 'development') {
     server.log.warn('RUNNING IN DEVELOPMENT MODE')
-    server.log.info('Routes:')
+    server.log.debug('Routes:')
     console.debug(server.printRoutes())
     server.log.info(
       'Startup time is ' + require('perf_hooks').performance.now() + 'ms'

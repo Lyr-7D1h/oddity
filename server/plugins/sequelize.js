@@ -3,10 +3,11 @@ const Sequelize = require('sequelize')
 
 module.exports = fp(
   (instance, opts, done) => {
-    const HOST = 'localhost' // instance.config.DB_HOST || 'localhost'
+    const HOST = instance.config.DB_HOST || 'localhost'
     const DATABASE = instance.config.DB_NAME || 'oddity'
-    const USERNAME = 'oddity' //instance.config.DB_USERNAME || 'oddity'
-    const PASSWORD = 'aa' //instance.config.DB_PASSWORD
+    const USERNAME = instance.config.DB_USERNAME || 'oddity'
+    const PASSWORD = instance.config.DB_PASSWORD
+    console.log(HOST, DATABASE, USERNAME)
 
     const sequelizeOpts = {
       host: HOST,

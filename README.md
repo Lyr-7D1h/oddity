@@ -1,5 +1,6 @@
 # ODDITY
-A completely modulare web application, aimed for gaming communities.  Let your community flourish and reach its full potential by using this application. Our main priorities are ease of use and developer friendliness. We use the most recent and modern technologies available to us for a very fast and stable environment.
+
+A completely modulare web application, aimed for gaming communities. Let your community flourish and reach its full potential by using this application. Our main priorities are ease of use and developer friendliness. We use the most recent and modern technologies available to us for a very fast and stable environment.
 
 ![CI](https://github.com/OddityServers/oddity/workflows/CI/badge.svg)
 
@@ -13,13 +14,30 @@ This is the base of the project. Web interface (client) + API (server)
 
 ## Setup
 
+### Docker Compose
+
+Requirements
+
+- Docker
+- Docker Compose
+
+Check out the application without any setup with docker-compose
+
+Hint: some features might not work because of invalid environment variables
+
+```
+docker-compose up
+```
+
+Application available on localhost:5000
+
+### Linux Based Systems (or in Windows WLS)
+
 Requirements
 
 - npm installed (V6.14 used)
 - node installed (V13.1 used)
 - postgresql (V12.2 used)
-
-### Linux Based Systems (or in Windows WLS)
 
 run `./setup.sh`
 

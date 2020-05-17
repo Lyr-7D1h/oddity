@@ -1,5 +1,5 @@
 #
-# Production Build: client + server
+# Development Build: client + server
 #
 
 
@@ -13,7 +13,7 @@ COPY . /usr/src/app
 
 # Build Server
 WORKDIR /usr/src/app/server
-RUN npm ci --production
+RUN npm ci
 
 # Create module_loader_imports file
 RUN node module_loader
@@ -24,10 +24,10 @@ RUN ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/"
 
 # Build Client
 WORKDIR /usr/src/app/client
-RUN npm ci --production
-RUN npm run build
+RUN npm ci
 
 # Start App
 WORKDIR /usr/src/app/server
-CMD npm start
+
+CMD cd ../client && npm start & npm start
 EXPOSE 5000

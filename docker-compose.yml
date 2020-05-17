@@ -1,0 +1,37 @@
+#
+# Only use this as an example for checking out and testing
+# the application
+# Not for any production environment
+#
+
+version: "2"
+services:
+  oddity:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    command: >
+      bash -c "sleep 5 
+      ; node models_sync
+      ; npx sequelize-cli db:seed:all 
+      ; npm run dev
+      & cd ../client 
+      && npm start"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_NAME: oddity
+      DB_USERNAME: oddity
+      DB_PASSWORD: oddity_pass
+      SESSION_SECRET: string_longer_than_32_characters
+      CAPTCHA_CLIENT: client_captcha
+      CAPTCHA_SERVER: server_captcha
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: oddity
+      POSTGRES_DB: oddity
+      POSTGRES_PASSWORD: oddity_pass
