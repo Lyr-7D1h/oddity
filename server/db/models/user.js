@@ -43,6 +43,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    hasFinishedAccount: {
+      type: DataTypes.BOOLEAN,
+    },
   })
   user.associate = (models) => {
     // user.hasMany(models.forumPost, {

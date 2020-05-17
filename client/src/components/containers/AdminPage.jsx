@@ -6,19 +6,22 @@ import { Card } from 'antd'
 import ConditionalRedirect from './ConditionalRedirect'
 import hasPermission from 'Helpers/hasPermission'
 import SavePopup from 'Components/SavePopup'
+import { connect } from 'react-redux'
 
-export default ({ children }) => {
-  const nav = ['General', 'Modules', 'Roles']
+export default connect((state) => ({ user: state.user }))(
+  ({ children, user }) => {
+    const nav = ['General', 'Modules', 'Roles']
 
-  return (
-    <ConditionalRedirect condition={!hasPermission('ROOT')}>
-      <Page selected="admin">
-        <SubNav items={nav} />
-        <Centered>
-          <Card>{children}</Card>
-        </Centered>
-      </Page>
-      <SavePopup context="admin" />
-    </ConditionalRedirect>
-  )
-}
+    return (
+      <ConditionalRedirect condition={!hasPermission('ROOT', user)}>
+        <Page selected="admin">
+          <SubNav items={nav} />
+          <Centered>
+            <Card>{children}</Card>
+          </Centered>
+        </Page>
+        <SavePopup context="admin" />
+      </ConditionalRedirect>
+    )
+  }
+)

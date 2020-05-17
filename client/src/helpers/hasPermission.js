@@ -1,19 +1,28 @@
 import store from '../redux/store'
 
-export default (permissionString) => {
-  let { init, user } = store.getState()
-  const PERMISSIONS = init.permissions
+export default (permissionStrings, user) => {
+  const state = store.getState()
+  const init = state.init
 
-  // if (!permissions || !user) {
-  //   return // wait for when state is ready
-  // }
-
-  if (!PERMISSIONS[permissionString]) {
-    console.error('Wrong permission string')
-    return false
+  if (!user) {
+    console.warn('Permission checking will not be updated on user changes')
+    user = state.user
   }
 
-  const permissionToCheck = PERMISSIONS[permissionString] | PERMISSIONS['ROOT'] // overwrite for root
+  const PERMISSIONS = init.permissions
+
+  if (!Array.isArray(permissionStrings)) permissionStrings = [permissionStrings]
+
+  let permissionToCheck = PERMISSIONS['ROOT'] // overwrite for root
+
+  permissionStrings.forEach((permissionString) => {
+    if (!PERMISSIONS[permissionString]) {
+      console.error('Wrong permission string')
+      return
+    }
+
+    permissionToCheck = PERMISSIONS[permissionString] | permissionToCheck
+  })
 
   return (permissionToCheck & user.permissions) > 0
 }

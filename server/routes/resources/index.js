@@ -14,7 +14,6 @@ module.exports = async (fastify) => {
       permissions: fastify.PERMISSIONS.NONE,
     },
     (request, reply) => {
-      console.log('RECEIVED')
       fastify.models.user
         .findOne({ where: { id: request.params.id } })
         .then((user) => {

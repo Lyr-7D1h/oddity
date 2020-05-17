@@ -11,18 +11,43 @@ import Title from 'antd/lib/typography/Title'
 import Paragraph from 'antd/lib/typography/Paragraph'
 import requester from 'Helpers/requester'
 import { rootReset } from 'Actions/rootActions'
+import ConnectThirdParty from 'Components/ConnectThirdParty'
 
 const { Step } = Steps
 
 const FinishAccountPage = ({ user, title, dispatch }) => {
-  const [currentStep, setCurrentStep] = useState(0)
+  const [currentStep, setCurrentStep] = useState(1)
+  const [isNextList, setIsNextList] = useState([false])
+  const [redirect, setRedirect] = useState(false)
 
   const next = () => {
+    if (isNextList[currentStep] === null) {
+      setIsNextList(isNextList.concat([false]))
+    }
+
+    if (currentStep === 2) {
+      requester
+        .put(`users/${user.id}/hasFinishedAccount`)
+        .then(() => {
+          dispatch(
+            updateUser(Object.assign({}, user, { hasFinishedAccount: true }))
+          )
+          setRedirect(true)
+        })
+        .catch((err) => {
+          notificationHandler.error('Could not finish account', err.message)
+        })
+    }
+
     setCurrentStep(currentStep + 1)
   }
 
   const previous = () => {
     setCurrentStep(currentStep - 1)
+  }
+
+  const handleOnFinish = () => {
+    setIsNextList(isNextList.concat([true]))
   }
 
   const handleLogout = () => {
@@ -38,34 +63,6 @@ const FinishAccountPage = ({ user, title, dispatch }) => {
         notificationHandler.error('Something went wrong')
       })
   }
-
-  const ConnectThirdParty = (
-    <>
-      <Typography.Title>Connect to third parties</Typography.Title>
-      <Typography.Text>
-        This way you can interact with our system on these third parties.
-      </Typography.Text>
-      <div style={{ marginBottom: 50 }}></div>
-      <Row type="flex" style={{ marginBottom: 50 }}>
-        <Col span={12}>
-          <Card bodyStyle={{ backgroundColor: 'black', color: 'white' }}>
-            <Typography.Title level={2} style={{ color: 'white' }}>
-              Discord <br />
-              Coming soon
-            </Typography.Title>
-          </Card>
-        </Col>
-        <Col span={12}>
-          <Card bodyStyle={{ backgroundColor: 'black', color: 'white' }}>
-            <Typography.Title level={2} style={{ color: 'white' }}>
-              Steam <br />
-              Coming soon
-            </Typography.Title>
-          </Card>
-        </Col>
-      </Row>
-    </>
-  )
 
   let Content
   switch (currentStep) {
@@ -83,14 +80,38 @@ const FinishAccountPage = ({ user, title, dispatch }) => {
       )
       break
     case 1:
-      Content = <ImageUpload url={`/api/resources/users/${user.id}`} />
+      Content = (
+        <>
+          <Typography.Title>Add an Avatar</Typography.Title>
+          <Typography.Text>
+            Make your profile yours by adding an avatar. Make yourself standout!
+          </Typography.Text>
+          <div style={{ marginBottom: 50 }}></div>
+          <ImageUpload onFinish={handleOnFinish} />
+          <div style={{ marginBottom: 50 }}></div>
+        </>
+      )
       break
     case 2:
-      Content = <ConnectThirdParty />
+      Content = (
+        <>
+          <Typography.Title>Connect to third parties</Typography.Title>
+          <Typography.Text>
+            This way you can interact with our system on these third parties or
+            the other way around.
+          </Typography.Text>
+          <div style={{ marginBottom: 50 }}></div>
+          <ConnectThirdParty />
+        </>
+      )
       break
     default:
-      Content = <Redirect to="/account" />
+      Content = ''
       break
+  }
+
+  if (redirect) {
+    return <Redirect to={`/u/${user.identifier}`} />
   }
 
   return (
@@ -127,7 +148,7 @@ const FinishAccountPage = ({ user, title, dispatch }) => {
             justify="space-around"
             style={{ textAlign: 'center' }}
           >
-            <Col span={24} style={{ marginBottom: '15px' }}>
+            <Col span={24} style={{ marginBottom: '60px' }}>
               <Centered>{Content}</Centered>
             </Col>
             <div
@@ -149,9 +170,15 @@ const FinishAccountPage = ({ user, title, dispatch }) => {
                   )}
                 </Col>
                 <Col offset={12} span={6}>
-                  <Button size="large" type="primary" onClick={next} block>
-                    Next <RightOutlined />
-                  </Button>
+                  {isNextList[currentStep] || currentStep === 2 ? (
+                    <Button size="large" type="primary" onClick={next} block>
+                      {currentStep === 2 ? 'Finish' : 'Next'} <RightOutlined />
+                    </Button>
+                  ) : (
+                    <Button size="large" onClick={next} block>
+                      Skip <RightOutlined />
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </div>

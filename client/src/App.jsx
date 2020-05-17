@@ -21,7 +21,7 @@ import ProfilePage from './components/pages/ProfilePage'
 import ModulesPage from 'Components/pages/ModulesPage'
 import ModuleSettingsPage from 'Components/pages/ModuleSettingsPage'
 
-const App = ({ modules, userNeedsSetup, dispatch }) => {
+const App = ({ modules, userNeedsSetup }) => {
   let noHomeSet = true
 
   const getModuleRoutes = () => {
@@ -163,14 +163,9 @@ const App = ({ modules, userNeedsSetup, dispatch }) => {
 }
 
 export default connect((state) => {
-  let userNeedsSetup = false
-  if (state.user.username && state.user.identifier !== 'admin') {
-    if (!state.user.avatar) {
-      userNeedsSetup = true
-    }
-  }
   return {
     modules: state.init.modules,
-    userNeedsSetup: userNeedsSetup,
+    userNeedsSetup:
+      state.user.id && !state.user.hasFinishedAccount ? true : false,
   }
 })(App)

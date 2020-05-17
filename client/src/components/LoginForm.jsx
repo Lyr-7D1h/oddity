@@ -8,7 +8,7 @@ import requester from '../helpers/requester'
 
 import { connect } from 'react-redux'
 import { updateUser } from '../redux/actions/userActions'
-import getUser from '../helpers/getUser'
+import { getUser } from '../helpers/userCookie'
 
 const LoginForm = ({ updateUser, ...props }) => {
   const handleLogin = (values) => {

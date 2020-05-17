@@ -7,7 +7,6 @@ module.exports = fp(
     const DATABASE = instance.config.DB_NAME || 'oddity'
     const USERNAME = instance.config.DB_USERNAME || 'oddity'
     const PASSWORD = instance.config.DB_PASSWORD
-    console.log(HOST, DATABASE, USERNAME)
 
     const sequelizeOpts = {
       host: HOST,

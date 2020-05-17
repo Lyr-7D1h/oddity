@@ -1,5 +1,5 @@
 import { UPDATE_USER } from '../actions/userActions'
-import getUser from 'Helpers/getUser'
+import { getUser } from 'Helpers/userCookie'
 
 export default (state, { type, payload }) => {
   switch (type) {
