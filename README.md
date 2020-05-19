@@ -49,7 +49,7 @@ Optional:
 DB_HOST=localhost - Host of the Postgres database, can be either an IP or Domain Name\
 DB_LOGGING_ENABLED=false - Show queries in the logs
 
-#### Build and Running
+#### Build and Run
 
 run `./setup.sh`
 
