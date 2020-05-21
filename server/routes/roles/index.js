@@ -15,7 +15,7 @@ module.exports = async (fastify) => {
       },
       {
         method: 'post',
-        preHandler: fastify.authentication.cookie,
+        preHandler: fastify.authorization.cookie,
         permissions: [
           fastify.PERMISSIONS.ROOT,
           fastify.PERMISSIONS.MANAGE_ROLES,
@@ -23,7 +23,7 @@ module.exports = async (fastify) => {
       },
       {
         method: 'delete',
-        preHandler: fastify.authentication.cookie,
+        preHandler: fastify.authorization.cookie,
         permissions: [
           fastify.PERMISSIONS.ROOT,
           fastify.PERMISSIONS.MANAGE_ROLES,
@@ -31,7 +31,7 @@ module.exports = async (fastify) => {
       },
       {
         method: 'patch',
-        preHandler: fastify.authentication.cookie,
+        preHandler: fastify.authorization.cookie,
         permissions: [
           fastify.PERMISSIONS.ROOT,
           fastify.PERMISSIONS.MANAGE_ROLES,

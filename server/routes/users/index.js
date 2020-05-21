@@ -11,7 +11,7 @@ module.exports = async (fastify) => {
         params: 'id#',
       },
       permissions: fastify.PERMISSIONS.NONE,
-      preHandler: fastify.auth([fastify.authentication.cookie]),
+      preHandler: fastify.auth([fastify.authorization.cookie]),
     },
     (req, reply) => {
       if (req.session.user.id === req.params.id) {

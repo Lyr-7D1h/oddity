@@ -59,7 +59,7 @@ test('Do route variables work', (t) => {
           route,
           {
             permissions: 4,
-            preHandler: fastify.auth([fastify.authentication.basic]),
+            preHandler: fastify.auth([fastify.authorization.basic]),
           },
           (req, reply) => {
             return reply.send({ method: 'GET' })
@@ -69,7 +69,7 @@ test('Do route variables work', (t) => {
           route,
           {
             permissions: 4,
-            preHandler: fastify.auth([fastify.authentication.basic]),
+            preHandler: fastify.auth([fastify.authorization.basic]),
           },
           (req, reply) => {
             return reply.send({ method: 'POST' })
@@ -155,7 +155,7 @@ test('Do custom permissions work', (t) => {
           '/api/test',
           {
             permissions: fastify.PERMISSIONS.CUSTOM_PERMISSION,
-            preHandler: fastify.auth([fastify.authentication.basic]),
+            preHandler: fastify.auth([fastify.authorization.basic]),
           },
           (req, reply) => {
             return reply.send({ message: 'This is an test' })

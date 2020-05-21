@@ -40,7 +40,7 @@ module.exports = async (fastify) => {
         },
       },
       permissions: [fastify.PERMISSIONS.NONE],
-      preHandler: [fastify.auth([fastify.authentication.cookie])],
+      preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
       validateTitle
@@ -89,7 +89,7 @@ module.exports = async (fastify) => {
         },
       },
       permissions: [fastify.PERMISSIONS.ROOT, fastify.PERMISSIONS.MANAGE_FORUM],
-      preHandler: [fastify.auth([fastify.authentication.cookie])],
+      preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
       if (request.body.content) {
@@ -148,7 +148,7 @@ module.exports = async (fastify) => {
     {
       schema: { params: "id#" },
       permissions: fastify.PERMISSIONS.MANAGE_FORUM,
-      preHandler: [fastify.auth([fastify.authentication.cookie])],
+      preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
       fastify.models.forumPost

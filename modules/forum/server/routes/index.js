@@ -224,7 +224,7 @@ module.exports = async (fastify) => {
         type: "object",
       },
       permissions: [fastify.PERMISSIONS.ROOT, fastify.PERMISSIONS.MANAGE_FORUM],
-      preHandler: [fastify.auth([fastify.authentication.cookie])],
+      preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
       fastify.models.forumCategory
@@ -246,7 +246,7 @@ module.exports = async (fastify) => {
         type: "object",
       },
       permissions: fastify.PERMISSIONS.ROOT,
-      preHandler: [fastify.auth([fastify.authentication.cookie])],
+      preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
       fastify.models.forumThread
@@ -271,7 +271,7 @@ module.exports = async (fastify) => {
         },
       },
       permissions: fastify.PERMISSIONS.ROOT,
-      preHandler: [fastify.auth([fastify.authentication.cookie])],
+      preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
       fastify.models.forumCategory.findAll().then((categories) => {
@@ -327,7 +327,7 @@ module.exports = async (fastify) => {
         },
       },
       permissions: fastify.PERMISSIONS.ROOT,
-      preHandler: [fastify.auth([fastify.authentication.cookie])],
+      preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
       fastify.models.forumThread.findAll().then((threads) => {

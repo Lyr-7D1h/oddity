@@ -40,7 +40,7 @@ module.exports = async (fastify, opts) => {
 
     .register(require('fastify-cookie'))
 
-    // TODO: not sure when used
+    // Used for resources
     .register(require('fastify-multipart'), {
       limits: {
         fieldNameSize: 100, // Max field name size in bytes

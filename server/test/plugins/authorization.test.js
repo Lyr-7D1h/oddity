@@ -2,6 +2,7 @@ const t = require('tap')
 const bcrypt = require('bcrypt')
 
 const test = t.test
+const only = t.only
 
 // clear all tables
 require('../db.helper').clear()
@@ -28,7 +29,7 @@ const basicTest = (app) => {
     fastify.get(
       '/test',
       {
-        preHandler: app.auth([app.authentication.basic]),
+        preHandler: app.auth([app.authorization.basic]),
         permissions: 1,
       },
       (request, reply) => {
@@ -38,7 +39,45 @@ const basicTest = (app) => {
   })
 }
 
-test('Can not authorize without credentials USING BASIC', (t) => {
+const createTestUser = (app) => {
+  return new Promise((resolve, reject) => {
+    app.models.role
+      .create(testRole)
+      .then((role) => {
+        testUser.roleId = role.id
+        app.models.user
+          .create(testUser)
+          .then((user) => {
+            resolve(user)
+          })
+          .catch((err) => reject(err))
+      })
+      .catch((err) => reject(err))
+  })
+}
+
+// TODO: Add session tests when session storage has changed to redis
+// const getSession = (app, cb) => {
+//   createTestUser(app)
+//     .then(() => {
+//       app.inject(
+//         {
+//           url: '/api/auth/login',
+//           headers: {
+//             Authorization:
+//               'Basic ' + Buffer.from('test:test').toString('base64'),
+//           },
+//         },
+//         (err, res) => {
+//           cb(err, res.headers['set-cookie'])
+//         }
+//       )
+//     })
+//     .catch((err) => cb(err))
+//   return cb
+// }
+
+test('Basic Auth - Can not authorize without credentials', (t) => {
   t.plan(5)
 
   const app = build(t)
@@ -71,7 +110,7 @@ test('Can not authorize without credentials USING BASIC', (t) => {
   })
 })
 
-test('Can authorize USING BASIC', (t) => {
+test('Basic Auth - Can authorize', (t) => {
   t.plan(4)
 
   const app = build(t)
@@ -116,7 +155,7 @@ test('Can authorize USING BASIC', (t) => {
   })
 })
 
-test('Can not authorize with wrong credentials USING BASIC', (t) => {
+test('Basic Auth - Can not authorize with wrong credentials', (t) => {
   t.plan(5)
 
   const app = build(t)
@@ -151,3 +190,18 @@ test('Can not authorize with wrong credentials USING BASIC', (t) => {
     )
   })
 })
+
+// only('Session Auth - Can authorize', (t) => {
+//   t.plan(2)
+
+//   const app = build(t)
+
+//   app.ready((err) => {
+//     t.error(err)
+
+//     getSession(app, (err, session) => {
+//       t.error(err)
+//       console.log(session)
+//     })
+//   })
+// })

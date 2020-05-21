@@ -10,7 +10,7 @@ module.exports = async (fastify) => {
       schema: {
         params: 'id#',
       },
-      preHandler: fastify.auth([fastify.authentication.cookie]),
+      preHandler: fastify.auth([fastify.authorization.cookie]),
       permissions: fastify.PERMISSIONS.NONE,
     },
     (request, reply) => {

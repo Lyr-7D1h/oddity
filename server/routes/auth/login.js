@@ -5,7 +5,7 @@ module.exports = async (fastify) => {
       schema: {
         hide: true, // hide from docs
       },
-      preHandler: fastify.auth([fastify.authentication.basic]),
+      preHandler: fastify.auth([fastify.authorization.basic]),
       permissions: fastify.PERMISSIONS.NON_SET,
     },
     (request, reply) => {

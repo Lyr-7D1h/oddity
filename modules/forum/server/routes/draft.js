@@ -3,7 +3,7 @@ module.exports = async (fastify) => {
     "/forum/drafts",
     {
       permissions: fastify.PERMISSIONS.NONE,
-      preHandler: fastify.auth([fastify.authentication.cookie]),
+      preHandler: fastify.auth([fastify.authorization.cookie]),
     },
     (request, reply) => {
       if (
@@ -36,7 +36,7 @@ module.exports = async (fastify) => {
         },
       },
       permissions: fastify.PERMISSIONS.NONE,
-      preHandler: [fastify.auth([fastify.authentication.cookie])],
+      preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
       fastify.models.forumDraft

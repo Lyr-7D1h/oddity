@@ -3,7 +3,7 @@ const auth = require('basic-auth')
 const { Unauthorized, InternalServerError } = require('http-errors')
 
 module.exports = fp(async (instance) => {
-  const basicAuth = (request, reply) => {
+  const basicAuth = (request) => {
     return new Promise((resolve, reject) => {
       // get credentials from request
       const basicCredentials = auth(request)
@@ -15,13 +15,16 @@ module.exports = fp(async (instance) => {
 
         instance.models.user
           .findOne({
+            attributes: ['permissions', 'password', 'id'],
             where: {
               [instance.Sequelize.Op.or]: [
                 { identifier: basicCredentials.name },
                 { email: basicCredentials.name },
               ],
             },
-            include: [{ model: instance.models.role }],
+            include: [
+              { attributes: ['permissions'], model: instance.models.role },
+            ],
           })
           .then((user) => {
             if (user) {
@@ -53,7 +56,6 @@ module.exports = fp(async (instance) => {
                   reject(new InternalServerError())
                 })
             } else {
-              // if none found unauthorized
               reject(new Unauthorized())
             }
           })
@@ -63,16 +65,24 @@ module.exports = fp(async (instance) => {
     })
   }
 
-  // TODO: Make more efficient and make improve permissions checking
-  const cookieAuth = (request, reply) => {
+  // TODO: Make more efficient and improve permissions checking
+  // Checks if session if valid and has the required permissions
+  const cookieAuth = (request) => {
     return new Promise((resolve, reject) => {
       if (request.session && request.session.user) {
         if (request.session.user.id) {
-          // check if still in DB
+          // TODO: only get attributes needed
           instance.models.user
             .findOne({
+              attributes: ['permissions'],
               where: { id: request.session.user.id },
-              include: [{ model: instance.models.role, as: 'role' }],
+              include: [
+                {
+                  attributes: 'permissions',
+                  model: instance.models.role,
+                  as: 'role',
+                },
+              ],
             })
             .then((user) => {
               if (user) {
@@ -107,7 +117,7 @@ module.exports = fp(async (instance) => {
     })
   }
 
-  instance.decorate('authentication', {
+  instance.decorate('authorization', {
     basic: basicAuth,
     cookie: cookieAuth,
   })
