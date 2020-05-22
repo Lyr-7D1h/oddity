@@ -20,6 +20,7 @@ import moduleLoaderModules from '../module_loader_imports/modules'
 import ProfilePage from './components/pages/ProfilePage'
 import ModulesPage from 'Components/pages/ModulesPage'
 import ModuleSettingsPage from 'Components/pages/ModuleSettingsPage'
+import SecuritySettingsPage from 'Components/pages/SecuritySettingsPage'
 
 const App = ({ modules, userNeedsSetup }) => {
   let noHomeSet = true
@@ -65,10 +66,17 @@ const App = ({ modules, userNeedsSetup }) => {
 
   const defaultRoutes = [
     { path: '/login', component: LoginPage },
-    { path: '/settings', component: AccountPage },
     { path: '/register', component: RegisterPage },
     { path: '/tos', component: TermsOfServicePage },
     { path: '/u/:identifier', component: ProfilePage },
+
+    { path: '/settings', component: AccountPage },
+    { path: '/settings/security', component: SecuritySettingsPage },
+
+    { path: '/admin', component: () => <Redirect to="admin/general" /> },
+    { path: '/admin/general', component: AdminSettingsPage },
+    { path: '/admin/modules', component: ModulesPage },
+    { path: '/admin/modules/:module', component: ModuleSettingsPage },
   ].map((route, i) => {
     return (
       <Route
@@ -82,46 +90,6 @@ const App = ({ modules, userNeedsSetup }) => {
     )
   })
 
-  const adminRoutes = [
-    <Route
-      key={0}
-      exact
-      path="/admin"
-      render={() => <Redirect to="admin/general" />}
-    />,
-    <Route
-      key={1}
-      exact
-      path="/admin/general"
-      render={(props) => {
-        return <AdminSettingsPage {...props} />
-      }}
-    />,
-    <Route
-      key={2}
-      path="/admin/modules"
-      exact
-      render={(props) => {
-        return <ModulesPage {...props} />
-      }}
-    />,
-    <Route
-      key={3}
-      path="/admin/modules/:module"
-      exact
-      render={(props) => {
-        return <ModuleSettingsPage {...props} />
-      }}
-    />,
-    // <Route
-    //   key={3}
-    //   path="/admin/:page"
-    //   render={(props) => {
-    //     return <AdminPage {...props} />
-    //   }}
-    // />,
-  ]
-
   return (
     <BrowserRouter>
       <InitLoader>
@@ -130,7 +98,6 @@ const App = ({ modules, userNeedsSetup }) => {
         ) : (
           <Switch>
             {defaultRoutes}
-            {adminRoutes}
 
             {getModuleRoutes()}
 

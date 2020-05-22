@@ -78,7 +78,7 @@ module.exports = fp(async (instance) => {
               where: { id: request.session.user.id },
               include: [
                 {
-                  attributes: 'permissions',
+                  attributes: ['permissions'],
                   model: instance.models.role,
                   as: 'role',
                 },

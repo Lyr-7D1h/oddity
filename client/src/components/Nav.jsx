@@ -47,6 +47,7 @@ const Nav = ({ modules, title, user, updateUser, location, rootReset }) => {
             defaultSelectedKeys={[selected]}
             style={{ lineHeight: '64px', marginRight: '20px', border: 'none' }}
             className="oddity-nav"
+            selectable={false} // Needed for save
           >
             {modules
               .filter((mod) => mod.route !== '')
@@ -69,15 +70,19 @@ const Nav = ({ modules, title, user, updateUser, location, rootReset }) => {
 
             {user.username && (user.permissions & 0x2) === 0 && (
               <Menu.SubMenu style={{ float: 'right' }} title={user.username}>
-                <Menu.ItemGroup title="Account">
+                <Menu.ItemGroup
+                  title={
+                    <>
+                      Signed in as <b>{user.username}</b>
+                    </>
+                  }
+                >
                   <Menu.Item key="profile">
                     <Link to={`/u/${user.identifier}`}>Profile</Link>
                   </Menu.Item>
                   <Menu.Item key="settings">
                     <Link to="/settings">Settings</Link>
                   </Menu.Item>
-                </Menu.ItemGroup>
-                <Menu.ItemGroup title="Actions">
                   <Menu.Item key="logout" onClick={handleLogout}>
                     <Typography.Text type="danger">Logout</Typography.Text>
                   </Menu.Item>

@@ -24,6 +24,7 @@ export default connect(
     const [isLoading, setIsLoading] = useState(false)
     const [escape, setEscape] = useState(false)
 
+    // FIXME: fix Warning: A history supports only one prompt at a time
     // Prevent escape when there are changes
     history.block(() => {
       if (show) {

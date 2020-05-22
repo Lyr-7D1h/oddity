@@ -1,17 +1,14 @@
 import React from 'react'
-import ConditionalRedirect from '../containers/ConditionalRedirect'
-import Page from '../containers/Page'
+import SettingsPage from 'Components/containers/SettingsPage'
 import { connect } from 'react-redux'
-import { Card } from 'antd'
+import UserInformationForm from 'Components/UserInformationForm'
+import SavePopup from 'Components/SavePopup'
 
-export default connect((state) => ({ username: state.user.username }))(
-  ({ username }) => {
-    return (
-      <ConditionalRedirect condition={!username}>
-        <Page>
-          <Card></Card>
-        </Page>
-      </ConditionalRedirect>
-    )
-  }
-)
+export default connect((state) => ({ user: state.user }))(({ user }) => {
+  return (
+    <SettingsPage title="Profile">
+      <UserInformationForm />
+      <SavePopup />
+    </SettingsPage>
+  )
+})

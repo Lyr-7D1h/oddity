@@ -4,18 +4,21 @@ import { connect } from 'react-redux'
 import notificationHandler from './notificationHandler'
 
 export default (Component, id) => {
-  if (!id) {
-    console.error('No id set')
-    return
-  }
-
   let saveHandler
   let resetHandler
   let hasChanges
 
   return connect((state) => ({ saveAttempt: state.save.saveAttempt }))(
     ({ dispatch, saveAttempt, ...props }) => {
-      const [initialValues, setInitialValues] = useState(null)
+      const [initialValues, setInitialValues] = useState(
+        props.initialValues || null
+      )
+
+      if (!id && props.name) {
+        id = props.name
+      } else if (!id) {
+        console.error('No id set')
+      }
 
       /**
        * callback: callback for a promise
@@ -87,6 +90,7 @@ export default (Component, id) => {
                 dispatch(removeCaller(id))
               })
               .catch((err) => {
+                console.log(err.message)
                 console.error(`Error in saveHandler for ${id}`, err)
                 notificationHandler.error('Could not save changes', err.message)
                 dispatch(setCallerError(id))

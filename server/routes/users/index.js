@@ -34,6 +34,37 @@ module.exports = async (fastify) => {
     }
   )
 
+  fastify.put(
+    '/users/:id',
+    {
+      schema: {
+        params: 'id#',
+        body: {
+          properties: {
+            username: { type: 'string' },
+            email: { type: 'string' },
+          },
+        },
+      },
+      preHandler: fastify.auth([fastify.authorization.cookie]),
+      permissions: fastify.PERMISSIONS.NONE,
+    },
+    (req, reply) => {
+      fastify.models.user
+        .update(req.body, {
+          where: { id: req.params.id },
+        })
+        .then(() => {
+          return reply.success()
+        })
+        .catch((err) => {
+          fastify.log.error(err)
+          fastify.sentry.captureException(err)
+          return reply.internalServerError(err)
+        })
+    }
+  )
+
   const excludeAttributes = [
     'password',
     'ip',
