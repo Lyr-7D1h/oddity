@@ -21,6 +21,7 @@ import ProfilePage from './components/pages/ProfilePage'
 import ModulesPage from 'Components/pages/ModulesPage'
 import ModuleSettingsPage from 'Components/pages/ModuleSettingsPage'
 import SecuritySettingsPage from 'Components/pages/SecuritySettingsPage'
+import LinkedAccountsPage from 'Components/pages/LinkedAccountsPage'
 
 const App = ({ modules, userNeedsSetup }) => {
   let noHomeSet = true
@@ -72,6 +73,7 @@ const App = ({ modules, userNeedsSetup }) => {
 
     { path: '/settings', component: AccountPage },
     { path: '/settings/security', component: SecuritySettingsPage },
+    { path: '/settings/linked', component: LinkedAccountsPage },
 
     { path: '/admin', component: () => <Redirect to="admin/general" /> },
     { path: '/admin/general', component: AdminSettingsPage },

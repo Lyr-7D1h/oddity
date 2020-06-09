@@ -2,8 +2,6 @@ import React, { useEffect } from 'react'
 import { Form, Result, Spin } from 'antd'
 import saveWrapper from 'Helpers/saveWrapper'
 
-let shouldSetHandler = true
-
 // TODO: Async inital values
 
 /**
@@ -22,9 +20,9 @@ const SaveForm = ({
 }) => {
   const [form] = Form.useForm()
 
-  const resetForm = (initialValues) => {
+  const resetForm = () => {
+    console.log('Reseting')
     form.resetFields()
-    // form.setFieldsValue(initialValues)
   }
 
   const handleOnFinish = (resolve, reject) => {
@@ -46,18 +44,15 @@ const SaveForm = ({
   }
 
   useEffect(() => {
-    if (shouldSetHandler) {
-      console.log('Setting handlers..')
-      setSaveHandler(handleOnFinish)
-      setResetHandler(resetForm)
-      shouldSetHandler = false
-    }
+    setSaveHandler(handleOnFinish)
+    setResetHandler(resetForm)
   })
 
   if (!initialValues) {
     return <Result icon={<Spin />} />
   }
 
+  console.log('Setting initial values ', initialValues)
   return (
     <Form
       initialValues={initialValues}
@@ -70,4 +65,8 @@ const SaveForm = ({
   )
 }
 
-export default saveWrapper(SaveForm)
+// Run once should be run for each creation
+export default (props) => {
+  const Wrapped = saveWrapper(SaveForm, props.name)
+  return <Wrapped {...props} />
+}

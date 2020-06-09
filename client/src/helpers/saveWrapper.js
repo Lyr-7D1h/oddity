@@ -14,6 +14,7 @@ export default (Component, id) => {
         props.initialValues || null
       )
 
+      console.log(id)
       if (!id && props.name) {
         id = props.name
       } else if (!id) {

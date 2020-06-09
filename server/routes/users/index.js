@@ -35,6 +35,63 @@ module.exports = async (fastify) => {
   )
 
   fastify.put(
+    '/users/:id/password',
+    {
+      schema: {
+        hide: true,
+        params: 'id#',
+        body: {
+          properties: {
+            old_password: { type: 'string' },
+            new_password: { type: 'string' },
+          },
+          required: ['old_password', 'new_password'],
+        },
+      },
+    },
+    (req, reply) => {
+      console.log(reply)
+      fastify.models.user
+        .findOne({ attributes: ['password'], where: { id: req.params.id } })
+        .then((user) => {
+          fastify.crypto
+            .validate(req.body.old_password, user.password)
+            .then((is_valid) => {
+              if (is_valid) {
+                fastify.crypto.hash(req.body.new_password).then((new_hash) => {
+                  fastify.models.user
+                    .update(
+                      { password: new_hash },
+                      { where: { id: req.params.id } }
+                    )
+                    .then(() => {
+                      return reply.success()
+                    })
+                    .catch((err) => {
+                      fastify.log.error(err)
+                      fastify.sentry.captureException(err)
+                      return reply.internalServerError(err)
+                    })
+                })
+              } else {
+                return reply.unauthorized()
+              }
+            })
+            .catch((err) => {
+              fastify.log.error(err)
+              fastify.sentry.captureException(err)
+              return reply.internalServerError(err)
+            })
+        })
+        .catch((err) => {
+          fastify.log.error(err)
+          fastify.sentry.captureException(err)
+          return reply.internalServerError(err)
+        })
+    }
+  )
+
+  fastify.put(
     '/users/:id',
     {
       schema: {
@@ -43,6 +100,7 @@ module.exports = async (fastify) => {
           properties: {
             username: { type: 'string' },
             email: { type: 'string' },
+            password_hash: { type: 'string' },
           },
         },
       },
