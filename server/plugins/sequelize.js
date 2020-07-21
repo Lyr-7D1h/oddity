@@ -26,14 +26,14 @@ module.exports = fp(
     sequelize
       .authenticate()
       .then(() => {
+        instance.log.info(
+          `Connected to Postgres postgresql://${USERNAME}:{PASSWORD}@${HOST}/${DATABASE}`
+        )
         instance.decorate('db', sequelize)
         instance.decorate('Sequelize', Sequelize)
         instance.addHook('onClose', (fastify, done) => {
           fastify.db.close().then(done).catch(done)
         })
-        instance.log.info(
-          `Connected to Postgres postgresql://${USERNAME}:{PASSWORD}@${HOST}/${DATABASE}`
-        )
         done()
       })
       .catch((err) => {

@@ -37,7 +37,7 @@
     "fastify-static": "^2.5.0",
     "glob": "^7.1.6",
     "make-promises-safe": "^5.1.0",
-    "pg": "^7.15.2",
+    "pg": "^8.0.3",
     "pg-native": "^3.0.0",
     "pino-pretty": "^3.2.2",
     "pump": "^3.0.0",
