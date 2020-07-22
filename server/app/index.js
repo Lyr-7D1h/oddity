@@ -103,12 +103,6 @@ module.exports = async (fastify, opts) => {
       ),
     })
 
-    .register(require('./static'), {
-      prefix: '/resources',
-      decorateReply: false,
-      root: path.join(__dirname, '../../resources'),
-    })
-
   pluginDirs.forEach((dir) => {
     fastify.register(fastifyAutoload, {
       dir: dir,

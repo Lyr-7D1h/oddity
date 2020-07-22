@@ -12,7 +12,7 @@ const fp = require('fastify-plugin')
 
 async function fastifyStatic(fastify, opts, next) {
   const sendOptions = {
-    root: opts.root,
+    root: path.join(__dirname, '../../resources'),
     acceptRanges: opts.acceptRanges,
     cacheControl: opts.cacheControl,
     dotfiles: opts.dotfiles,
@@ -39,8 +39,7 @@ async function fastifyStatic(fastify, opts, next) {
           // check if file has filename extension
           const pathList = pathname.split('/')
           if (pathList[pathList.length - 1].split('.').length === 1) {
-            fastify.log.info(`Redirecting to index.html for ${pathname}`)
-            pumpSendToReply(request, reply, '/')
+            return reply.notFound()
           } else {
             return reply.callNotFound()
           }
@@ -95,12 +94,6 @@ async function fastifyStatic(fastify, opts, next) {
     stream.pipe(wrap)
   }
 
-  if (opts.prefix === undefined) opts.prefix = '/'
-  const prefix =
-    opts.prefix[opts.prefix.length - 1] === '/'
-      ? opts.prefix
-      : opts.prefix + '/'
-
   // Set the schema hide property if defined in opts or true by default
   const routeOptions = {
     schema: {
@@ -111,12 +104,9 @@ async function fastifyStatic(fastify, opts, next) {
 
   // Serve
   if (opts.serve !== false) {
-    fastify.get(prefix + '*', routeOptions, function (req, reply) {
+    fastify.get('/resources/*', routeOptions, function (req, reply) {
       pumpSendToReply(req, reply, '/' + req.params['*'])
     })
-    // fastify.head(prefix + '*', routeOptions, function (req, reply) {
-    //   reply.send()
-    // })
 
     // return early to avoid calling next afterwards
     return
@@ -126,6 +116,5 @@ async function fastifyStatic(fastify, opts, next) {
 }
 
 module.exports = fp(fastifyStatic, {
-  fastify: '>=2.0.0',
-  name: 'fastify-static',
+  name: 'resources',
 })
