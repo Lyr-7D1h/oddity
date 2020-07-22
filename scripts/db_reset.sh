@@ -3,7 +3,11 @@
 CYAN='\033[0;36m'
 NY='\033[0m'
 
-cd server && \
+# Move to relative path and use pwd as cwd
+cd `dirname $0`
+ROOT=$(pwd)/..
+
+cd $ROOT/server && \
 
 echo -e "\n\n${CYAN}Removing Database${NY}" && \
 npx sequelize-cli db:drop && \

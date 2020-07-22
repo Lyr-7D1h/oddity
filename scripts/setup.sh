@@ -3,8 +3,12 @@
 CYAN='\033[0;36m'
 NY='\033[0m'
 
+# Move to relative path and use pwd as cwd
+cd `dirname $0`
+ROOT=$(pwd)/..
+
 echo -e "\n\n${CYAN}SERVER: Installing dependencies${NY}" && \
-cd server && \
+cd $ROOT/server && \
 npm ci && \
 
 echo -e "\n\n${CYAN}SERVER: Executing module_loader to copy and paste DB Files${NY}" && \
@@ -23,7 +27,7 @@ ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/" && \
 echo OK && \
 
 echo -e "\n\n${CYAN}CLIENT: Installing dependencies${NY}" && \
-cd client && \
+cd $ROOT/client && \
 npm ci && \
 
 echo -e "\n\n${CYAN}CLIENT: Building minified static files${NY}" && \
