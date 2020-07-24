@@ -7,7 +7,7 @@
     "@ckeditor/ckeditor5-build-classic": "^18.0.0",
     "@ckeditor/ckeditor5-react": "^2.1.0",
     "@sentry/browser": "^5.13.2",
-    "antd": "^4.2.4",
+    "antd": "^4.4.3",
     "axios": "^0.19.2",
     "babel-plugin-import": "^1.13.0",
     "customize-cra": "^0.8.0",
