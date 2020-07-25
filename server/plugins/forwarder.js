@@ -84,14 +84,15 @@ const watcher = (models, instance) => {
 
 module.exports = fp(
   async (instance) => {
-    // Populate init
-    buildInit(instance).catch((err) => {
-      instance.log.error(err)
-      instance.sentry.captureException(err)
-    })
-
     // Wait for the server to load before watching changes
+    // buildInit needs to wait due to dynamic permissions being added on startup
     setTimeout(() => {
+      // Populate init
+      buildInit(instance).catch((err) => {
+        instance.log.error(err)
+        instance.sentry.captureException(err)
+      })
+
       watcher([instance.models.module, instance.models.config], instance)
     }, 1000)
 

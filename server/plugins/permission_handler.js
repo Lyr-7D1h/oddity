@@ -173,6 +173,7 @@ module.exports = fp(
       return false
     }
 
+    // Add multiple permissions togheter
     const calcPermission = (...perms) => {
       let result = 0
       for (let i in perms) {
@@ -181,8 +182,9 @@ module.exports = fp(
       return result
     }
 
-    const addPermission = (capitalized_name) => {
-      PERMISSIONS[capitalized_name.toUpperCase()] = getHighestPermission() * 2
+    const addPermission = (name) => {
+      console.log('Adding', name)
+      PERMISSIONS[name.toUpperCase()] = getHighestPermission() * 2
     }
 
     instance.decorate('PERMISSIONS', PERMISSIONS)

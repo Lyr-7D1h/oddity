@@ -1,5 +1,6 @@
 import store from '../redux/store'
 
+/// checks if user is allowed to do something
 export default (permissionStrings, user) => {
   const state = store.getState()
   const init = state.init

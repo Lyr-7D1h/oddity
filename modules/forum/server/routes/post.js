@@ -2,6 +2,7 @@ module.exports = async (fastify) => {
   // TODO: test if works
   // Check if there is the same post with the same title in current thread
   const validateTitle = (threadId, title) => {
+    console.log(threadId, title);
     return new Promise((resolve, reject) => {
       fastify.models.forumThread
         .findOne({
@@ -14,7 +15,9 @@ module.exports = async (fastify) => {
             },
           ],
         })
-        .then((thread) => resolve(thread.posts.length === 0))
+        .then((thread) => {
+          resolve(thread === null || thread.posts.length === 0);
+        })
         .catch((err) => reject(err));
     });
   };
@@ -43,7 +46,7 @@ module.exports = async (fastify) => {
       preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
-      validateTitle
+      validateTitle(request.body.threadId, request.body.title)
         .then((is_valid) => {
           if (!is_valid) {
             return reply.badRequest(
@@ -96,19 +99,20 @@ module.exports = async (fastify) => {
         request.body.content = fastify.htmlSanitizer(request.body.content);
       }
 
-      const createPost = fastify.models.forumPost
-        .update(request.body, {
-          where: { id: request.params.id },
-          returning: true,
-        })
-        .then(([_, post]) => {
-          return reply.send(post[0]);
-        })
-        .catch((err) => {
-          fastify.log.error(err);
-          fastify.sentry.captureException(err);
-          return reply.badRequest(err.message);
-        });
+      const createPost = () =>
+        fastify.models.forumPost
+          .update(request.body, {
+            where: { id: request.params.id },
+            returning: true,
+          })
+          .then(([_, post]) => {
+            return reply.send(post[0]);
+          })
+          .catch((err) => {
+            fastify.log.error(err);
+            fastify.sentry.captureException(err);
+            return reply.badRequest(err.message);
+          });
 
       if (request.body.title) {
         if (request.body.threadId) {
@@ -147,16 +151,18 @@ module.exports = async (fastify) => {
     "/forum/posts/:id",
     {
       schema: { params: "id#" },
-      permissions: fastify.PERMISSIONS.MANAGE_FORUM,
+      permissions: fastify.PERMISSIONS.NONE,
       preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
+      console.log(request.user);
       fastify.models.forumPost
         .destroy({ where: { id: request.params.id } })
         .then(() => {
           return reply.success();
         })
         .catch((err) => {
+          fastify.log.error(err);
           return reply.internalServerError();
         });
     }

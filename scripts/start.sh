@@ -7,6 +7,6 @@ cd `dirname $0`
 ROOT=$(pwd)/..
 
 cd $ROOT/server
-alacritty -e /bin/bash npm run dev &
+alacritty -e npm run dev &
 cd $ROOT/client
 npm start

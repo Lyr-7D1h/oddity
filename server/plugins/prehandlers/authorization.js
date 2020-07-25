@@ -15,7 +15,7 @@ module.exports = fp(async (instance) => {
 
         instance.models.user
           .findOne({
-            attributes: ['permissions', 'password', 'id'],
+            attributes: ['permissions', 'password', 'id', 'identifier'],
             where: {
               [instance.Sequelize.Op.or]: [
                 { identifier: basicCredentials.name },
@@ -32,16 +32,21 @@ module.exports = fp(async (instance) => {
                 .validate(basicCredentials.pass, user.password)
                 .then((isValid) => {
                   if (isValid) {
+                    const permissions = instance.permissions.calcPermission(
+                      user.role.permissions,
+                      user.permissions
+                    )
                     const authorizedRoute = instance.permissions.authorizeRoute(
                       request.raw.url,
                       request.raw.method,
-                      instance.permissions.calcPermission(
-                        user.permissions,
-                        user.role.permissions
-                      )
+                      permissions
                     )
                     if (authorizedRoute) {
-                      request.user = { id: user.id }
+                      request.user = {
+                        id: user.id,
+                        identifier: user.identifier,
+                        permissions,
+                      }
                       resolve()
                     } else {
                       reject(new Unauthorized())
@@ -74,7 +79,7 @@ module.exports = fp(async (instance) => {
           // TODO: only get attributes needed
           instance.models.user
             .findOne({
-              attributes: ['permissions'],
+              attributes: ['permissions', 'id', 'identifier'],
               where: { id: request.session.user.id },
               include: [
                 {
@@ -86,15 +91,21 @@ module.exports = fp(async (instance) => {
             })
             .then((user) => {
               if (user) {
+                const permissions = instance.permissions.calcPermission(
+                  user.role.permissions,
+                  user.permissions
+                )
                 const authorizedRoute = instance.permissions.authorizeRoute(
                   request.raw.url,
                   request.raw.method,
-                  instance.permissions.calcPermission(
-                    user.role.permissions,
-                    user.permissions
-                  )
+                  permissions
                 )
                 if (authorizedRoute) {
+                  request.user = {
+                    id: user.id,
+                    identifier: user.identifier,
+                    permissions,
+                  }
                   resolve()
                 } else {
                   reject(new Unauthorized())

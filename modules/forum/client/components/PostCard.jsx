@@ -23,8 +23,8 @@ import hasPermission from "Helpers/hasPermission";
 import { Redirect } from "react-router";
 import { connect } from "react-redux";
 
-export default connect((state) =>
-  ({ user: state.user }(({ post: postProp }) => {
+export default connect((state) => ({ user: state.user }))(
+  ({ post: postProp, user }) => {
     const [showSettings, setShowSettings] = useState(false);
     const [editPostHtml, setEditPostHtml] = useState("");
     const [editPost, setEditPost] = useState(false);
@@ -69,13 +69,18 @@ export default connect((state) =>
       return <Redirect to=".." />;
     }
 
+    const allowedToEdit =
+      hasPermission("MANAGE_FORUM", user) || post.author
+        ? user.identifier === post.author.identifier
+        : false;
+
     const PostOptions = (
       <Space>
         <Button type="link" danger block>
           <AlertFilled />
           <s>Report</s>
         </Button>
-        {hasPermission("MANAGE_FORUM", user) ? (
+        {allowedToEdit ? (
           <>
             <Button
               onClick={() => {
@@ -161,5 +166,5 @@ export default connect((state) =>
         </Card>
       );
     }
-  }))
+  }
 );
