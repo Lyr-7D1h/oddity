@@ -183,7 +183,6 @@ module.exports = fp(
     }
 
     const addPermission = (name) => {
-      console.log('Adding', name)
       PERMISSIONS[name.toUpperCase()] = getHighestPermission() * 2
     }
 

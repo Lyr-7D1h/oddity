@@ -16,9 +16,10 @@ module.exports = override(
   //   }),
   addLessLoader({
     javascriptEnabled: true,
-    // modifyVars: {
-    //   "@primary-color": "#FFFFFF"
-    // }
+    modifyVars: {
+      '@primary-color': 'rgb(56, 56, 56)',
+      '@link-color': 'rgb(100,100,100)',
+    },
   }),
 
   // addWebpackModuleRule({
