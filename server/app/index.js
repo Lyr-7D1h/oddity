@@ -89,9 +89,6 @@ module.exports = async (fastify, opts) => {
       }
     )
 
-    // Syncronize modules_imports with db
-    .register(require('./modules_sync'))
-
     // Autoload Routes
     .register(fastifyAutoload, {
       dir: path.join(__dirname, '../routes'),

@@ -10,13 +10,13 @@ modules = modules.map((mod) => ({
   title: mod.name,
 }))
 
+// Sync modules with db
 module.exports = fp(
   async (fastify, _, done) => {
     const upsertModules = () => {
       return new Promise((resolve, reject) => {
         const promises = []
 
-        // console.log('FOUND MODULES: ', modules)
         fastify.db
           .query(
             'SELECT id, identifier, name FROM modules WHERE identifier IN (?)',
@@ -111,7 +111,7 @@ module.exports = fp(
   },
   {
     name: 'modules_sync',
-    decorators: ['models'],
+    // decorators: ['models'],
     dependencies: ['sequelize', 'models'],
   }
 )

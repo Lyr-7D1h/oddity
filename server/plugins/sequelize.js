@@ -11,6 +11,11 @@ module.exports = fp(
     const sequelizeOpts = {
       host: HOST,
       dialect: 'postgres',
+      pool: {
+        max: 5,
+        min: 0,
+        idle: 1000, // Smaller idle time to increase tests speed
+      },
     }
 
     if (
@@ -31,9 +36,19 @@ module.exports = fp(
         )
         instance.decorate('db', sequelize)
         instance.decorate('Sequelize', Sequelize)
-        instance.addHook('onClose', (fastify, done) => {
-          fastify.db.close().then(done).catch(done)
-        })
+        // onClose hook remove due to tests not working
+        // https://stackoverflow.com/questions/47970050/node-js-mocha-sequelize-error-connectionmanager-getconnection-was-called-after-t
+        // instance.addHook('onClose', (fastify, done) => {
+        // fastify.db
+        //   .close()
+        // .then(() => {
+        // done()
+        //   })
+        //   .catch((err) => {
+        //     instance.log.error(err)
+        //     done()
+        //   })
+        // })
         done()
       })
       .catch((err) => {
@@ -44,6 +59,5 @@ module.exports = fp(
   },
   {
     name: 'sequelize',
-    // dependencies: ['modules_sync']
   }
 )

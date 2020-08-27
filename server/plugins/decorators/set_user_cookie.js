@@ -13,23 +13,27 @@ module.exports = fp((instance, _, done) => {
           ],
         })
         .then((user) => {
-          const userCookie = {
-            id: user.id,
-            username: user.username,
-            identifier: user.identifier,
-            avatar: user.avatar,
-            email: user.email,
-            hasFinishedAccount: user.hasFinishedAccount,
+          if (user) {
+            const userCookie = {
+              id: user.id,
+              username: user.username,
+              identifier: user.identifier,
+              avatar: user.avatar,
+              email: user.email,
+              hasFinishedAccount: user.hasFinishedAccount,
+            }
+
+            userCookie.permissions = user.role.permissions | user.permissions
+
+            reply.setCookie('user', JSON.stringify(userCookie), {
+              httpOnly: false, // Should always be false because js needs to interact with this
+              secure: !(instance.config.NODE_ENV === 'development'),
+              path: '/',
+            })
+            resolve()
+          } else {
+            reject(new Error('Could not find user'))
           }
-
-          userCookie.permissions = user.role.permissions | user.permissions
-
-          reply.setCookie('user', JSON.stringify(userCookie), {
-            httpOnly: false, // Should always be false because js needs to interact with this
-            secure: !(instance.config.NODE_ENV === 'development'),
-            path: '/',
-          })
-          resolve()
         })
         .catch((err) => {
           reject(err)

@@ -21,22 +21,17 @@ module.exports = fp(
   async (instance) => {
     try {
       if (instance.config.NODE_ENV === 'development') {
-        const count = await instance.models.oddityMeta.count()
-
-        if (count === 0) {
+        const oddityMeta = await instance.models.oddityMeta.findByPk(1)
+        if (oddityMeta === 0) {
           // default meta object
           await instance.models.oddityMeta.create({
             devShouldSeed: false,
           })
-        } else {
           await seed(instance.models, instance.crypto)
-
-          await instance.models.oddityMeta.update(
-            {
-              devShouldSeed: true,
-            },
-            { where: { id: 1 } }
-          )
+        } else if (oddityMeta.devShouldSeed) {
+          oddityMeta.devShouldSeed = false
+          await oddityMeta.save()
+          await seed(instance.models, instance.crypto)
         }
       }
     } catch (err) {

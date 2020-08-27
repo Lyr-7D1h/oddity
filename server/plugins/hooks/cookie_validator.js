@@ -20,9 +20,11 @@ module.exports = fp((instance, _, done) => {
         .then(() => {
           done()
         })
-        .catch((err) => {
-          instance.log.error(err)
-          reply.internalServerError(err)
+        .catch(() => {
+          request.destroySession((err) => {
+            if (err) instance.log.error(err)
+            reply.internalServerError()
+          })
         })
     } else {
       done()

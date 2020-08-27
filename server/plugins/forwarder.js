@@ -5,7 +5,7 @@ const send = require('send')
 const { PassThrough } = require('readable-stream')
 
 const buildFolder = path.join(__dirname, '..', '..', 'client', 'build')
-var init
+var init = ''
 
 /**
  * PassThrough stream for injecting into html files
@@ -62,6 +62,7 @@ const buildInit = (instance) => {
   })
 }
 
+// Watch models given for changes and update init when it happens
 const watcher = (models, instance) => {
   const errHandler = (err) => {
     instance.log.error(err)
@@ -73,9 +74,7 @@ const watcher = (models, instance) => {
       'afterValidate',
       () => {
         // Make sure update has gone through before updating init
-        setTimeout(() => {
-          return buildInit(instance).catch(errHandler)
-        })
+        return buildInit(instance).catch(errHandler)
       },
       1000
     )
@@ -86,15 +85,14 @@ module.exports = fp(
   async (instance) => {
     // Wait for the server to load before watching changes
     // buildInit needs to wait due to dynamic permissions being added on startup
-    setTimeout(() => {
-      // Populate init
+    instance.ready().then(() => {
       buildInit(instance).catch((err) => {
         instance.log.error(err)
         instance.sentry.captureException(err)
       })
 
       watcher([instance.models.module, instance.models.config], instance)
-    }, 1000)
+    })
 
     /**
      * DEVELOPMENT
@@ -243,6 +241,6 @@ module.exports = fp(
     decorators: {
       fastify: ['models'],
     },
-    dependencies: ['permission_handler'],
+    dependencies: ['permission_handler', 'modules_sync'],
   }
 )
