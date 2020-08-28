@@ -88,7 +88,7 @@ jobs:
           version: latest
       - name: Build and push
         run: |
-          docker builx build --push \
+          docker buildx build --push \
             --tag oddityservers/oddity:${GITHUB_SHA::8} \
             --tag oddityservers/oddity:latest \
             --platform linux/amd64,linux/arm64
