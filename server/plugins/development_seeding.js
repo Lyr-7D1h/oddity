@@ -27,10 +27,12 @@ module.exports = fp(
           await instance.models.oddityMeta.create({
             devShouldSeed: false,
           })
+          instance.log.debug('Seeding development data...')
           await seed(instance.models, instance.crypto)
         } else if (oddityMeta.devShouldSeed) {
           oddityMeta.devShouldSeed = false
           await oddityMeta.save()
+          instance.log.debug('Seeding development data...')
           await seed(instance.models, instance.crypto)
         }
       }

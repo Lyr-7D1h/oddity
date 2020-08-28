@@ -176,7 +176,7 @@ const FinishAccountPage = ({ user, title, dispatch }) => {
                     </Button>
                   ) : (
                     <Button size="large" onClick={next} block>
-                      Skip <RightOutlined />
+                      Next <RightOutlined />
                     </Button>
                   )}
                 </Col>
