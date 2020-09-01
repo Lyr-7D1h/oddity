@@ -1,6 +1,7 @@
 const fp = require('fastify-plugin')
+const { exec } = require('child_process')
 
-const seed = async (models, crypto) => {
+const development_seed = async (models, crypto) => {
   const role = await models.role.create({
     name: 'Test',
     permissions: 1,
@@ -17,23 +18,41 @@ const seed = async (models, crypto) => {
   })
 }
 
+const seed = () => {
+  return new Promise((resolve, reject) => {
+    exec('npx sequelize-cli db:seed:all', (err) => {
+      if (err) reject(err)
+      resolve()
+    })
+  })
+}
+
 module.exports = fp(
   async (instance) => {
     try {
       if (instance.config.NODE_ENV === 'development') {
         const oddityMeta = await instance.models.oddityMeta.findByPk(1)
-        if (oddityMeta === 0) {
-          // default meta object
+
+        if (!oddityMeta) {
           await instance.models.oddityMeta.create({
             devShouldSeed: false,
+            shouldSeed: false,
           })
-          instance.log.debug('Seeding development data...')
-          await seed(instance.models, instance.crypto)
-        } else if (oddityMeta.devShouldSeed) {
-          oddityMeta.devShouldSeed = false
-          await oddityMeta.save()
-          instance.log.debug('Seeding development data...')
-          await seed(instance.models, instance.crypto)
+          instance.log.debug('First time connecting to db seeding...')
+          await seed()
+          await development_seed(instance.models, instance.crypto)
+        } else {
+          if (oddityMeta.shouldSeed) {
+            oddityMeta.shouldSeed = false
+            await oddityMeta.save()
+            instance.log.debug('Seeding data...')
+            await seed()
+          } else if (oddityMeta.devShouldSeed) {
+            oddityMeta.devShouldSeed = false
+            await oddityMeta.save()
+            instance.log.debug('Seeding development data...')
+            await development_seed(instance.models, instance.crypto)
+          }
         }
       }
     } catch (err) {
@@ -42,5 +61,5 @@ module.exports = fp(
       instance.sentry.captureException(err)
     }
   },
-  { name: 'development_seeding', dependencies: ['models'] }
+  { name: 'seeding', dependencies: ['models'] }
 )

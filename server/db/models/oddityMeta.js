@@ -7,6 +7,9 @@ module.exports = (sequelize, DataTypes) => {
       devShouldSeed: {
         type: DataTypes.BOOLEAN,
       },
+      shouldSeed: {
+        type: DataTypes.BOOLEAN,
+      },
     },
     {
       createdAt: false,
