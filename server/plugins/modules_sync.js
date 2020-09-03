@@ -112,6 +112,6 @@ module.exports = fp(
   {
     name: 'modules_sync',
     // decorators: ['models'],
-    dependencies: ['sequelize', 'seeding'],
+    dependencies: ['sequelize', 'models'],
   }
 )
