@@ -7,26 +7,31 @@ const preRun = (host, user, password, database) => {
     host,
     user,
     password,
+    database: 'postgres', // Using default db to authenticate against
   })
 
-  client.connect()
-
   return new Promise((resolve, reject) => {
-    // No IF EXISTS for postgres so ignoring error for duplicate db
     client
-      .query(`CREATE DATABASE ${database}`)
+      .connect()
       .then(() => {
-        client.end()
-        resolve()
+        // No IF EXISTS for postgres so ignoring error for duplicate db
+        client
+          .query(`CREATE DATABASE ${database}`)
+          .then(() => {
+            client.end()
+            resolve()
+          })
+          .catch((err) => {
+            client.end()
+            // If database already exists do continue
+            if (err.code === '42P04') {
+              resolve()
+            }
+
+            reject(err)
+          })
       })
       .catch((err) => {
-        client.end()
-
-        // If database already exists do continue
-        if (err.code === '42P04') {
-          resolve()
-        }
-
         reject(err)
       })
   })
@@ -45,7 +50,7 @@ module.exports = fp(
       pool: {
         max: 5,
         min: 0,
-        idle: 1000, // Smaller idle time to increase tests speed
+        idle: 1000, // Smaller idle time to increase tests speed (in ms)
       },
     }
 
@@ -79,15 +84,15 @@ module.exports = fp(
             // onClose hook remove due to tests not working
             // https://stackoverflow.com/questions/47970050/node-js-mocha-sequelize-error-connectionmanager-getconnection-was-called-after-t
             // instance.addHook('onClose', (fastify, done) => {
-            // fastify.db
-            //   .close()
-            // .then(() => {
-            // done()
-            //   })
-            //   .catch((err) => {
-            //     instance.log.error(err)
-            //     done()
-            //   })
+            //   fastify.db
+            //     .close()
+            //     .then(() => {
+            //       done()
+            //     })
+            //     .catch((err) => {
+            //       instance.log.error(err)
+            //       done()
+            //     })
             // })
             done()
           })
