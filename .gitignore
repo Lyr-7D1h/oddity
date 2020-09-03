@@ -24,7 +24,7 @@ resources/users/*
 .vscode
 *code-workspace
 
-server/.env
+server/.env*
 
 # to ignore videos (from cypress)
 *.mp4
