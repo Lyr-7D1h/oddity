@@ -81,19 +81,17 @@ module.exports = fp(
             instance.decorate('db', sequelize)
             instance.decorate('Sequelize', Sequelize)
 
-            // onClose hook remove due to tests not working
-            // https://stackoverflow.com/questions/47970050/node-js-mocha-sequelize-error-connectionmanager-getconnection-was-called-after-t
-            // instance.addHook('onClose', (fastify, done) => {
-            //   fastify.db
-            //     .close()
-            //     .then(() => {
-            //       done()
-            //     })
-            //     .catch((err) => {
-            //       instance.log.error(err)
-            //       done()
-            //     })
-            // })
+            instance.addHook('onClose', (fastify, done) => {
+              fastify.db
+                .close()
+                .then(() => {
+                  done()
+                })
+                .catch((err) => {
+                  instance.log.error(err)
+                  done()
+                })
+            })
             done()
           })
           .catch((err) => {

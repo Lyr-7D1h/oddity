@@ -86,12 +86,21 @@ module.exports = fp(
     // Wait for the server to load before watching changes
     // buildInit needs to wait due to dynamic permissions being added on startup
     instance.ready().then(() => {
-      buildInit(instance).catch((err) => {
-        instance.log.error(err)
-        instance.sentry.captureException(err)
-      })
+      // Make sure db works after 0.5s after ready
+      // Tests immediately close instance so needs to make sure it isn't closed already
+      setTimeout(() => {
+        instance.db
+          .authenticate()
+          .then(() => {
+            buildInit(instance).catch((err) => {
+              instance.log.error(err)
+              instance.sentry.captureException(err)
+            })
 
-      watcher([instance.models.module, instance.models.config], instance)
+            watcher([instance.models.module, instance.models.config], instance)
+          })
+          .catch((err) => {}) // Ignore authentication errors
+      }, 500)
     })
 
     /**
