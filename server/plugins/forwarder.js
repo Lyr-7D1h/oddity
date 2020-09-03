@@ -33,22 +33,16 @@ const buildInit = (instance) => {
       captcha: instance.config.CAPTCHA_CLIENT,
     }
 
-    const initPromises = []
-    initPromises.push(
+    Promise.all([
       instance.models.config.findOne({
         where: { isActive: true },
         attributes: { exclude: ['createdAt', 'updatedAt'] },
-      })
-    )
-
-    initPromises.push(
+      }),
       instance.models.module.findAll({
         where: { enabled: true },
         attributes: { exclude: ['createdAt', 'updatedAt'] },
-      })
-    )
-
-    Promise.all(initPromises)
+      }),
+    ])
       .then(([config, modules]) => {
         initObject.config = config ? config.dataValues : {}
         initObject.modules = modules ? modules.map((mod) => mod.dataValues) : []
@@ -92,12 +86,11 @@ module.exports = fp(
         instance.db
           .authenticate()
           .then(() => {
-            buildInit(instance).catch((err) => {
+            watcher([instance.models.module, instance.models.config], instance)
+            return buildInit(instance).catch((err) => {
               instance.log.error(err)
               instance.sentry.captureException(err)
             })
-
-            watcher([instance.models.module, instance.models.config], instance)
           })
           .catch((err) => {}) // Ignore authentication errors
       }, 500)
