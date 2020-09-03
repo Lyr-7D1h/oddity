@@ -25,6 +25,11 @@ const clear = () => {
       cwd: require('path').join(__dirname, '..'),
     }
   )
+
+  // Make sure not to seed for tests
+  client.querySync(
+    `INSERT INTO "oddityMeta" ("devShouldSeed", "shouldSeed") VALUES (FALSE, FALSE);`
+  )
 }
 
 module.exports = {
