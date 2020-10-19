@@ -8,7 +8,7 @@ const development_seed = async (models, crypto) => {
   })
   const passwordHash = await crypto.hash('test')
   await models.user.create({
-    username: 'test',
+    username: 'Test',
     identifier: 'test',
     email: 'test@test.com',
     roleId: role.id,

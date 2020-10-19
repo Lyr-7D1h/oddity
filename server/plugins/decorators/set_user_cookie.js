@@ -29,6 +29,7 @@ module.exports = fp((instance, _, done) => {
               httpOnly: false, // Should always be false because js needs to interact with this
               secure: !(instance.config.NODE_ENV === 'development'),
               path: '/',
+              samesite: true
             })
             resolve()
           } else {

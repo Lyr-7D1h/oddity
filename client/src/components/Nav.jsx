@@ -11,6 +11,7 @@ import notificationHandler from '../helpers/notificationHandler'
 import { connect } from 'react-redux'
 import { updateUser } from '../redux/actions/userActions'
 import { rootReset } from '../redux/actions/rootActions'
+import hasPermission from 'Helpers/hasPermission'
 
 const Nav = ({ modules, title, user, updateUser, location, rootReset }) => {
   const [loginError, setLoginError] = useState(false)
@@ -90,7 +91,7 @@ const Nav = ({ modules, title, user, updateUser, location, rootReset }) => {
               </Menu.SubMenu>
             )}
 
-            {user.permissions & 0x2 && (
+            {hasPermission("ROOT", user) && (
               <Menu.Item
                 style={{ float: 'right' }}
                 onClick={handleLogout}
@@ -99,7 +100,7 @@ const Nav = ({ modules, title, user, updateUser, location, rootReset }) => {
                 <Typography.Text type="danger">Logout</Typography.Text>
               </Menu.Item>
             )}
-            {user.permissions & 0x2 && (
+            {hasPermission("ROOT", user) && (
               <Menu.Item style={{ float: 'right' }} key="admin">
                 <Link to="/admin">Admin</Link>
               </Menu.Item>
