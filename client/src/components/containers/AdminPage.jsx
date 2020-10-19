@@ -15,8 +15,8 @@ export default connect((state) => ({ user: state.user }))(
     return (
       <ConditionalRedirect condition={!hasPermission('ROOT', user)}>
         <Page selected="admin">
-          <SubNav items={nav} />
           <Centered>
+            <SubNav items={nav} />
             <Card>{children}</Card>
           </Centered>
         </Page>
