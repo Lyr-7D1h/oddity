@@ -26,7 +26,7 @@ module.exports = (fastify) => {
           ],
         },
       },
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     (request, reply) => {
       if (!request.body.agreement) {

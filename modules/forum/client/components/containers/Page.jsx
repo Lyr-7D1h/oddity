@@ -1,4 +1,4 @@
-import { Card, Col, Row } from "antd";
+import { Card, Col, Row, Anchor } from "antd";
 import Breadcrumb from "Components/Breadcrumb";
 import Centered from "Components/containers/Centered";
 import Page from "Components/containers/Page";
@@ -6,14 +6,15 @@ import NotFoundPage from "Components/pages/NotFoundPage";
 import notificationHandler from "Helpers/notificationHandler";
 import requester from "Helpers/requester";
 import React, { useEffect } from "react";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { updateDrafts } from "../../redux/draftActions";
 
 export default connect((state) => ({
   draftCount: state.draft.draftCount,
   isUser: state.user.id,
-}))(({ dispatch, isUser, draftCount, children, notFound }) => {
+  rootPath: state.init.modules.find((mod) => mod.identifier === "forum").route,
+}))(({ dispatch, isUser, draftCount, children, notFound, rootPath }) => {
   if (notFound) {
     return <NotFoundPage />;
   }
@@ -45,7 +46,7 @@ export default connect((state) => ({
             </Col>
             <Col span={6}>
               <Centered>
-                {/* <Link href="drafts" title={`drafts ${draftCount}`} /> */}
+                <Link to={`/${rootPath}/drafts`}>drafts ({draftCount})</Link>
               </Centered>
             </Col>
           </Row>

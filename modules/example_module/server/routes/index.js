@@ -4,7 +4,7 @@ module.exports = async (fastify) => {
   fastify.get(
     "/example",
     {
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     async (request, reply) => {
       reply.example();

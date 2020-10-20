@@ -6,7 +6,7 @@ module.exports = async (fastify) => {
         hide: true, // hide from docs
       },
       preHandler: fastify.auth([fastify.authorization.basic]),
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     (request, reply) => {
       fastify

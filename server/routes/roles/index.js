@@ -7,11 +7,11 @@ module.exports = async (fastify) => {
       {
         method: 'get',
         multiple: true,
-        permissions: fastify.PERMISSIONS.NON_SET,
+        permissions: fastify.PERMISSIONS.PUBLIC,
       },
       {
         method: 'get',
-        permissions: fastify.PERMISSIONS.NON_SET,
+        permissions: fastify.PERMISSIONS.PUBLIC,
       },
       {
         method: 'post',

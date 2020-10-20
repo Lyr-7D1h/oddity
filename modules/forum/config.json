@@ -7,6 +7,10 @@
       "component": "/client/components/pages/RootPage"
     },
     {
+      "path": "/drafts",
+      "component": "/client/components/pages/DraftsPage"
+    },
+    {
       "path": "/:category/",
       "component": "/client/components/pages/CategoryPage"
     },

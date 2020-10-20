@@ -4,7 +4,7 @@ module.exports = async (fastify) => {
   fastify.post(
     '/users/preflight',
     {
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     (request, reply) => {
       const search = {}

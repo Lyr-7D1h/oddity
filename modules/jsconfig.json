@@ -1,3 +1,4 @@
+// FIXME: for some reason not working for antd imports
 {
   "compilerOptions": {
     "module": "commonjs",
@@ -9,7 +10,9 @@
       "Components/*": ["./components/*"],
       "Actions/*": ["./redux/actions/*"],
       "Helpers/*": ["./helpers/*"]
-    }
+    },
+    "allowSyntheticDefaultImports": true
   },
+  // "extends": "../client/jsconfig.json",
   "exclude": ["node_modules", "**/node_modules/*"]
 }

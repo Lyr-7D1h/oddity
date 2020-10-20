@@ -4,7 +4,7 @@ module.exports = async (fastify) => {
   fastify.get(
     '/modules',
     {
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     function (request, reply) {
       fastify.models.module
@@ -24,7 +24,7 @@ module.exports = async (fastify) => {
   fastify.get(
     '/modules/identifier/:identifier/enabled',
     {
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
       schema: {
         params: {
           type: 'object',

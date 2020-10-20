@@ -1,7 +1,7 @@
 const fp = require('fastify-plugin')
 
 const PERMISSIONS = {
-  NON_SET: 0x0,
+  PUBLIC: 0x0,
   NONE: 0x1, // Default for users
   ROOT: 0x2, // Used to identify someone with access to everything
   MANAGE_ROLES: 0x4,

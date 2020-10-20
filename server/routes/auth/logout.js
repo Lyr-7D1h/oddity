@@ -5,7 +5,7 @@ module.exports = (fastify) => {
       schema: {
         hide: true, // hide from docs
       },
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     (request, reply) => {
       request.destroySession((err) => {

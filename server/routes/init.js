@@ -1,7 +1,7 @@
 module.exports = async (fastify) => {
   fastify.get(
     '/init',
-    { permissions: fastify.PERMISSIONS.NON_SET },
+    { permissions: fastify.PERMISSIONS.PUBLIC },
     (request, reply) => {
       const initPromises = []
       initPromises.push(

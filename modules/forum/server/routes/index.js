@@ -4,7 +4,7 @@ module.exports = async (fastify) => {
   fastify.get(
     "/forum",
     {
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     (request, reply) => {
       fastify.models.forumCategory
@@ -51,7 +51,7 @@ module.exports = async (fastify) => {
   fastify.get(
     "/forum/categories",
     {
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     (request, reply) => {
       fastify.models.forumCategory
@@ -75,7 +75,7 @@ module.exports = async (fastify) => {
   fastify.get(
     "/forum/threads",
     {
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     (request, reply) => {
       fastify.models.forumThread
@@ -102,7 +102,7 @@ module.exports = async (fastify) => {
   //     schema: {
   //       params: "id#",
   //     },
-  //     permissions: fastify.PERMISSIONS.NON_SET,
+  //     permissions: fastify.PERMISSIONS.PUBLIC,
   //   },
   //   (request, reply) => {
   //     fastify.models.forumCategory
@@ -152,7 +152,7 @@ module.exports = async (fastify) => {
   //     schema: {
   //       params: "id#",
   //     },
-  //     permissions: fastify.PERMISSIONS.NON_SET
+  //     permissions: fastify.PERMISSIONS.PUBLIC
   //   },
   //   (request, reply) => {
   //     fastify.models.forumThread

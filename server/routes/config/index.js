@@ -2,7 +2,7 @@ module.exports = async (fastify) => {
   // Get Default Config (NOT USED)
   fastify.get(
     '/config',
-    { permissions: fastify.PERMISSIONS.NON_SET },
+    { permissions: fastify.PERMISSIONS.PUBLIC },
     (request, reply) => {
       fastify.models.config
         .findOne({ where: { isActive: true } })

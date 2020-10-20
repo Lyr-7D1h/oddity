@@ -155,7 +155,6 @@ module.exports = async (fastify) => {
       preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
-      console.log(request.user);
       fastify.models.forumPost
         .destroy({ where: { id: request.params.id } })
         .then(() => {

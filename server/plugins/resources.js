@@ -99,7 +99,7 @@ async function fastifyStatic(fastify, opts, next) {
     schema: {
       hide: true,
     },
-    permissions: fastify.PERMISSIONS.NON_SET,
+    permissions: fastify.PERMISSIONS.PUBLIC,
   }
 
   // Serve

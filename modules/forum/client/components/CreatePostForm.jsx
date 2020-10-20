@@ -24,13 +24,14 @@ export default connect((state) => ({ userId: state.user.id }), {
       authorId: userId,
     };
 
-    const url = isDraft ? "forum/draft" : "forum/posts";
+    const url = isDraft ? "forum/drafts" : "forum/posts";
 
     requester
       .post(url, values)
       .then((post) => {
         if (isDraft) {
           pushDraft(post);
+          // #TODO: redirect to drafts
           setRedirect(threadPath);
         } else {
           setRedirect(path.join(threadPath, post.title));
@@ -83,7 +84,7 @@ export default connect((state) => ({ userId: state.user.id }), {
   }
 
   return (
-    <Card title={"Create new post"} onSubmit={handleFinish}>
+    <Card title={"Create new post"}>
       <Form form={form} onFinish={handleFinish} {...formItemLayout}>
         <Form.Item label="Title" name="title" rules={[{ required: true }]}>
           <Input />

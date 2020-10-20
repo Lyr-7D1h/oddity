@@ -233,7 +233,7 @@ module.exports = fp(
       '/*',
       {
         schema: { hide: true },
-        permissions: instance.PERMISSIONS.NON_SET,
+        permissions: instance.PERMISSIONS.PUBLIC,
       },
       handler
     )

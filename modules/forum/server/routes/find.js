@@ -11,7 +11,7 @@ module.exports = async (fastify) => {
           postTitle: { type: "string" },
         },
       },
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     (request, reply) => {
       fastify.models.forumCategory
@@ -63,7 +63,7 @@ module.exports = async (fastify) => {
           },
         },
       },
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     (request, reply) => {
       fastify.models.forumCategory
@@ -116,7 +116,7 @@ module.exports = async (fastify) => {
           categoryTitle: { type: "string" },
         },
       },
-      permissions: fastify.PERMISSIONS.NON_SET,
+      permissions: fastify.PERMISSIONS.PUBLIC,
     },
     (request, reply) => {
       fastify.models.forumCategory

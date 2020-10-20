@@ -139,12 +139,12 @@ module.exports = async (fastify) => {
         method: 'get',
         multiple: true,
         exclude: excludeAttributes,
-        permissions: fastify.PERMISSIONS.NON_SET,
+        permissions: fastify.PERMISSIONS.PUBLIC,
       },
       {
         method: 'get',
         exclude: excludeAttributes,
-        permissions: fastify.PERMISSIONS.NON_SET,
+        permissions: fastify.PERMISSIONS.PUBLIC,
       },
     ],
   }

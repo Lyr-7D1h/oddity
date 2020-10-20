@@ -112,10 +112,8 @@ const Page = ({
             <>
               <Row>
                 <Col span={6}>
-                  {' '}
                   <Link to="/admin/modules">
-                    <Button block type="primary">
-                      <RollbackOutlined />
+                    <Button icon={<RollbackOutlined />} block type="primary">
                       Back
                     </Button>
                   </Link>
