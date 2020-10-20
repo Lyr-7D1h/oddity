@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2016",
+    "target": "es6",
     "jsx": "preserve",
     "baseUrl": "../client/src",
+    "alwaysStrict": true,
     "paths": {
       "Components/*": ["./components/*"],
       "Actions/*": ["./redux/actions/*"],

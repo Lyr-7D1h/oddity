@@ -278,7 +278,7 @@ export default ({ categories, onChange, onCreateCategory }) => {
   }
   return (
     <>
-      <Input required ref={forumInput} placeholder="Title" />
+      <Input ref={forumInput} placeholder="Title" />
       <Row style={{ marginBottom: "30px" }}>
         <Col span={12}>
           <Button onClick={handleCreateCategory} type="primary" block>

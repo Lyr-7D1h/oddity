@@ -1,14 +1,21 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2016",
+    "target": "es6",
     "jsx": "preserve",
     "baseUrl": "./src",
+    "alwaysStrict": true,
     "paths": {
       "Components/*": ["./components/*"],
       "Actions/*": ["./redux/actions/*"],
       "Helpers/*": ["./helpers/*"]
     }
   },
-  "exclude": ["node_modules", "**/node_modules/*"]
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*",
+    "public",
+    "module_loader_imports",
+    "build"
+  ]
 }

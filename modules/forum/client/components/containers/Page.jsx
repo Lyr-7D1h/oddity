@@ -1,23 +1,24 @@
-import React, { useEffect } from "react";
-import Page from "Components/containers/Page";
+import { Card, Col, Row } from "antd";
 import Breadcrumb from "Components/Breadcrumb";
+import Centered from "Components/containers/Centered";
+import Page from "Components/containers/Page";
 import NotFoundPage from "Components/pages/NotFoundPage";
-import { Card, Alert } from "antd";
-import requester from "Helpers/requester";
 import notificationHandler from "Helpers/notificationHandler";
-import { useDispatch, connect } from "react-redux";
+import requester from "Helpers/requester";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { updateDrafts } from "../../redux/draftActions";
 
 export default connect((state) => ({
   draftCount: state.draft.draftCount,
   isUser: state.user.id,
-}))(({ children, draftCount, notFound, isUser }) => {
+}))(({ dispatch, isUser, draftCount, children, notFound }) => {
   if (notFound) {
     return <NotFoundPage />;
   }
 
   if (draftCount === null && isUser) {
-    const dispatch = useDispatch();
     useEffect(() => {
       requester
         .get("forum/drafts")
@@ -36,26 +37,18 @@ export default connect((state) => ({
 
   return (
     <Page>
-      {draftCount > 0 ? (
-        <div style={{ paddingLeft: "10vw", paddingRight: "10vw" }}>
-          <Alert
-            message={`You have ${draftCount} saved draft${
-              draftCount > 1 ? "s" : ""
-            }!`}
-            description={`Remove or Create a post using these draft${
-              draftCount > 1 ? "s" : ""
-            } to get rid of this message.`}
-            type="info"
-            showIcon
-            closable
-          />
-        </div>
-      ) : (
-        ""
-      )}
       <div style={{ paddingLeft: "8vw", paddingRight: "8vw" }}>
         <Card bodyStyle={{ paddingTop: 10, paddingBottom: 10 }}>
-          <Breadcrumb />
+          <Row>
+            <Col span={18}>
+              <Breadcrumb />
+            </Col>
+            <Col span={6}>
+              <Centered>
+                {/* <Link href="drafts" title={`drafts ${draftCount}`} /> */}
+              </Centered>
+            </Col>
+          </Row>
         </Card>
       </div>
       <div style={{ paddingLeft: "10vw", paddingRight: "10vw" }}>

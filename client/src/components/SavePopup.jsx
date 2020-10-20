@@ -32,7 +32,6 @@ export default connect(
         if (!escape) {
           setTimeout(() => setEscape(false), 800)
         }
-        setTimeout()
         return false
       }
       return true

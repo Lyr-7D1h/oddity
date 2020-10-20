@@ -3,7 +3,7 @@ import { Breadcrumb } from 'antd'
 import { Link } from 'react-router-dom'
 import { withRouter } from 'react-router'
 
-export default withRouter(({ routes, location }) => {
+export default withRouter(({ location }) => {
   const selected = location.pathname.split('/')
   selected.shift()
   return (
