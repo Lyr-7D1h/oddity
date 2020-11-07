@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import path from "path";
 import Editor from "Components/Editor";
-import { pushDraft } from "../redux/draftActions";
+import { pushDraft } from "../redux/forumActions";
 
 export default connect((state) => ({ userId: state.user.id }), {
   pushDraft,

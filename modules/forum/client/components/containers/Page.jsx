@@ -8,10 +8,10 @@ import requester from "Helpers/requester";
 import React, { useEffect } from "react";
 import { connect, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { updateDrafts } from "../../redux/draftActions";
+import { updateDrafts } from "../../redux/forumActions";
 
 export default connect((state) => ({
-  draftCount: state.draft.draftCount,
+  draftCount: state.forum.drafts.length,
   isUser: state.user.id,
   rootPath: state.init.modules.find((mod) => mod.identifier === "forum").route,
 }))(({ dispatch, isUser, draftCount, children, notFound, rootPath }) => {
@@ -19,22 +19,21 @@ export default connect((state) => ({
     return <NotFoundPage />;
   }
 
-  if (draftCount === null && isUser) {
-    useEffect(() => {
-      requester
-        .get("forum/drafts")
-        .then((drafts) => {
-          dispatch(updateDrafts(drafts));
-        })
-        .catch((err) => {
-          if (err.message !== "Could not find user") {
-            console.log(err.message);
-            console.error(err);
-            notificationHandler.error("Could not fetch drafts", err.message);
-          }
-        });
-    }, []);
-  }
+  // on page load update drafts
+  useEffect(() => {
+    requester
+      .get("forum/drafts")
+      .then((drafts) => {
+        dispatch(updateDrafts(drafts));
+      })
+      .catch((err) => {
+        if (err.message !== "Could not find user") {
+          console.log(err.message);
+          console.error(err);
+          notificationHandler.error("Could not fetch drafts", err.message);
+        }
+      });
+  }, []);
 
   return (
     <Page>
@@ -45,9 +44,11 @@ export default connect((state) => ({
               <Breadcrumb />
             </Col>
             <Col span={6}>
-              <Centered>
-                <Link to={`/${rootPath}/drafts`}>drafts ({draftCount})</Link>
-              </Centered>
+              {isUser && (
+                <Centered>
+                  <Link to={`/${rootPath}/drafts`}>drafts ({draftCount})</Link>
+                </Centered>
+              )}
             </Col>
           </Row>
         </Card>
