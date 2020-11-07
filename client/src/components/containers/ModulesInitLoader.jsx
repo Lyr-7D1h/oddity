@@ -8,6 +8,7 @@ export default connect((state) => ({ modules: state.init.modules }))(
 
     useEffect(() => {
       const effectiveInits = modules
+        .filter((mod) => importedModules[mod.name])
         .map((mod) => importedModules[mod.name].init)
         .filter((mod) => mod !== undefined)
         .map((mod) => {

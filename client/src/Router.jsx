@@ -35,6 +35,11 @@ export default connect((state) => ({ modules: state.init.modules }))(
 
           if (route === '') noHomeSet = false
 
+          // if module does not exist return continue to next iter
+          if (!moduleLoaderModules[mod.name]) {
+            continue
+          }
+
           if (mod) {
             const modRoutes = moduleLoaderModules[mod.name].routes
             if (modRoutes) {
