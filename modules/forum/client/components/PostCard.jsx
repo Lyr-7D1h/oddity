@@ -69,10 +69,10 @@ export default connect((state) => ({ user: state.user }))(
       return <Redirect to=".." />;
     }
 
-    const allowedToEdit =
-      hasPermission("MANAGE_FORUM", user) || post.author
-        ? user.identifier === post.author.identifier
-        : false;
+    const allowedToEdit = post.author
+      ? hasPermission("MANAGE_FORUM", user) ||
+        post.author.identifier === user.identifier
+      : false;
 
     const PostOptions = (
       <Space>
