@@ -19,21 +19,21 @@ export default connect((state) => ({
     return <NotFoundPage />;
   }
 
-  // on page load update drafts
-  useEffect(() => {
-    requester
-      .get("forum/drafts")
-      .then((drafts) => {
-        dispatch(updateDrafts(drafts));
-      })
-      .catch((err) => {
-        if (err.message !== "Could not find user") {
-          console.log(err.message);
-          console.error(err);
-          notificationHandler.error("Could not fetch drafts", err.message);
-        }
-      });
-  }, []);
+  // // on page load update drafts
+  // useEffect(() => {
+  //   requester
+  //     .get("forum/drafts")
+  //     .then((drafts) => {
+  //       dispatch(updateDrafts(drafts));
+  //     })
+  //     .catch((err) => {
+  //       if (err.message !== "Could not find user") {
+  //         console.log(err.message);
+  //         console.error(err);
+  //         notificationHandler.error("Could not fetch drafts", err.message);
+  //       }
+  //     });
+  // }, []);
 
   return (
     <Page>

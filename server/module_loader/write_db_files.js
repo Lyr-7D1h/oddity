@@ -3,6 +3,7 @@ const path = require('path')
 const getDatabaseFiles = require('./server_importer').getDatabaseFiles
 
 /**
+ * Copy all database related files to corresponding folder in /server
  * Should be run after all server components are loaded
  */
 module.exports = () => {
@@ -15,20 +16,20 @@ module.exports = () => {
 
         const loaders = []
         if (existingFiles) {
-          existingFiles = existingFiles.filter(file =>
+          existingFiles = existingFiles.filter((file) =>
             file.startsWith('.imported_')
           )
 
           // Remove file if it does not exist in sources
-          existingFiles.forEach(existingFile => {
-            const sourcesFilesList = sources.map(file => path.basename(file))
+          existingFiles.forEach((existingFile) => {
+            const sourcesFilesList = sources.map((file) => path.basename(file))
             existingFile = existingFile.replace('.imported_', '')
             if (sourcesFilesList.indexOf(existingFile) === -1) {
               loaders.push(
                 new Promise((resolve, reject) => {
                   fs.unlink(
                     path.join(destination, '.imported_' + existingFile),
-                    err => {
+                    (err) => {
                       if (err) reject(err)
                       resolve()
                     }
@@ -39,9 +40,9 @@ module.exports = () => {
           })
         }
 
-        sources.forEach(source => {
+        sources.forEach((source) => {
           loaders.push(
-            new Promise(resolve => {
+            new Promise((resolve) => {
               fs.copyFile(
                 source,
                 path.join(destination, '.imported_' + path.basename(source)),
@@ -62,6 +63,6 @@ module.exports = () => {
   return Promise.all([
     syncFiles(seeders, path.join(__dirname, '../db/seeders')),
     syncFiles(models, path.join(__dirname, '../db/models')),
-    syncFiles(migrations, path.join(__dirname, '../db/migrations'))
+    syncFiles(migrations, path.join(__dirname, '../db/migrations')),
   ])
 }

@@ -1,4 +1,3 @@
-import requester from "Helpers/requester";
 import { UPDATE_DRAFTS, PUSH_DRAFT } from "./forumActions";
 
 export default (_state, { type, payload }) => {

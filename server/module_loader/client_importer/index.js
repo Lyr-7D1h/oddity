@@ -16,6 +16,7 @@ const clientImportData = {
 const loadComponents = require('./load_components')
 const loadAdminPage = require('./load_admin_page')
 const loadRedux = require('./load_redux')
+const loadInit = require('./loadInit')
 
 exports.load = (config, modulePath) => {
   clientImportData.modules[config.name] = { routes: [] }
@@ -42,6 +43,8 @@ exports.load = (config, modulePath) => {
           case 'redux':
             clientLoaders.push(loadRedux(config, modulePath, clientImportData))
             break
+          case 'init.js':
+            clientLoaders.push(loadInit(config, modulePath, clientImportData))
         }
       })
 
