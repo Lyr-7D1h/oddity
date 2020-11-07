@@ -2,7 +2,7 @@ import React from 'react'
 import { Result } from 'antd'
 import { connect } from 'react-redux'
 
-const ConfigLoader = ({ init, children }) => {
+const InitLoader = ({ init, children }) => {
   if (init.noInit) {
     return (
       <Result
@@ -17,4 +17,4 @@ const ConfigLoader = ({ init, children }) => {
   }
 }
 
-export default connect((state) => ({ init: state.init }))(ConfigLoader)
+export default connect((state) => ({ init: state.init }))(InitLoader)
