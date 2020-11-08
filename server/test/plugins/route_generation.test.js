@@ -2,7 +2,7 @@
 
 const Fastify = require('fastify')
 const { test } = require('tap')
-const RouteGen = require('../../plugins/decorators/route_generation')
+const RouteGen = require('../../plugins/decorators/routeGen')
 // const getTestModel = require('../models/test')
 
 // clear all tables
