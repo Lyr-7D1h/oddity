@@ -24,20 +24,20 @@ export default connect(
     const [isLoading, setIsLoading] = useState(false)
     const [escape, setEscape] = useState(false)
 
-    // FIXME: fix Warning: A history supports only one prompt at a time
-    // Prevent escape when there are changes
-    history.block(() => {
-      if (show) {
-        setEscape(true)
-        if (!escape) {
-          setTimeout(() => setEscape(false), 800)
-        }
-        return false
-      }
-      return true
-    })
-
     useEffect(() => {
+      // FIXME: fix Warning: A history supports only one prompt at a time
+      // Prevent escape when there are changes
+      history.block(() => {
+        if (show) {
+          setEscape(true)
+          if (!escape) {
+            setTimeout(() => setEscape(false), 800)
+          }
+          return false
+        }
+        return true
+      })
+
       if (errors.length > 0) {
         setIsLoading(false)
       }
@@ -45,7 +45,7 @@ export default connect(
       if (!show) {
         setIsLoading(false)
       }
-    }, [show, errors])
+    }, [escape, history, show, errors])
 
     const handleOnSave = () => {
       setIsLoading(true)

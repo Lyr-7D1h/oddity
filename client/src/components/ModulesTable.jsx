@@ -4,27 +4,36 @@ import notificationHandler from 'Helpers/notificationHandler'
 import { Table, Tag, Button } from 'antd'
 
 import { Link, useLocation } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { disableModule, enableModule } from 'Actions/initActions'
 
 export default ({ modules: modulesProp }) => {
   const [modules, setModules] = useState([])
+  const dispatch = useDispatch()
 
   useEffect(() => {
     setModules(modulesProp)
   }, [modulesProp])
 
   const setEnabled = (id) => {
-    const enabled = !modules.find((mod) => mod.id === id).enabled
+    const selectedModule = modules.find((mod) => mod.id === id)
     requester
-      .patch(`modules/${id}/enabled`, { enabled })
+      .patch(`modules/${id}/enabled`, { enabled: !selectedModule.enabled })
       .then(() => {
-        setModules(
-          modules.map((mod) => {
-            if (mod.id === id) {
-              mod.enabled = enabled
-            }
-            return mod
-          })
-        )
+        const newModules = modules.map((mod) => {
+          if (mod.id === id) {
+            mod.enabled = !selectedModule.enabled
+          }
+          return mod
+        })
+        setModules(newModules)
+
+        // selectedModule.enabled = !selectedModule.enabled
+        if (selectedModule.enabled) {
+          dispatch(enableModule(selectedModule))
+        } else {
+          dispatch(disableModule(selectedModule))
+        }
       })
       .catch((err) => {
         notificationHandler.error('Could not enable Module', err.message)
