@@ -79,6 +79,10 @@ module.exports = async (fastify) => {
             return reply.send(mod)
           }
         })
+        .catch((err) => {
+          fastify.log.error(err)
+          return reply.badRequest(err.message)
+        })
     }
   )
 
@@ -102,10 +106,14 @@ module.exports = async (fastify) => {
         )
         .then(([amountModified, mod]) => {
           if (amountModified === 0) {
-            reply.noChange()
+            return reply.noChange()
           } else {
-            reply.send(mod)
+            return reply.send(mod)
           }
+        })
+        .catch((err) => {
+          fastify.log.error(err)
+          return reply.badRequest(err.message)
         })
     }
   )
