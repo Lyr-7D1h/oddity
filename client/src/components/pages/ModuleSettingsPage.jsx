@@ -30,9 +30,11 @@ const Page = ({
         .get(`modules/identifier/${match.params.module}/enabled`)
         .then((mod) => {
           if (mod) {
-            const component = moduleLoaderModules[mod.name].adminPage
-            if (component) {
-              setImportedSettingsComponent(React.createElement(component))
+            if (moduleLoaderModules[mod.name]) {
+              const component = moduleLoaderModules[mod.name].adminPage
+              if (component) {
+                setImportedSettingsComponent(React.createElement(component))
+              }
             }
             setInitialValues(mod)
             setResetHandler((mod) => {
