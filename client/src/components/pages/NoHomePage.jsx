@@ -1,39 +1,40 @@
 import React from 'react'
 import { RightOutlined } from '@ant-design/icons'
-import { Result, Button, Row, Col } from 'antd'
+import { Result, Button } from 'antd'
 import { Link } from 'react-router-dom'
 import Centered from 'Components/containers/Centered'
 import Page from 'Components/containers/Page'
+import { connect } from 'react-redux'
+import hasPermission from 'Helpers/hasPermission'
 
-export default () => {
+export default connect((state) => ({
+  isAdmin: hasPermission('ROOT', state.user),
+}))(({ isAdmin }) => {
   return (
     <Page>
       <Result
-        title="You have not set the home page"
+        title="There is no home page set"
         subTitle="Set a page to default/home in the admin panel"
         extra={
           <Centered>
-            <Row>
-              <Col span={12}>
-                <Link to="/admin">
-                  <Button type="primary" style={{ height: '50px' }}>
-                    ADMIN PANEL
-                    <RightOutlined />
-                  </Button>
-                </Link>
-              </Col>
-              <Col span={12}>
-                <Link to="/login">
-                  <Button type="primary" style={{ height: '50px' }}>
-                    OR LOGIN FIRST
-                    <RightOutlined />
-                  </Button>
-                </Link>
-              </Col>
-            </Row>
+            {isAdmin ? (
+              <Link to="/admin">
+                <Button type="primary" style={{ height: '50px' }}>
+                  ADMIN PANEL
+                  <RightOutlined />
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/login">
+                <Button type="primary" style={{ height: '50px' }}>
+                  LOGIN
+                  <RightOutlined />
+                </Button>
+              </Link>
+            )}
           </Centered>
         }
       />
     </Page>
   )
-}
+})
