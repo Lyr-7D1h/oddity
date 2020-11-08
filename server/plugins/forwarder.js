@@ -46,6 +46,7 @@ const buildInit = (instance) => {
       .then(([config, modules]) => {
         initObject.config = config ? config.dataValues : {}
         initObject.modules = modules ? modules.map((mod) => mod.dataValues) : []
+        // console.log(modules)
         instance.log.debug('Forwarder: updating init')
         init = `<script>window.init=${JSON.stringify(initObject)}</script>`
         resolve()
@@ -64,11 +65,13 @@ const watcher = (models, instance) => {
   }
 
   models.forEach((model) => {
-    model.afterValidate(
+    model.addHook(
       'afterValidate',
       () => {
-        // Make sure update has gone through before updating init
-        return buildInit(instance).catch(errHandler)
+        // WARN: could make models out of sync if updating of model takes longer than 1000ms
+        setTimeout(() => {
+          return buildInit(instance).catch(errHandler)
+        }, 1000)
       },
       1000
     )

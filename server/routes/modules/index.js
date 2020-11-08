@@ -6,7 +6,7 @@ module.exports = async (fastify) => {
     {
       permissions: fastify.PERMISSIONS.PUBLIC,
     },
-    function (request, reply) {
+    function (_, reply) {
       fastify.models.module
         .findAll({
           attributes: { exclude: ['createdAt', 'updatedAt'] },
