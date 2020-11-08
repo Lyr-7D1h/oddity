@@ -51,7 +51,6 @@ module.exports = fp(
               )
             })
 
-            // Return needed to fix (node:6106) Warning: a promise was created in a handler at domain.js:137:15 but was not returned from it
             return Promise.all(promises)
               .then((rows) => {
                 rows = rows

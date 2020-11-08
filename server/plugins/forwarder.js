@@ -221,7 +221,9 @@ module.exports = fp(
         },
       })
 
-      // reply.send sends no reply when data has been transformed
+      response.setMaxListeners(200)
+
+      // WARN: (FROM TESTING) response gives => (node:58920) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 201 error listeners added to [Response]. Use emitter.setMaxListeners() to increase limit
       stream.pipe(wrap).pipe(response)
     }
     const staticHandler = (request, reply) => {
