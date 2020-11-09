@@ -11,6 +11,8 @@ import notificationHandler from 'Helpers/notificationHandler'
 import { Link } from 'react-router-dom'
 import Title from 'antd/lib/typography/Title'
 import saveWrapper from 'Helpers/saveWrapper'
+import { useDispatch } from 'react-redux'
+import { updateModuleRoute } from 'Actions/initActions'
 
 const Page = ({
   setHasChanges,
@@ -23,6 +25,7 @@ const Page = ({
   const [ImportedSettingsComponent, setImportedSettingsComponent] = useState('')
   const [notFound, setNotFound] = useState(false)
   const [form] = Form.useForm()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (!mod) {
@@ -47,6 +50,7 @@ const Page = ({
                   requester
                     .patch(`modules/${mod.id}`, values)
                     .then((module) => {
+                      dispatch(updateModuleRoute(module.id, module.route))
                       resolve(module)
                     })
                     .catch((err) => reject(err))
@@ -62,7 +66,15 @@ const Page = ({
           notificationHandler.error('Something went wrong', err.message)
         })
     }
-  }, [mod, match, form, setInitialValues, setResetHandler, setSaveHandler])
+  }, [
+    mod,
+    dispatch,
+    match,
+    form,
+    setInitialValues,
+    setResetHandler,
+    setSaveHandler,
+  ])
 
   const Content = (
     <>

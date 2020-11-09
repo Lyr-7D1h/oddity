@@ -76,7 +76,7 @@ module.exports = async (fastify) => {
           if (amountModified === 0) {
             return reply.noChange()
           } else {
-            return reply.send(mod)
+            return reply.send(mod[0])
           }
         })
         .catch((err) => {

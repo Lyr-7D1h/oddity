@@ -3,12 +3,22 @@ import {
   UPDATE_CONFIG,
   ENABLE_MODULE,
   DISABLE_MODULE,
+  UPDATE_MODULE_ROUTE,
 } from '../actions/initActions'
 
 export default (state, { type, payload }) => {
   switch (type) {
     case UPDATE_CONFIG:
       return Object.assign({}, state, { config: payload })
+    case UPDATE_MODULE_ROUTE:
+      const newState = Object.assign({}, state)
+      newState.modules = state.modules.map((mod) => {
+        if (mod.id === payload.id) {
+          mod.route = payload.route
+        }
+        return mod
+      })
+      return newState
     case ENABLE_MODULE:
       if (state.modules.some((mod) => mod.id === payload.id)) {
         return state
