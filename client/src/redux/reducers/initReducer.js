@@ -1,3 +1,4 @@
+import importedModules from '../../../module_loader_imports/modules'
 import {
   UPDATE_CONFIG,
   ENABLE_MODULE,
@@ -19,7 +20,19 @@ export default (state, { type, payload }) => {
       return Object.assign({}, state, { modules })
     default:
       if (window.init && Object.keys(window.init).length > 0) {
-        return window.init
+        // only allow modules with client routes
+        let state = Object.assign({}, window.init)
+        state.modules = state.modules
+          .filter(
+            (mod) =>
+              importedModules[mod.name] &&
+              importedModules[mod.name].routes.length > 0
+          )
+          .map((mod) => {
+            mod.routes = importedModules[mod.name].routes
+            return mod
+          })
+        return state
       } else {
         return { noInit: true }
       }

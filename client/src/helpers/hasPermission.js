@@ -1,8 +1,8 @@
-import store from '../redux/store'
+import { useStore } from 'react-redux'
 
 /// checks if user is allowed to do something
 export default (permissionStrings, user) => {
-  const state = store.getState()
+  const state = useStore().getState()
   const init = state.init
 
   if (!user) {
