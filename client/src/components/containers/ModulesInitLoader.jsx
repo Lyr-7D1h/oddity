@@ -1,3 +1,4 @@
+import errorHandler from 'Helpers/errorHandler'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import importedModules from '../../../module_loader_imports/modules'
@@ -20,9 +21,13 @@ export default connect((state) => ({ modules: state.init.modules }))(
             }
           })
 
-        Promise.all(effectiveInits).then(() => {
-          setLoaded(true)
-        })
+        Promise.all(effectiveInits)
+          .catch((err) =>
+            errorHandler(err, {
+              title: 'Failed to load initial data from module',
+            })
+          )
+          .finally(() => setLoaded(true))
       }
     }, [loaded, modules, dispatch])
 

@@ -8,17 +8,18 @@ import notificationHandler from './helpers/notificationHandler'
 import moduleLoaderModules from '../module_loader_imports/modules'
 
 import LoginPage from './components/pages/LoginPage'
-import AdminSettingsPage from './components/pages/AdminSettingsPage'
+import AdminSettingsPage from './components/admin/pages/AdminSettingsPage'
 import RegisterPage from './components/pages/RegisterPage'
 import TermsOfServicePage from './components/pages/TermsOfServicePage'
 import NotFoundPage from './components/pages/NotFoundPage'
 import NoHomePage from './components/pages/NoHomePage'
 import AccountPage from './components/pages/AccountSettingsPage'
 import ProfilePage from './components/pages/ProfilePage'
-import ModulesPage from 'Components/pages/ModulesPage'
-import ModuleSettingsPage from 'Components/pages/ModuleSettingsPage'
+import ModulesPage from 'Components/admin/pages/ModulesPage'
+import ModuleSettingsPage from 'Components/admin/pages/ModuleSettingsPage'
 import SecuritySettingsPage from 'Components/pages/SecuritySettingsPage'
 import LinkedAccountsPage from 'Components/pages/LinkedAccountsPage'
+import RolesSettingsPage from 'Components/admin/pages/RolesSettingsPage'
 
 export default connect((state) => ({ modules: state.init.modules }))(
   ({ modules }) => {
@@ -81,6 +82,7 @@ export default connect((state) => ({ modules: state.init.modules }))(
       { path: '/admin/general', component: AdminSettingsPage },
       { path: '/admin/modules', component: ModulesPage },
       { path: '/admin/modules/:module', component: ModuleSettingsPage },
+      { path: '/admin/roles', component: RolesSettingsPage },
     ].map((route, i) => {
       return (
         <Route

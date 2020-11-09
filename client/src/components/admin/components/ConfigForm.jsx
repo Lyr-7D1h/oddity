@@ -3,9 +3,9 @@ import { Input, Button } from 'antd'
 import { Form } from 'antd'
 
 import { connect } from 'react-redux'
-import { updateConfig } from '../redux/actions/initActions'
-import requester from '../helpers/requester'
-import notificationHandler from '../helpers/notificationHandler'
+import { updateConfig } from 'Actions/initActions'
+import requester from 'Helpers/requester'
+import notificationHandler from 'Helpers/notificationHandler'
 
 const ConfigForm = ({ dispatch, config, ...props }) => {
   const handleFinish = (values) => {

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import Title from 'antd/lib/typography/Title'
 import requester from 'Helpers/requester'
 import { Alert } from 'antd'
-import AdminPage from 'Components/containers/AdminPage'
-import ModulesTable from 'Components/ModulesTable'
+import AdminPage from 'Components/admin/containers/AdminPage'
+import ModulesTable from 'Components/admin/components/ModulesTable'
 
 export default () => {
   const [modules, setModules] = useState([])
@@ -15,7 +14,7 @@ export default () => {
   }, [])
 
   return (
-    <AdminPage>
+    <AdminPage title="Modules">
       {-1 === modules.findIndex((mod) => mod.route === '') &&
       modules.length > 0 ? (
         <>
@@ -30,7 +29,6 @@ export default () => {
       ) : (
         ''
       )}
-      <Title>Modules</Title>
       <ModulesTable modules={modules} />
     </AdminPage>
   )
