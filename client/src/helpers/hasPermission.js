@@ -14,7 +14,7 @@ export default (permissionStrings, user) => {
 
   if (!Array.isArray(permissionStrings)) permissionStrings = [permissionStrings]
 
-  let permissionToCheck = PERMISSIONS['ROOT'] // overwrite for root
+  let permissionToCheck = PERMISSIONS['ADMIN'] // overwrite for root
 
   permissionStrings.forEach((permissionString) => {
     if (!PERMISSIONS[permissionString]) {

@@ -29,6 +29,7 @@ function injectInit(init) {
 const buildInit = (instance) => {
   return new Promise((resolve, reject) => {
     const initObject = {
+      permissionsDescriptions: instance.PERMISSIONS_DESCRIPTIONS,
       permissions: instance.PERMISSIONS,
       captcha: instance.config.CAPTCHA_CLIENT,
     }

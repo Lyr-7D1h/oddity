@@ -32,7 +32,7 @@ module.exports = async (fastify) => {
         },
       },
       preHandler: [fastify.auth([fastify.authorization.cookie])],
-      permissions: [fastify.PERMISSIONS.ROOT],
+      permissions: [fastify.PERMISSIONS.ADMIN],
     },
     (request, reply) => {
       fastify.models.config

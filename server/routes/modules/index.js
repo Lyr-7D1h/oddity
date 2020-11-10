@@ -61,7 +61,7 @@ module.exports = async (fastify) => {
           type: 'object',
         },
       },
-      permissions: fastify.PERMISSIONS.ROOT,
+      permissions: fastify.PERMISSIONS.ADMIN,
       preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
@@ -92,7 +92,7 @@ module.exports = async (fastify) => {
       schema: { params: 'id#' },
       preHandler: [fastify.auth([fastify.authorization.cookie])],
       permissions: [
-        fastify.PERMISSIONS.ROOT,
+        fastify.PERMISSIONS.ADMIN,
         fastify.PERMISSIONS.MANAGE_MODULES,
       ],
     },

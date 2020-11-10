@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import hasPermission from 'Helpers/hasPermission'
 
 export default connect((state) => ({
-  isAdmin: hasPermission('ROOT', state.user),
+  isAdmin: hasPermission('ADMIN', state.user),
 }))(({ isAdmin }) => {
   return (
     <Page>

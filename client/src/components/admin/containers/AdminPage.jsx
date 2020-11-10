@@ -10,18 +10,25 @@ import { connect } from 'react-redux'
 import Title from 'antd/lib/typography/Title'
 
 export default connect((state) => ({ user: state.user }))(
-  ({ children, user, title }) => {
+  ({ children, user, title, customLayout }) => {
     const nav = ['General', 'Modules', 'Roles']
 
     return (
-      <ConditionalRedirect condition={!hasPermission('ROOT', user)}>
+      <ConditionalRedirect condition={!hasPermission('ADMIN', user)}>
         <Page selected="admin">
           <Centered>
             <SubNav items={nav} />
-            <Card>
-              {title && <Title>{title}</Title>}
-              {children}
-            </Card>
+            {customLayout ? (
+              <>
+                {title && <Title>{title}</Title>}
+                {children}
+              </>
+            ) : (
+              <Card>
+                {title && <Title>{title}</Title>}
+                {children}
+              </Card>
+            )}
           </Centered>
         </Page>
         <SavePopup context="admin" />

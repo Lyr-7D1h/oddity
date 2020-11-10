@@ -3,9 +3,32 @@ const fp = require('fastify-plugin')
 const PERMISSIONS = {
   PUBLIC: 0x0,
   NONE: 0x1, // Default for users
-  ROOT: 0x2, // Used to identify someone with access to everything
+  ADMIN: 0x2, // Used to identify someone with access to everything
   MANAGE_ROLES: 0x4,
   MANAGE_MODULES: 0x8,
+}
+
+const PERMISSIONS_DESCRIPTIONS = {
+  PUBLIC: {
+    description: 'Public',
+    details: 'No permission someone who is not logged in.',
+  },
+  NONE: {
+    description: 'None',
+    details: 'Default permission for logged in user.',
+  },
+  ADMIN: {
+    description: 'Administrator',
+    details: 'Users with this permission have every permission.',
+  },
+  MANAGE_ROLES: {
+    description: 'Manage Roles',
+    details: 'Users with this permission can create, remove and edit roles.',
+  },
+  MANAGE_MODULES: {
+    description: 'Manage Modules',
+    details: 'Users with this permission can manage modules.',
+  },
 }
 
 // Add Permission to schema summary of route
@@ -149,7 +172,7 @@ module.exports = fp(
 
     const authorizeRoute = (route, method, permission) => {
       // if root always true
-      if (permission & PERMISSIONS.ROOT) {
+      if (permission & PERMISSIONS.ADMIN) {
         return true
       }
 
@@ -182,11 +205,24 @@ module.exports = fp(
       return result
     }
 
-    const addPermission = (name) => {
+    /**
+     * Dynamically add a permission
+     * @param {String} name - Name of permission, will be screaming snake case to access it
+     * @param {String} module - Name of module, used for catogorizing permissions, if none given will be general
+     * @param {String} description - Very short description of permission, few words
+     * @param {String} details - More details explanation of permission, few lines
+     */
+    const addPermission = (name, module, description, details) => {
       PERMISSIONS[name.toUpperCase()] = getHighestPermission() * 2
+      PERMISSIONS_DESCRIPTIONS[name.toUpperCase()] = {
+        module: module || '',
+        description: description || name,
+        details: details || '',
+      }
     }
 
     instance.decorate('PERMISSIONS', PERMISSIONS)
+    instance.decorate('PERMISSIONS_DESCRIPTIONS', PERMISSIONS_DESCRIPTIONS)
     instance.decorate('permissions', {
       calcPermission,
       authorizeRoute,

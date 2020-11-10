@@ -91,7 +91,10 @@ module.exports = async (fastify) => {
           },
         },
       },
-      permissions: [fastify.PERMISSIONS.ROOT, fastify.PERMISSIONS.MANAGE_FORUM],
+      permissions: [
+        fastify.PERMISSIONS.ADMIN,
+        fastify.PERMISSIONS.MANAGE_FORUM,
+      ],
       preHandler: [fastify.auth([fastify.authorization.cookie])],
     },
     (request, reply) => {
