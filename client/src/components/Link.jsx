@@ -2,6 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useLocation } from 'react-router-dom'
 
+/// Use this link over react-router-dom link this will also resolve module routes
 export default ({ to, children }) => {
   to = to.startsWith('/') ? to : '/' + to
 
