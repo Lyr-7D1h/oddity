@@ -1,5 +1,8 @@
 const path = require("path");
 const fs = require("fs");
+const loadSeeders = require("./loadSeeders");
+const loadMigrations = require("./loadMigrations");
+const loadModels = require("./loadModels");
 
 const serverImportData = {
   modules: [],
@@ -21,21 +24,6 @@ const load = (_config, moduleIdentifier) => {
     serverImportData.routeDirs.push(path.join(serverPath, "routes"));
   };
 
-  const loadDbFiles = (key) => {
-    return new Promise((resolve, reject) => {
-      fs.readdir(path.join(serverPath, key), (err, matches) => {
-        if (err) reject(err);
-
-        matches.forEach((match) => {
-          serverImportData[key].push(
-            `require('${path.join(serverPath, key, match)}')`
-          );
-        });
-        resolve();
-      });
-    });
-  };
-
   return new Promise((resolve, reject) => {
     fs.readdir(path.join(serverPath), (err, matches) => {
       if (err) reject(err);
@@ -50,13 +38,15 @@ const load = (_config, moduleIdentifier) => {
             loadPlugins();
             break;
           case "models":
-            serverLoaders.push(loadDbFiles("models"));
+            serverLoaders.push(loadModels(moduleIdentifier, serverImportData));
             break;
           case "migrations":
-            serverLoaders.push(loadDbFiles("migrations"));
+            serverLoaders.push(
+              loadMigrations(moduleIdentifier, serverImportData)
+            );
             break;
           case "seeders":
-            serverLoaders.push(loadDbFiles("seeders"));
+            serverLoaders.push(loadSeeders(moduleIdentifier, serverImportData));
             break;
         }
       });
@@ -73,9 +63,7 @@ const load = (_config, moduleIdentifier) => {
  */
 const write = () => {
   return new Promise((resolve, reject) => {
-    const serverFile = `module.exports = ${JSON.stringify(serverImportData)}`
-      .replace(/("require\()/g, "require(")
-      .replace(/\)"/g, ")");
+    const serverFile = `module.exports = ${JSON.stringify(serverImportData)}`;
 
     // write server import file
     const write = () =>

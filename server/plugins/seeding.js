@@ -19,6 +19,7 @@ const development_seed = async (models, crypto) => {
 }
 
 const seed = () => {
+  // TODO: custom seed handler to include from import file
   return new Promise((resolve, reject) => {
     exec('npx sequelize-cli db:seed:all', (err, _stderr, _std) => {
       if (err) reject(err)

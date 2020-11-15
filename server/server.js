@@ -61,7 +61,7 @@ server
 
 // If in development run module_loader on start as a child process
 if (process.env.NODE_ENV === 'development')
-  require('child_process').exec('node module_loader', (err, stdout) => {
+  require('child_process').exec('node ../module_loader', (err, stdout) => {
     if (err) {
       server.log.fatal('Something went wrong with the module loader')
       server.log.error(err)
