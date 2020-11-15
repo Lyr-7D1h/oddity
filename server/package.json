@@ -10,7 +10,7 @@
     "devtest": "DB_NAME=testing DB_USERNAME=test DB_PASSWORD=test_pass node models_sync && npm test",
     "test": "tap test/**/*.test.js",
     "start": "node server.js",
-    "dev": "NODE_ENV=development nodemon -w ../modules -i db -i module_loader_imports.js -w . start"
+    "dev": "NODE_ENV=development nodemon -w ../modules -i db -i module_loader_imports -w . start"
   },
   "keywords": [],
   "author": "ivelthoven",
