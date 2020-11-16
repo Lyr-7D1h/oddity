@@ -1,8 +1,6 @@
-const path = require('path')
+const path = require("path");
 
-module.exports = (config, modulesPath, clientImportData) => {
-  clientImportData.modules[config.name].init = `require('${path.join(
-    modulesPath,
-    'client/init.js'
-  )}').default`
-}
+module.exports = (config, moduleIdentifier, clientImportData) => {
+  const initPath = path.join(MODULES_DIR, moduleIdentifier, "client/init.js");
+  clientImportData.modules[config.name].init = `require('${initPath}').default`;
+};

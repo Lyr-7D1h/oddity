@@ -1,5 +1,11 @@
 const fp = require('fastify-plugin')
-const { exec } = require('child_process')
+const fs = require('fs')
+const path = require('path')
+const { seeders: importSeeders } = require('../module_loader_imports')
+const Promise = require('bluebird')
+const util = require('util')
+
+const readdir = util.promisify(fs.readdir)
 
 const development_seed = async (models, crypto) => {
   const role = await models.role.create({
@@ -18,14 +24,35 @@ const development_seed = async (models, crypto) => {
   })
 }
 
-const seed = () => {
-  // TODO: custom seed handler to include from import file
-  return new Promise((resolve, reject) => {
-    exec('npx sequelize-cli db:seed:all', (err, _stderr, _std) => {
-      if (err) reject(err)
-      resolve()
+// Sequentially seed all seeder files
+const seed = async (instance) => {
+  const seedersPath = path.join(__dirname, '../db/seeders')
+  const matches = await readdir(seedersPath)
+
+  const seeders = matches
+    .map((match) => path.join(seedersPath, match))
+    .concat(importSeeders)
+    .map((p) => {
+      if (p.slice(-3) !== '.js') {
+        instance.log.error(`Seeding: ${p} is not a javascript file`)
+      }
+
+      let timestamp = path.parse(p).base.match(/^[0-9]{12,15}/)
+
+      if (!timestamp || timestamp.length !== 1)
+        instance.log.warn(`Seeding: invalid timestamp for ${p}`)
+      timestamp = timestamp[0]
+
+      return { path: p, timestamp: parseInt(timestamp) }
     })
-  })
+    .sort((a, b) => a.timestamp - b.timestamp)
+
+  for (const seeder of seeders) {
+    await require(seeder.path).up(
+      instance.db.getQueryInterface(),
+      instance.Sequelize
+    )
+  }
 }
 
 module.exports = fp(
@@ -34,36 +61,35 @@ module.exports = fp(
       const oddityMeta = await instance.models.oddityMeta.findByPk(1)
 
       if (!oddityMeta) {
+        instance.log.debug('Seeding: First time connecting to db')
         const devShouldSeed = instance.config.NODE_ENV !== 'development'
+        await seed(instance)
+        if (!devShouldSeed)
+          await development_seed(instance.models, instance.crypto)
         await instance.models.oddityMeta.create({
           devShouldSeed,
           shouldSeed: false,
         })
-        instance.log.debug('First time connecting to db seeding...')
-        await seed()
-        if (!devShouldSeed)
-          await development_seed(instance.models, instance.crypto)
       } else {
         if (
           instance.config.NODE_ENV === 'development' &&
           oddityMeta.devShouldSeed
         ) {
+          instance.log.debug('Seeding: creating development data')
+          await development_seed(instance.models, instance.crypto)
           oddityMeta.devShouldSeed = false
           await oddityMeta.save()
-          instance.log.debug('Seeding development data...')
-          await development_seed(instance.models, instance.crypto)
         }
         if (oddityMeta.shouldSeed) {
+          instance.log.debug('Seeding: creating data')
+          await seed(instance)
           oddityMeta.shouldSeed = false
           await oddityMeta.save()
-          instance.log.debug('Seeding data...')
-          await seed()
         }
       }
     } catch (err) {
-      instance.log.error('Could not seed development tables')
-      instance.log.error(err)
-      instance.sentry.captureException(err)
+      instance.log.error('Seeding: Could not seed development tables')
+      instance.error(err)
     }
   },
   { name: 'seeding', dependencies: ['models'] }
