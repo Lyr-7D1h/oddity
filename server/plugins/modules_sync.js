@@ -53,13 +53,12 @@ module.exports = fp(
 
             return Promise.all(promises)
               .then((rows) => {
-                rows = rows
-                  .filter((mod) => mod[1])
-                  .map((mod) => mod[0].name)
-                  .join(', ')
-
-                if (rows)
-                  fastify.log.debug(`Modules Sync: Created "${rows}" modules`)
+                if (rows.length)
+                  rows = rows
+                    .filter((mod) => mod[1])
+                    .map((mod) => mod[0].name)
+                    .join(', ')
+                fastify.log.debug(`Modules Sync: Created "${rows}" modules`)
                 resolve()
               })
               .catch((err) => reject(err))
@@ -110,7 +109,6 @@ module.exports = fp(
   },
   {
     name: 'modules_sync',
-    // decorators: ['models'],
-    dependencies: ['sequelize', 'seeding'],
+    dependencies: ['sequelize', 'seeding', 'migrations'],
   }
 )
