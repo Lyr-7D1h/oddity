@@ -1,4 +1,4 @@
-const { test } = require('tap')
+const { test, only } = require('tap')
 const fp = require('fastify-plugin')
 
 const build = require('../build.helper')
@@ -45,7 +45,7 @@ const tryRoutes = [
   '/jjjJ/JJJ/SDLFKJ',
 ]
 
-test('Do route variables work', (t) => {
+only('Do route variables work', (t) => {
   t.plan(1 + tryRoutes.length * 4 * 3)
 
   const app = build(t)

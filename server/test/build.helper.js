@@ -2,31 +2,25 @@
 
 const fp = require('fastify-plugin')
 const Fastify = require('fastify')
+const { schema, data } = require('./config.helper')
 
-const envSchema = {
-  type: 'object',
-  required: ['SESSION_SECRET', 'DB_USERNAME', 'DB_PASSWORD', 'DB_NAME'],
-  properties: {
-    DB_HOST: { type: 'string' },
-    DB_NAME: { type: 'string' },
-    DB_USERNAME: { type: 'string' },
-    DB_PASSWORD: { type: 'string' },
-    DB_LOGGING_ENABLED: { type: 'boolean' },
-    SESSION_SECRET: { type: 'string' },
-    PORT: { type: 'integer' },
-    NODE_ENV: { type: 'string' },
-  },
-  additionalProperties: false,
-}
+/**
+ * Build the test version of our app
+ * @param {object} test - Test object
+ * @param {object} opts - Options for app helper
+ */
+module.exports = (test, opts) => {
+  process.on('uncaughtException', (err) => () => {
+    console.error('UNCAUGHT ERROR')
+    test.error(err)
+  })
 
-// automatically build and tear down our instance
-module.exports = (t) => {
   const app = Fastify()
 
   // Set Fastify Env with env variables defined here
   app.register(require('fastify-env'), {
-    schema: envSchema,
-    data: require('./config.helper')(),
+    schema: schema,
+    data: data,
   })
 
   // Create test sentry
@@ -39,22 +33,15 @@ module.exports = (t) => {
   // fastify-plugin ensures that all decorators
   // are exposed for testing purposes, this is
   // different from the production setup
-  app.register(fp(require('../app')), { disableConfig: true })
-
-  process.on('uncaughtException', (err) => () => {
-    console.log('UNCAUGHT ERROR')
-    t.error(err)
-  })
+  app.register(fp(require('./app.helper'), opts))
 
   // tear down our app after we are done
-  t.tearDown(() => {
+  test.tearDown(() => {
     // Overwrite exitCode to 0 when tearing down
     // Fastify always sets exitCode to 1 when closing
     process.on('exit', () => {
       process.exitCode = 0
     })
-
-    // require('./db.helper')(); // Clear tables
 
     app.close()
   })

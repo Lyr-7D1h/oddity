@@ -6,7 +6,7 @@ const {
   DB_NAME,
   DB_USERNAME,
   DB_PASSWORD,
-} = require('./config.helper')()
+} = require('./config.helper').data
 
 const clear = () => {
   const client = new Client()
@@ -24,11 +24,6 @@ const clear = () => {
     {
       cwd: require('path').join(__dirname, '..'),
     }
-  )
-
-  // Make sure not to seed for tests
-  client.querySync(
-    `INSERT INTO "oddityMeta" ("devShouldSeed", "shouldSeed") VALUES (FALSE, FALSE);`
   )
 }
 

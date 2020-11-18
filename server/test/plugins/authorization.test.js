@@ -2,7 +2,6 @@ const t = require('tap')
 const bcrypt = require('bcrypt')
 
 const test = t.test
-const only = t.only
 
 // clear all tables
 require('../db.helper').clear()
@@ -127,7 +126,7 @@ test('Basic Auth - Can authorize', (t) => {
 
         app.models.user
           .create(testUser)
-          .then(() => {
+          .then((testUser) => {
             app.inject(
               {
                 url: '/test',
@@ -141,7 +140,7 @@ test('Basic Auth - Can authorize', (t) => {
 
                 t.equal(res.statusCode, 200)
 
-                t.equal(JSON.parse(res.body), 1)
+                t.equal(JSON.parse(res.body), testUser.id)
               }
             )
           })
