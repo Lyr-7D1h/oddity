@@ -1,6 +1,6 @@
-const path = require('path')
-const fs = require('fs')
-const getJsFiles = require('./get_js_files')
+const path = require("path");
+const fs = require("fs");
+const getJsFiles = require("../get_js_files");
 
 /**
  * Can either be two files
@@ -13,92 +13,92 @@ const getJsFiles = require('./get_js_files')
  * /actions
  * /reducers
  */
-module.exports = (config, modulePath, clientImportData) => {
-  const reduxPath = path.join(modulePath, 'client', 'redux')
+module.exports = (config, moduleIdentifier, clientImportData) => {
+  const reduxPath = path.join(MODULES_DIR, moduleIdentifier, "client", "redux");
 
   const getReduxStateNaming = (file) => {
-    return file.replace(/Actions|Reducer|js|\./gm, '')
-  }
+    return file.replace(/Actions|Reducer|js|\./gm, "");
+  };
 
   const loadDirectory = (directory, reduxSub) => {
     return new Promise((resolve, reject) => {
       getJsFiles(directory).then((files) => {
-        const loaders = []
+        const loaders = [];
         files.forEach((file) => {
           loaders.push(
             clientImportData.redux[reduxSub].push([
               getReduxStateNaming(file),
               path.join(directory, file),
             ])
-          )
-        })
+          );
+        });
 
         Promise.all(loaders)
           .then(() => resolve())
-          .catch((err) => reject(err))
-      })
-    })
-  }
+          .catch((err) => reject(err));
+      });
+    });
+  };
 
   const loadFile = (file) => {
     return new Promise((resolve, reject) => {
       fs.stat(path.join(reduxPath, file), (err, stats) => {
-        if (err) reject(err)
+        if (err) reject(err);
 
         if (stats.isDirectory()) {
           switch (file) {
-            case 'reducers':
-              loadDirectory(path.join(reduxPath, 'reducers'), 'reducers')
+            case "reducers":
+              loadDirectory(path.join(reduxPath, "reducers"), "reducers")
                 .then(() => {
-                  resolve()
+                  resolve();
                 })
-                .catch((err) => reject(err))
-              break
-            case 'actions':
+                .catch((err) => reject(err));
+              break;
+            case "actions":
               // Currently not used might be usefull in the future
-              loadDirectory(path.join(reduxPath, 'actions'), 'actions')
+              loadDirectory(path.join(reduxPath, "actions"), "actions")
                 .then(() => {
-                  resolve()
+                  resolve();
                 })
-                .catch((err) => reject(err))
-              break
+                .catch((err) => reject(err));
+              break;
           }
-        } else if (file.endsWith('Actions.js')) {
+        } else if (file.endsWith("Actions.js")) {
           // Currently not used might be usefull in the future
           clientImportData.redux.actions.push([
             getReduxStateNaming(file),
             `require('${path.join(reduxPath, file)}').default`,
-          ])
-          resolve()
-        } else if (file.endsWith('Reducer.js')) {
+          ]);
+          resolve();
+        } else if (file.endsWith("Reducer.js")) {
           clientImportData.redux.reducers.push([
             getReduxStateNaming(file),
             `require('${path.join(reduxPath, file)}').default`,
-          ])
-          resolve()
+          ]);
+          resolve();
         } else {
-          resolve()
+          resolve();
         }
-      })
-    })
-  }
+      });
+    });
+  };
 
   return new Promise((resolve, reject) => {
-    console.debug(`${config.name}: Loading Redux`)
+    console.debug(`${config.name}: Loading Redux`);
 
     fs.readdir(reduxPath, (err, files) => {
-      if (err) reject(err)
-      const loaders = []
+      if (err) reject(err);
+      const loaders = [];
 
       files.forEach((file) => {
-        loaders.push(loadFile(file))
-      })
+        loaders.push(loadFile(file));
+      });
 
       Promise.all(loaders)
         .then(() => {
-          resolve()
+          resolve();
         })
-        .catch((err) => reject(err))
-    })
-  })
-}
+        .catch((err) => reject(err));
+    });
+  });
+};

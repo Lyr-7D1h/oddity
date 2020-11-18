@@ -31,7 +31,7 @@ docker-compose up
 
 Application available on localhost:5000
 
-### Linux Based Systems (or in Windows WLS)
+### Manually (in development mode)
 
 #### Environment Variables
 
@@ -51,7 +51,7 @@ DB_LOGGING_ENABLED=false - Show queries in the logs
 
 #### Build and Run
 
-run `./setup.sh`
+run `./scripts/setup.sh` (or run commands manually)
 
 Run client
 

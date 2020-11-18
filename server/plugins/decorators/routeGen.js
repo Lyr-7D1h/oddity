@@ -24,7 +24,7 @@ const getHandler = (route, model, instance) => {
         return (request, reply) => {
           model
             .findOne({
-              where: { id: request.params.id, attributes: columns },
+              where: { id: request.params.id },
             })
             .then((item) => {
               if (!item) reply.notFound()
@@ -69,12 +69,15 @@ const getHandler = (route, model, instance) => {
       }
       return (request, reply) => {
         model
-          .patch(request.body)
-          .then((response) => {
-            if (response.nModified === 0) {
+          .update(request.body, {
+            where: { id: request.params.id },
+            returning: true,
+          })
+          .then(([affectedRows, newValues]) => {
+            if (affectedRows === 0) {
               return reply.noChange()
             } else {
-              return reply.success()
+              return reply.send(newValues[0])
             }
           })
           .catch((err) => {
