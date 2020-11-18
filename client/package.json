@@ -30,7 +30,7 @@
   "scripts": {
     "start": "BROWSER=none react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "npm run build && cd ../server && npm start & wait-on http://localhost:5000 && cypress run",
+    "test": "yarn build && cd ../server && yarn start & wait-on http://localhost:5000 && cypress run",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

@@ -9,7 +9,7 @@ ROOT=$(pwd)/..
 
 echo -e "\n\n${CYAN}SERVER: Installing dependencies${NY}" && \
 cd $ROOT/server && \
-npm ci && \
+yarn && \
 
 # link node_modules after done installing
 echo -e "\n\n${CYAN}MODULES: Linking node_modules from server to modules${NY}" && \
@@ -19,11 +19,11 @@ echo OK && \
 # load modules
 echo -e "\n\n${CYAN}MODULES: writing import files${NY}" && \
 cd $ROOT/module_loader && \
-npm start && \
+yarn start && \
 
 echo -e "\n\n${CYAN}CLIENT: Installing dependencies${NY}" && \
 cd $ROOT/client && \
-npm ci && \
+yarn ci && \
 
 echo -e "\n\n${CYAN}CLIENT: Building minified static files${NY}" && \
-npm run build
+yarn build

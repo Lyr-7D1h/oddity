@@ -13,21 +13,21 @@ COPY . /usr/src/app
 
 # Build Server
 WORKDIR /usr/src/app/server
-RUN npm ci --production
+RUN yarn install --production
 
 # Load modules
 WORKDIR /usr/src/app
 RUN ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/" 
 WORKDIR /usr/src/app/module_loader
-RUN npm ci
-RUN npm start
+RUN yarn install --production
+RUN yarn start
 
 # Build Client
 WORKDIR /usr/src/app/client
-RUN npm ci --production
-RUN npm run build
+RUN yarn install --production
+RUN yarn build
 
 # Start App
 WORKDIR /usr/src/app/server
-CMD npm start
+CMD yarn prod
 EXPOSE 5000

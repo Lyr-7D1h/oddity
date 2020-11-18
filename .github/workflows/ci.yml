@@ -52,23 +52,22 @@ jobs:
         run: ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/"
       - name: Load Modules
         run: |
-          npm ci
-          npm start
+          yarn
+          yarn start
         working-directory: module_loader
       - name: Build Server
-        run: |
-          npm ci
+        run: yarn
         working-directory: server
       - name: Build Client
         working-directory: client
         run: |
-          npm ci
-          npm run build
+          yarn
+          yarn build
       - name: Test Server
-        run: npm test
+        run: yarn test
         working-directory: server
       - name: Test Client
-        run: npm test
+        run: yarn test
         working-directory: client
 
   docker:

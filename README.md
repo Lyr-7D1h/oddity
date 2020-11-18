@@ -57,7 +57,7 @@ Run client
 
 ```
 cd client
-npm start
+yarn start
 ```
 
 This will start a development server which is intended only for development.
@@ -67,7 +67,7 @@ Run server in a seperate process/window
 
 ```
 cd server
-npm run dev
+yarn start
 ```
 
 This will start the server in a development mode. It will proxy requests to the client development server if it isn't prefixed with `/api` or `/documentation`

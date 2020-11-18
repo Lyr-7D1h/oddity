@@ -7,6 +7,6 @@ cd `dirname $0`
 ROOT=$(pwd)/..
 
 cd $ROOT/server
-alacritty -e npm run dev &
+alacritty -e yarn start &
 cd $ROOT/client
-npm start
+yarn start
