@@ -51,7 +51,9 @@ jobs:
       - name: Link server node_modules to modules
         run: ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/"
       - name: Load Modules
-        run: npm start
+        run: |
+          npm ci
+          npm start
         working-directory: module_loader
       - name: Build Server
         run: |
