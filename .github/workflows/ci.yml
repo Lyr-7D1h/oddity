@@ -58,7 +58,6 @@ jobs:
       - name: Build Server
         run: |
           npm ci
-          node models_sync
         working-directory: server
       - name: Build Client
         working-directory: client

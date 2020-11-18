@@ -1,5 +1,3 @@
-const fastify = require('fastify')
-const fastifyPlugin = require('fastify-plugin')
 const fp = require('fastify-plugin')
 
 module.exports = fp(async (instance) => {
