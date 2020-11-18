@@ -6,12 +6,11 @@ import { connect } from 'react-redux'
 import InitLoader from './components/containers/InitLoader'
 import FinishAccountPage from './components/pages/FinishAccountPage'
 
-import Router from 'Router'
+import Router from './Router'
 import ModulesInitLoader from 'Components/containers/ModulesInitLoader'
 import SavePopup from 'Components/SavePopup'
 
 const App = ({ userNeedsSetup }) => {
-  console.log('app')
   return (
     <BrowserRouter>
       <InitLoader>
