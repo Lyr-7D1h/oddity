@@ -48,16 +48,16 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Build Server
-        run: |
-          npm ci
-          node models_sync
-        working-directory: server
       - name: Link server node_modules to modules
         run: ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/"
       - name: Load Modules
         run: npm start
         working-directory: module_loader
+      - name: Build Server
+        run: |
+          npm ci
+          node models_sync
+        working-directory: server
       - name: Build Client
         working-directory: client
         run: |
