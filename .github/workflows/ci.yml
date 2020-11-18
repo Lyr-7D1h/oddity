@@ -51,11 +51,13 @@ jobs:
       - name: Build Server
         run: |
           npm ci
-          node module_loader
           node models_sync
         working-directory: server
-      - name: Load Modules
+      - name: Link server node_modules to modules
         run: ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/"
+      - name: Load Modules
+        run: npm start
+        working-directory: module_loader
       - name: Build Client
         working-directory: client
         run: |
