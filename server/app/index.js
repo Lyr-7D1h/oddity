@@ -118,26 +118,8 @@ module.exports = async (fastify, opts) => {
     })
   })
 
-  /**
-   * Load Client
-   * In Dev: Proxy server for fast page rerendering
-   * In Production: Render static files from the react build folder
-   */
-  // if (fastify.config.NODE_ENV === 'development') {
-  //   fastify.register(require('./proxy'), {
-  //     upstream: 'http://localhost:3000',
-  //     prefix: '/',
-  //     http2: false,
-  //   })
-  // } else {
-  // fastify.register(require('./static'), {
-  //   root: path.join(__dirname, '../../client/build'),
-  // })
-  // }
-
-  // Run code when ready
+  // Load Documentation when ready
   fastify.ready(() => {
-    // Load Documentation
     fastify.oas()
   })
 }
