@@ -1,0 +1,13 @@
+{
+  "name": "module_loader",
+  "version": "1.0.0",
+  "description": "Load modules to the base application",
+  "dependencies": {
+    "glob": "^7.1.6"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Lyr",
+  "license": "ISC"
+}
