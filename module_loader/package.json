@@ -6,7 +6,9 @@
     "glob": "^7.1.6"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "client": "node index.js client",
+    "server": "node index.js server"
   },
   "author": "Lyr",
   "license": "ISC"

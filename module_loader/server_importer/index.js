@@ -73,6 +73,9 @@ const write = () => {
         (err) => {
           if (err) reject(err);
 
+          console.log(
+            `Server: ${path.join(SERVER_IMPORT_DIR, "index.js")} written`
+          );
           resolve();
         }
       );

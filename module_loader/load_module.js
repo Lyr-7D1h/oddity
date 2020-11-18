@@ -8,7 +8,7 @@ const { load: loadServer, addModule } = require("./server_importer");
 /**
  * Load module and validate config
  */
-module.exports = (moduleIdentifier) => {
+module.exports = (moduleIdentifier, ignoreModule) => {
   const modulePath = path.join(MODULES_DIR, moduleIdentifier);
   return new Promise((resolve, reject) => {
     glob("?(config.js|config.json)", { cwd: modulePath }, (err, matches) => {
@@ -53,22 +53,15 @@ module.exports = (moduleIdentifier) => {
         if (err) reject(err);
 
         moduleFiles.forEach((moduleFile) => {
-          switch (moduleFile.toLowerCase()) {
-            case "config.js":
-              break;
-            case "config.json":
-              break;
-            case "client":
-              srcLoaders.push(loadClient(config, moduleIdentifier));
-              break;
-            case "server":
-              srcLoaders.push(loadServer(config, moduleIdentifier));
-              break;
-            default:
-              console.warn(
-                `Could not load file: ${path.join(modulePath, moduleFile)}`
-              );
-              break;
+          moduleFile = moduleFile.toLowerCase();
+          if (moduleFile === "config.js" || moduleFile === "config.json") {
+            // do nothing if config file
+          } else if (moduleFile === "client" && ignoreModule !== "client") {
+            srcLoaders.push(loadClient(config, moduleIdentifier));
+          } else if (moduleFile === "server" && ignoreModule !== "server") {
+            srcLoaders.push(loadServer(config, moduleIdentifier));
+          } else {
+            console.warn(`Ignoring: ${path.join(modulePath, moduleFile)}`);
           }
         });
 
