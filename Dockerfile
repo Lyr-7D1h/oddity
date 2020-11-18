@@ -15,12 +15,12 @@ COPY . /usr/src/app
 WORKDIR /usr/src/app/server
 RUN npm ci --production
 
-# Create module_loader_imports file
-RUN node module_loader
-
-# Link node_modules for modules
+# Load modules
 WORKDIR /usr/src/app
 RUN ln -fs "$(pwd)/server/node_modules" "$(pwd)/modules/" 
+WORKDIR /usr/src/app/module_loader
+RUN npm ci
+RUN npm start
 
 # Build Client
 WORKDIR /usr/src/app/client

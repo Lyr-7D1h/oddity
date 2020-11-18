@@ -88,9 +88,9 @@ module.exports = fp(
         }
       }
     } catch (err) {
-      instance.log.error('Seeding: Could not seed development tables')
+      instance.log.error('Seeding: Could not seed tables')
       instance.error(err)
     }
   },
-  { name: 'seeding', dependencies: ['models'] }
+  { name: 'seeding', dependencies: ['migrations'] }
 )

@@ -30,7 +30,19 @@ const migrate = async (instance) => {
     })
     .sort((a, b) => a.timestamp - b.timestamp)
 
-  const oddityMeta = await instance.models.oddityMeta.findByPk(1)
+  let oddityMeta = await instance.models.oddityMeta.findByPk(1)
+
+  // If this is first time connecting create oddityMeta with latestTimestamp of last migration
+  if (oddityMeta === null) {
+    instance.log.info(
+      `Migrations: first time connecting to db, updating oddityMeta to latest migration`
+    )
+    oddityMeta = await instance.models.oddityMeta.create({
+      devShouldSeed: instance.config.NODE_ENV !== 'development',
+      shouldSeed: true,
+      latestMigration: migrations[migrations.length - 1].timestamp,
+    })
+  }
 
   let newTimeStamp
   let count = 0
@@ -53,19 +65,16 @@ const migrate = async (instance) => {
 
 module.exports = fp(
   (instance, _opts, next) => {
-    if (instance.config.NODE_ENV !== 'development') {
-      migrate(instance)
-        .then(() => next())
-        .catch((err) => {
-          instance.error(err)
-          next()
-        })
-    } else {
-      next()
-    }
+    migrate(instance)
+      .then(() => next())
+      .catch((err) => {
+        instance.log.error('Migrations: migrating failed')
+        instance.error(err)
+        next()
+      })
   },
   {
     name: 'migrations',
-    dependencies: ['sequelize'],
+    dependencies: ['models'],
   }
 )

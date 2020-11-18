@@ -1,7 +1,5 @@
 #
-# Only use this as an example for checking out and testing
-# the application
-# Not for any production environment
+# Production ready docker compose
 #
 
 version: "2"
@@ -9,14 +7,7 @@ services:
   oddity:
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
-    command: >
-      bash -c "sleep 5 
-      ; node models_sync
-      ; npx sequelize-cli db:seed:all 
-      ; npm run dev
-      & cd ../client 
-      && npm start"
+      dockerfile: ./Dockerfile
     ports:
       - "5000:5000"
     depends_on:
