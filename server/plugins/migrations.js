@@ -64,14 +64,13 @@ const migrate = async (instance) => {
 }
 
 module.exports = fp(
-  (instance, _opts, next) => {
-    migrate(instance)
-      .then(() => next())
-      .catch((err) => {
-        instance.log.error('Migrations: migrating failed')
-        instance.error(err)
-        next()
-      })
+  async (instance) => {
+    try {
+      await migrate(instance)
+    } catch (e) {
+      instance.log.error('Migrations: migrating failed')
+      instance.error(e)
+    }
   },
   {
     name: 'migrations',
