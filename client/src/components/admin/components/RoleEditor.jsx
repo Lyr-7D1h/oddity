@@ -1,52 +1,98 @@
-import { Form, Input, Skeleton, Switch } from 'antd'
+import { Form, Input, Switch } from 'antd'
+import QuestionDot from 'Components/QuestionDot'
+import SaveForm from 'Components/SaveForm'
+import requester from 'Helpers/requester'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
+
+const mapInitialValues = (role, initPermissions) => {
+  const initialValues = Object.assign({}, role)
+  for (const key in initPermissions) {
+    if ((initPermissions[key] & initialValues.permissions) > 0) {
+      initialValues[key] = true
+    } else {
+      initialValues[key] = false
+    }
+  }
+  return initialValues
+}
+
+const getGroupedPermissions = (initPermissions, permissionsDescriptions) => {
+  const mappedPermissions = Object.keys(initPermissions)
+    .filter((key) => key !== 'NONE' && key !== 'PUBLIC')
+    .map((key) => ({
+      value: initPermissions[key],
+      key,
+      description: permissionsDescriptions[key].description,
+      module: permissionsDescriptions[key].module || 'General Permissions',
+      details: permissionsDescriptions[key].details,
+    }))
+
+  let groupedPermissions = {}
+  for (const perm of mappedPermissions) {
+    if (groupedPermissions[perm.module]) {
+      groupedPermissions[perm.module].push(perm)
+    } else {
+      groupedPermissions[perm.module] = [perm]
+    }
+  }
+  return groupedPermissions
+}
 
 export default connect((state) => ({
   initPermissions: state.init.permissions,
   permissionsDescriptions: state.init.permissionsDescriptions,
-}))(({ role, initPermissions, permissionsDescriptions }) => {
+}))(({ role, initPermissions, permissionsDescriptions, onFinish }) => {
   const [groupedPermissions, setGroupedPermissions] = useState([])
-  const [form] = Form.useForm()
+  const [initialValues, setInitialValues] = useState()
 
   useEffect(() => {
-    const groupedPermissions = {}
-    const initialValues = role
-    if (initialValues.color) initialValues.color = '#FFFFFF' //'#' + initialValues.color.toString(16)
-    console.log(initialValues)
-    Object.keys(initPermissions)
-      .filter((key) => key !== 'NONE' && key !== 'PUBLIC')
-      .map((key) => {
-        if ((initPermissions[key] & role.permissions) > 0) {
-          initialValues[key] = true
-        } else {
-          initialValues[key] = false
-        }
-        return {
-          hasValue: (initPermissions[key] & role.permissions) > 0,
-          value: initPermissions[key],
-          key,
-          description: permissionsDescriptions[key].description,
-          module: permissionsDescriptions[key].module || 'General Permissions',
-          details: permissionsDescriptions[key].details,
-        }
-      })
-      .forEach((perm) => {
-        if (groupedPermissions[perm.module]) {
-          groupedPermissions[perm.module].push(perm)
-        } else {
-          groupedPermissions[perm.module] = [perm]
-        }
-      })
-
-    form.setFieldsValue(initialValues)
-    setGroupedPermissions(groupedPermissions)
+    setInitialValues(mapInitialValues(role, initPermissions))
+    setGroupedPermissions(
+      getGroupedPermissions(initPermissions, permissionsDescriptions)
+    )
   }, [initPermissions, role, permissionsDescriptions])
 
-  console.log(groupedPermissions)
+  const handleOnFinish = (resolve, reject, newValues) => {
+    let hasChanges = false
+
+    const newRole = Object.assign({}, role)
+    let newPermissions = newRole.permissions
+
+    for (const key in newValues) {
+      if (newValues[key] !== initialValues[key]) {
+        if (initPermissions[key]) {
+          newPermissions = newPermissions | initPermissions[key]
+          hasChanges = true
+        } else {
+          newRole[key] = newValues[key]
+          hasChanges = true
+        }
+      }
+    }
+
+    if (hasChanges) {
+      requester
+        .patch(`roles/${role.id}`, newRole)
+        .then((role) => {
+          const newValues = mapInitialValues(role, initPermissions)
+          onFinish(role)
+          resolve(newValues)
+        })
+        .catch(reject)
+    } else {
+      resolve(newValues)
+    }
+  }
 
   return (
-    <Form form={form} labelCol={{ span: 10 }} wrapperCol={{ span: 12 }}>
+    <SaveForm
+      initialValues={initialValues}
+      onFinish={handleOnFinish}
+      name="RoleEditor"
+      labelCol={{ span: 10 }}
+      wrapperCol={{ span: 12 }}
+    >
       <Form.Item name="name" label="Role Name">
         <Input />
       </Form.Item>
@@ -61,13 +107,18 @@ export default connect((state) => ({
               valuePropName="checked"
               key={i}
               name={perm.key}
-              label={perm.description}
+              label={
+                <>
+                  {perm.description}&nbsp;
+                  <QuestionDot message={perm.details} />
+                </>
+              }
             >
               <Switch />
             </Form.Item>
           ))}
         </div>
       ))}
-    </Form>
+    </SaveForm>
   )
 })

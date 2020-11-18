@@ -20,6 +20,19 @@ export default () => {
       .catch((err) => errorHandler(err))
   }, [])
 
+  const updateRoles = (newRole) => {
+    setSelectedRole(newRole)
+    setRoles(
+      roles.map((role) => {
+        if (role.id === newRole.id) {
+          return newRole
+        } else {
+          return role
+        }
+      })
+    )
+  }
+
   return (
     <Layout>
       <Space />
@@ -28,9 +41,7 @@ export default () => {
           <VertNavSelected
             selected={selectedRole.id}
             items={roles}
-            onClick={(id) =>
-              setSelectedRole(roles.find((role) => role.id === id))
-            }
+            onClick={setSelectedRole}
           />
         </Layout.Sider>
         <Layout.Content>
@@ -40,7 +51,7 @@ export default () => {
             ) : (
               <>
                 <Title>{selectedRole.name}</Title>
-                <RoleEditor role={selectedRole} />
+                <RoleEditor role={selectedRole} onFinish={updateRoles} />
               </>
             )}
           </Card>

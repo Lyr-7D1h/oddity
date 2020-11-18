@@ -5,7 +5,7 @@ import saveWrapper from 'Helpers/saveWrapper'
 // TODO: Async inital values
 
 /**
- * @param {onFinish*} onFinish - Promise callback with the update values
+ * @param {onFinish*} onFinish - Promise callback with the update values, you should return the new values in resolve(values)
  */
 const SaveForm = ({
   setSaveHandler,
@@ -52,7 +52,6 @@ const SaveForm = ({
     return <Result icon={<Spin />} />
   }
 
-  console.log('Setting initial values ', initialValues)
   return (
     <Form
       initialValues={initialValues}

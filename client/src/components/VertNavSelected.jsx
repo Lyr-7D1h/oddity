@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 
 /**
  * Verticle Navigation for custom functions on click
- * @param {Array[Object]} items - List of items
+ * @param {Array[Object]} items - List of items (each item should have an unique id)
  * @param selected - Selected id
  * @param {Function} onClick - Function when item clicked
  */
@@ -14,9 +14,9 @@ export default ({ items, selected: selectedProps, onClick }) => {
 
   useEffect(() => setSelected(selectedProps), [selectedProps])
 
-  const handleClick = (id) => {
-    onClick(id)
-    setSelected(id)
+  const handleClick = (item) => {
+    onClick(item)
+    setSelected(item.id)
   }
 
   if (items === null) {
@@ -31,7 +31,7 @@ export default ({ items, selected: selectedProps, onClick }) => {
     >
       {items.map((item, i) => (
         <Menu.Item icon={item.icon} key={'' + item.id}>
-          <a onClick={() => handleClick(item.id)}>{item.name}</a>
+          <div onClick={() => handleClick(item)}>{item.name}</div>
         </Menu.Item>
       ))}
     </Menu>

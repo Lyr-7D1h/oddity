@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import requester from "Helpers/requester";
-import notificationHandler from "Helpers/notificationHandler";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Row, Col, Collapse, Input, Empty } from "antd";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DndProvider, DragSource, DropTarget } from "react-dnd";
-import SavePopup from "Components/SavePopup";
 
 export default ({ categories, onChange, onCreateCategory }) => {
   const forumInput = React.createRef();
