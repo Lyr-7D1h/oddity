@@ -49,6 +49,7 @@ const envSchema = {
     NODE_ENV: { type: 'string' },
     CAPTCHA_CLIENT: { type: 'string' },
     CAPTCHA_SERVER: { type: 'string' },
+    SHOW_ROUTES: { type: 'boolean' },
   },
   additionalProperties: false,
 }
@@ -61,7 +62,7 @@ server
 
 // If in development run module_loader on start as a child process
 if (process.env.NODE_ENV === 'development')
-  require('child_process').exec('node module_loader', (err, stdout) => {
+  require('child_process').exec('node ../module_loader', (err, stdout) => {
     if (err) {
       server.log.fatal('Something went wrong with the module loader')
       server.log.error(err)
@@ -78,9 +79,11 @@ server.listen(process.env.PORT || 5000, '0.0.0.0', (err) => {
   }
 
   if (server.config.NODE_ENV === 'development') {
-    server.log.warn('RUNNING IN DEVELOPMENT MODE')
-    server.log.debug('Routes:')
-    console.debug(server.printRoutes())
+    server.log.info('Running in development mode')
+    if (server.config.SHOW_ROUTES !== false) {
+      server.log.debug('Routes:')
+      console.debug(server.printRoutes())
+    }
     server.log.info(
       'Startup time is ' + require('perf_hooks').performance.now() + 'ms'
     )

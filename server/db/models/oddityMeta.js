@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
       shouldSeed: {
         type: DataTypes.BOOLEAN,
       },
+      latestMigration: {
+        type: DataTypes.BIGINT,
+      },
     },
     {
       createdAt: false,

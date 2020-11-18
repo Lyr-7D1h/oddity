@@ -2,11 +2,11 @@ let { modules } = require('../module_loader_imports')
 const fp = require('fastify-plugin')
 
 modules = modules.map((mod) => ({
-  identifier: mod.name.toLowerCase(),
+  identifier: mod.identifier,
   name: mod.name,
   version: mod.version,
   enabled: false,
-  route: mod.name,
+  route: mod.route,
   title: mod.name,
 }))
 
@@ -53,13 +53,12 @@ module.exports = fp(
 
             return Promise.all(promises)
               .then((rows) => {
-                rows = rows
-                  .filter((mod) => mod[1])
-                  .map((mod) => mod[0].name)
-                  .join(', ')
-
-                if (rows)
-                  fastify.log.debug(`Modules Sync: Created "${rows}" modules`)
+                if (rows.length)
+                  rows = rows
+                    .filter((mod) => mod[1])
+                    .map((mod) => mod[0].name)
+                    .join(', ')
+                fastify.log.debug(`Modules Sync: Created "${rows}" modules`)
                 resolve()
               })
               .catch((err) => reject(err))
@@ -110,7 +109,6 @@ module.exports = fp(
   },
   {
     name: 'modules_sync',
-    // decorators: ['models'],
-    dependencies: ['sequelize', 'seeding'],
+    dependencies: ['sequelize', 'seeding', 'migrations'],
   }
 )

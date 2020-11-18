@@ -8,13 +8,16 @@ import FinishAccountPage from './components/pages/FinishAccountPage'
 
 import Router from 'Router'
 import ModulesInitLoader from 'Components/containers/ModulesInitLoader'
+import SavePopup from 'Components/SavePopup'
 
 const App = ({ userNeedsSetup }) => {
+  console.log('app')
   return (
     <BrowserRouter>
       <InitLoader>
         <ModulesInitLoader>
           {userNeedsSetup ? <FinishAccountPage /> : <Router />}
+          <SavePopup />
         </ModulesInitLoader>
       </InitLoader>
     </BrowserRouter>
@@ -23,7 +26,6 @@ const App = ({ userNeedsSetup }) => {
 
 export default connect((state) => {
   return {
-    modules: state.init.modules,
     userNeedsSetup:
       state.user.id &&
       !state.user.hasFinishedAccount &&
