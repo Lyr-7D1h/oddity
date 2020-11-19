@@ -24,7 +24,7 @@ yarn start && \
 
 echo -e "\n\n${CYAN}CLIENT: Installing dependencies${NY}" && \
 cd $ROOT/client && \
-yarn ci && \
+yarn && \
 
 echo -e "\n\n${CYAN}CLIENT: Building minified static files${NY}" && \
 yarn build
