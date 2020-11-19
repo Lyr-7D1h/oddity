@@ -19,6 +19,7 @@ echo OK && \
 # load modules
 echo -e "\n\n${CYAN}MODULES: writing import files${NY}" && \
 cd $ROOT/module_loader && \
+yarn && \
 yarn start && \
 
 echo -e "\n\n${CYAN}CLIENT: Installing dependencies${NY}" && \

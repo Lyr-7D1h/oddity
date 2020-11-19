@@ -1,0 +1,30 @@
+CLIENT:
+	React
+		Redux
+		React-router
+		Antd
+		Less
+		Cypress
+SERVER:
+	Node
+		Fastify
+		Sequelize (Entity Framework)
+			Postgres
+
+Dockerized
+Dynamic Permissions management
+Request validation
+Automatic documentation (openapi)
+Modules
+Html injection
+Redux
+SPA - Single Page Application
+
+
+Hosting architecture:
+
+		KUBERNETES
+            				#1 a.com	POSTGRES
+request  => traefik (load balancer)	#2 b.com 	RESOURCES
+					#3 c.com
+					#4 d.com
