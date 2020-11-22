@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
-import Centered from '../containers/Centered'
+import Centered from '../../common/containers/Centered'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { Steps, Row, Col, Button, Card, Typography, Layout, Menu } from 'antd'
-import notificationHandler from '../../helpers/notificationHandler'
-import { updateUser } from '../../redux/actions/userActions'
-import ImageUpload from 'Components/ImageUpload'
+import notificationHandler from '../../../helpers/notificationHandler'
+import { updateUser } from '../../../redux/actions/userActions'
+import ImageUpload from 'Components/common/ImageUpload'
 import Title from 'antd/lib/typography/Title'
 import Paragraph from 'antd/lib/typography/Paragraph'
 import requester from 'Helpers/requester'
 import { rootReset } from 'Actions/rootActions'
-import ConnectThirdParty from 'Components/ConnectThirdParty'
+import ConnectThirdParty from 'Components/user/ConnectThirdParty'
 
 const { Step } = Steps
 

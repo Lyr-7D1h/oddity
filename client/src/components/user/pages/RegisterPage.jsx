@@ -1,13 +1,13 @@
 import React from 'react'
 import { Card } from 'antd'
 import RegisterForm from '../RegisterForm'
-import Page from '../containers/Page'
-import LoggedInRedirect from '../containers/LoggedInRedirect'
+import Page from '../../common/containers/Page'
+import LoggedInRedirect from '../../common/containers/LoggedInRedirect'
 import Title from 'antd/lib/typography/Title'
 
-import Centered from '../containers/Centered'
+import Centered from '../../common/containers/Centered'
 
-export default props => {
+export default (props) => {
   return (
     <LoggedInRedirect>
       <Page>

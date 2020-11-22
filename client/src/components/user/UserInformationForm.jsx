@@ -1,8 +1,8 @@
 import React from 'react'
 import { Input, Form } from 'antd'
-import SaveForm from './SaveForm'
+import SaveForm from '../common/SaveForm'
 import { connect } from 'react-redux'
-import QuestionDot from './QuestionDot'
+import QuestionDot from '../common/QuestionDot'
 import requester from 'Helpers/requester'
 import { updateUser } from 'Actions/userActions'
 

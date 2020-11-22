@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, Layout, Avatar } from 'antd'
-import Centered from './containers/Centered'
+import Centered from '../common/containers/Centered'
 
 const { Header } = Layout
 

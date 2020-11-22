@@ -1,8 +1,8 @@
 import { Card, Col, Row, Anchor } from "antd";
-import Breadcrumb from "Components/Breadcrumb";
-import Centered from "Components/containers/Centered";
-import Page from "Components/containers/Page";
-import NotFoundPage from "Components/pages/NotFoundPage";
+import Breadcrumb from "Components/common/Breadcrumb";
+import Centered from "Components/common/containers/Centered";
+import Page from "Components/common/containers/Page";
+import NotFoundPage from "Components/common/pages/NotFoundPage";
 import notificationHandler from "Helpers/notificationHandler";
 import requester from "Helpers/requester";
 import React, { useEffect } from "react";

@@ -3,12 +3,12 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Input, Button, Form } from 'antd'
 import { Link } from 'react-router-dom'
 
-import notificationHandler from '../helpers/notificationHandler'
-import requester from '../helpers/requester'
+import notificationHandler from 'Helpers/notificationHandler'
+import requester from 'Helpers/requester'
 
 import { connect } from 'react-redux'
-import { updateUser } from '../redux/actions/userActions'
-import { getUser } from '../helpers/userCookie'
+import { updateUser } from 'Actions/userActions'
+import { getUser } from 'Helpers/userCookie'
 
 const LoginForm = ({ updateUser, ...props }) => {
   const handleLogin = (values) => {

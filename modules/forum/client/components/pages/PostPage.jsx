@@ -6,7 +6,7 @@ import CreatePostForm from "../CreatePostForm";
 import Page from "../containers/Page";
 import path from "path";
 import PostCard from "../PostCard";
-import ConditionalRedirect from "Components/containers/ConditionalRedirect";
+import ConditionalRedirect from "Components/common/containers/ConditionalRedirect";
 import notificationHandler from "Helpers/notificationHandler";
 import { connect } from "react-redux";
 
