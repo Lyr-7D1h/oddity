@@ -5,7 +5,7 @@ const fastifyAutoload = require('fastify-autoload')
 const fp = require('fastify-plugin')
 const session = require('fastify-session')
 const SequelizeStore = require('connect-session-sequelize')(session.Store)
-const { routeDirs, pluginDirs } = require('../module_loader_imports')
+const { routeDirs, pluginDirs } = require('../../module_loader_imports')
 
 module.exports = async (fastify, opts) => {
   fastify

@@ -1,9 +1,9 @@
 'use strict'
 
-const Sentry = require('@sentry/node')
-
-// Read the .env file.
-require('dotenv').config()
+import Sentry = require('@sentry/node')
+import Fastify from 'fastify'
+import dotenv = require('dotenv')
+dotenv.config()
 
 // sentry.io
 Sentry.init({
@@ -14,9 +14,6 @@ Sentry.init({
 
 // installs an 'unhandledRejection' handler
 require('make-promises-safe')
-
-// Require the framework
-const Fastify = require('fastify')
 
 // Instantiate Fastify with some config
 const server = Fastify({
