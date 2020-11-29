@@ -48,11 +48,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   })
   user.associate = (models) => {
-    // user.hasMany(models.forumPost, {
-    //   as: 'posts',
-    //   foreignKey: 'authorId'
-    // })
-    user.belongsTo(models.role)
+    user.belongsToMany(models.role, { through: 'roleBinding' })
   }
   return user
 }

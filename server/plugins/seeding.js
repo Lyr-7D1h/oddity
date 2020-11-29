@@ -2,7 +2,6 @@ const fp = require('fastify-plugin')
 const fs = require('fs')
 const path = require('path')
 const { seeders: importSeeders } = require('../module_loader_imports')
-const Promise = require('bluebird')
 const util = require('util')
 
 const readdir = util.promisify(fs.readdir)
