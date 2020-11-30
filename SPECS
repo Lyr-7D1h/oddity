@@ -10,12 +10,13 @@ SERVER:
 		Fastify
 		Sequelize (Entity Framework)
 			Postgres
+		Tap
 
 Dockerized
 Dynamic Permissions management
 Request validation
 Automatic documentation (openapi)
-Modules
+Modular
 Html injection
 Redux
 SPA - Single Page Application
@@ -23,8 +24,8 @@ SPA - Single Page Application
 
 Hosting architecture:
 
-		KUBERNETES
-            				#1 a.com	POSTGRES
-request  => traefik (load balancer)	#2 b.com 	RESOURCES
-					#3 c.com
-					#4 d.com
+			KUBERNETES
+            						#1 a.com
+request  => traefik (load balancer)	#2 b.com 	=>	RESOURCES
+									#3 c.com	=> 	POSTGRES
+									#4 d.com
