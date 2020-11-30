@@ -20,12 +20,18 @@ export default (state, { type, payload }) => {
       })
       return newState
     case ENABLE_MODULE:
+      // if already exists do nothing
       if (newState.modules.some((mod) => mod.id === payload.id)) {
+        return newState
+      }
+      // If does not exist in imported module do nothing
+      if (!importedModules[payload.name]) {
         return newState
       }
       newState.modules.push(payload)
       return newState
     case DISABLE_MODULE:
+      // filter out given module
       const modules = newState.modules.filter((mod) => mod.id !== payload.id)
       return Object.assign({}, state, { modules })
     default:

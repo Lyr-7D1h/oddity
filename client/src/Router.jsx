@@ -21,6 +21,36 @@ import SecuritySettingsPage from 'Components/user/pages/SecuritySettingsPage'
 import LinkedAccountsPage from 'Components/user/pages/LinkedAccountsPage'
 import RolesSettingsPage from 'Components/admin/pages/RolesSettingsPage'
 
+const defaultRoutes = [
+  { path: '/login', component: LoginPage },
+  { path: '/register', component: RegisterPage },
+  { path: '/tos', component: TermsOfServicePage },
+  { path: '/u/:identifier', component: ProfilePage },
+
+  { path: '/settings', component: AccountPage },
+  { path: '/settings/security', component: SecuritySettingsPage },
+  { path: '/settings/linked', component: LinkedAccountsPage },
+
+  { path: '/admin', component: () => <Redirect to="admin/general" /> },
+  { path: '/admin/general', component: AdminSettingsPage },
+  { path: '/admin/modules', component: ModulesPage },
+  { path: '/admin/modules/:module', component: ModuleSettingsPage },
+  { path: '/admin/roles', component: RolesSettingsPage },
+]
+
+const DefaultRoutes = defaultRoutes.map((route, i) => {
+  return (
+    <Route
+      key={i}
+      exact
+      path={route.path}
+      render={(props) => {
+        return React.createElement(route.component, props)
+      }}
+    />
+  )
+})
+
 export default connect((state) => ({ modules: state.init.modules }))(
   ({ modules }) => {
     let noHomeSet = true
@@ -68,37 +98,10 @@ export default connect((state) => ({ modules: state.init.modules }))(
         return moduleRoutes
       }
     }
-    const defaultRoutes = [
-      { path: '/login', component: LoginPage },
-      { path: '/register', component: RegisterPage },
-      { path: '/tos', component: TermsOfServicePage },
-      { path: '/u/:identifier', component: ProfilePage },
-
-      { path: '/settings', component: AccountPage },
-      { path: '/settings/security', component: SecuritySettingsPage },
-      { path: '/settings/linked', component: LinkedAccountsPage },
-
-      { path: '/admin', component: () => <Redirect to="admin/general" /> },
-      { path: '/admin/general', component: AdminSettingsPage },
-      { path: '/admin/modules', component: ModulesPage },
-      { path: '/admin/modules/:module', component: ModuleSettingsPage },
-      { path: '/admin/roles', component: RolesSettingsPage },
-    ].map((route, i) => {
-      return (
-        <Route
-          key={i}
-          exact
-          path={route.path}
-          render={(props) => {
-            return React.createElement(route.component, props)
-          }}
-        />
-      )
-    })
 
     return (
       <Switch>
-        {defaultRoutes}
+        {DefaultRoutes}
 
         {getModuleRoutes()}
 
