@@ -5,13 +5,13 @@ import { withRouter } from 'react-router'
 
 import { Link } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
-import requester from '../helpers/requester'
-import notificationHandler from '../helpers/notificationHandler'
+import requester from 'Helpers/requester'
+import notificationHandler from 'Helpers/notificationHandler'
+import hasPermission from 'Helpers/hasPermission'
 
 import { connect } from 'react-redux'
-import { updateUser } from '../redux/actions/userActions'
-import { rootReset } from '../redux/actions/rootActions'
-import hasPermission from 'Helpers/hasPermission'
+import { updateUser } from 'Actions/userActions'
+import { rootReset } from 'Actions/rootActions'
 
 const Nav = ({ modules, title, user, updateUser, location, rootReset }) => {
   const [loginError, setLoginError] = useState(false)

@@ -1,7 +1,7 @@
 import errorHandler from 'Helpers/errorHandler'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import importedModules from '../../../module_loader_imports/modules'
+import importedModules from '../../../../module_loader_imports/modules'
 
 export default connect((state) => ({ modules: state.init.modules }))(
   ({ modules, dispatch, children }) => {

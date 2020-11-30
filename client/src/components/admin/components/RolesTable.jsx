@@ -4,7 +4,7 @@ import errorHandler from 'Helpers/errorHandler'
 import requester from 'Helpers/requester'
 import React, { useState, useEffect } from 'react'
 import RoleEditor from './RoleEditor'
-import VertNavSelected from '../../VertNavSelected'
+import VertNavSelected from '../../common/VertNavSelected'
 
 export default () => {
   const [roles, setRoles] = useState(null)

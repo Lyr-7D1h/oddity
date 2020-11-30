@@ -1,8 +1,8 @@
 import React from 'react'
 import { Card, Row, Col } from 'antd'
 import LoginForm from '../LoginForm'
-import Page from '../containers/Page'
-import LoggedInRedirect from '../containers/LoggedInRedirect'
+import Page from '../../common/containers/Page'
+import LoggedInRedirect from '../../common/containers/LoggedInRedirect'
 import Title from 'antd/lib/typography/Title'
 
 export default () => {

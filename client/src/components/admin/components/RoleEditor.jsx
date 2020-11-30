@@ -1,6 +1,6 @@
 import { Form, Input, Switch } from 'antd'
-import QuestionDot from 'Components/QuestionDot'
-import SaveForm from 'Components/SaveForm'
+import QuestionDot from 'Components/common/QuestionDot'
+import SaveForm from 'Components/common/SaveForm'
 import requester from 'Helpers/requester'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'

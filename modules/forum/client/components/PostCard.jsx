@@ -16,7 +16,7 @@ import {
   AlertFilled,
 } from "@ant-design/icons";
 import ReactHtmlParser from "react-html-parser";
-import Editor from "Components/Editor";
+import Editor from "Components/common/Editor";
 import requester from "Helpers/requester";
 import notificationHandler from "Helpers/notificationHandler";
 import hasPermission from "Helpers/hasPermission";

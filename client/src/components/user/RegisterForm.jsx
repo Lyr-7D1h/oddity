@@ -4,8 +4,8 @@ import { Link, Redirect } from 'react-router-dom'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { Form, Input, Tooltip, Checkbox, Button } from 'antd'
 
-import notificationHandler from '../helpers/notificationHandler'
-import requester from '../helpers/requester'
+import notificationHandler from 'Helpers/notificationHandler'
+import requester from 'Helpers/requester'
 import { useState } from 'react'
 import { connect } from 'react-redux'
 

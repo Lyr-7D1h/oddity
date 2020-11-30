@@ -1,11 +1,11 @@
 import React from 'react'
-import ConditionalRedirect from '../containers/ConditionalRedirect'
-import Page from '../containers/Page'
+import ConditionalRedirect from '../../common/containers/ConditionalRedirect'
+import Page from '../../common/containers/Page'
 import { Card, Layout, Divider } from 'antd'
 import { connect } from 'react-redux'
-import VertNav from 'Components/VertNav'
+import VertNav from 'Components/common/VertNav'
 import { UserOutlined, LockOutlined, LinkOutlined } from '@ant-design/icons'
-import Centered from './Centered'
+import Centered from '../../common/containers/Centered'
 import Title from 'antd/lib/typography/Title'
 
 export default connect((state) => ({ username: state.user.username }))(
