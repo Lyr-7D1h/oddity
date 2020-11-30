@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import requester from 'Helpers/requester'
-import notificationHandler from 'Helpers/notificationHandler'
 import { Table, Tag, Button } from 'antd'
 
 import { Link, useLocation } from 'react-router-dom'
