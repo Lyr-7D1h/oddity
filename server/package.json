@@ -2,16 +2,17 @@
   "name": "oddity-server",
   "version": "0.1.0",
   "description": "",
-  "main": "server.js",
+  "main": "dist/src/server.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "test": "tap test/**/*.test.js",
-    "prod": "NODE_ENV=production node server.js",
     "build": "tsc -p tsconfig.json",
-    "start": "NODE_ENV=development node dist/src/server.js --trace-warnings",
-    "oldstart": "NODE_ENV=development nodemon -w ../modules -i db -i module_loader_imports -w . start"
+    "rebuild": "yarn build && node dist/src/server.js",
+    "start": "yarn start:dev",
+    "start:dev": "NODE_ENV=development nodemon -e ts,.d.ts,.js -w ../modules -w ./src --exec yarn rebuild",
+    "start:prod": "NODE_ENV=production node server.js"
   },
   "keywords": [],
   "author": "ivelthoven",
