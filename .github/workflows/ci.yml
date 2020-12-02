@@ -56,7 +56,9 @@ jobs:
           yarn start
         working-directory: module_loader
       - name: Build Server
-        run: yarn
+        run: |
+          yarn
+          yarn build
         working-directory: server
       - name: Build Client
         working-directory: client

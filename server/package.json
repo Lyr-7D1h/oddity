@@ -12,7 +12,7 @@
     "rebuild": "yarn build && node dist/src/server.js",
     "start": "yarn start:dev",
     "start:dev": "NODE_ENV=development nodemon -e ts,.d.ts,.js -w ../modules -w ./src --exec yarn rebuild",
-    "start:prod": "NODE_ENV=production node server.js"
+    "start:prod": "NODE_ENV=production node dist/src/server.js"
   },
   "keywords": [],
   "author": "ivelthoven",
@@ -43,7 +43,8 @@
     "pino-pretty": "^3.6.1",
     "pump": "^3.0.0",
     "sanitize-html": "^1.27.4",
-    "sequelize": "^5.22.3"
+    "sequelize": "^5.22.3",
+    "typescript": "^4.1.2"
   },
   "devDependencies": {
     "@sentry/types": "^5.28.0",
@@ -57,7 +58,6 @@
     "eslint-plugin-standard": "^4.0.1",
     "nodemon": "^2.0.4",
     "sequelize-cli": "^5.5.1",
-    "tap": "^12.5.3",
-    "typescript": "^4.1.2"
+    "tap": "^12.5.3"
   }
 }
