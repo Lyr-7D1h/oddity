@@ -16,6 +16,5 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
   })
-  role.associate = (models) => {}
   return role
 }
