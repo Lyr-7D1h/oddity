@@ -31,7 +31,7 @@ module.exports = async (fastify) => {
     "/forum/drafts/:id",
     {
       schema: {
-        params: "id#",
+        params: { $ref: "id#" },
       },
       permissions: fastify.PERMISSIONS.NONE,
       preHandler: fastify.auth([fastify.authorization.cookie]),
@@ -54,7 +54,7 @@ module.exports = async (fastify) => {
     "/forum/drafts/:id",
     {
       schema: {
-        params: "id#",
+        params: { $ref: "id#" },
         body: {
           type: "object",
         },
@@ -79,7 +79,7 @@ module.exports = async (fastify) => {
   fastify.delete(
     "/forum/drafts/:id",
     {
-      schema: { params: "id#" },
+      schema: { params: { $ref: "id#" } },
       permissions: fastify.PERMISSIONS.NONE,
       preHandler: [fastify.auth([fastify.authorization.cookie])],
     },

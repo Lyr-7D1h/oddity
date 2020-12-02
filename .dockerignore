@@ -21,5 +21,6 @@
 **/secrets.dev.yaml
 **/values.dev.yaml
 **/jsconfig.json
+**/dist
 LICENSE
 README.md

@@ -6,17 +6,17 @@ module.exports = {
       {
         title: "Uncategorized",
         order: 0,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
+        createdAt: Sequelize.fn("NOW"),
+        updatedAt: Sequelize.fn("NOW"),
+      },
     ]);
   },
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkDelete("forumCategories", [
       {
-        title: "Uncategorized"
-      }
+        title: "Uncategorized",
+      },
     ]);
-  }
+  },
 };
