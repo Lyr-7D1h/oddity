@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      order: {
+        type: DataTypes.INTEGER,
+        unique: true,
+        allowNull: false,
+      },
       route: {
         type: DataTypes.STRING,
         allowNull: false,

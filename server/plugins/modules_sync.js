@@ -1,11 +1,12 @@
 let { modules } = require('../module_loader_imports')
 const fp = require('fastify-plugin')
 
-modules = modules.map((mod) => ({
+modules = modules.map((mod, index) => ({
   identifier: mod.identifier,
   name: mod.name,
   version: mod.version,
   enabled: false,
+  order: index + 1,
   route: mod.route,
   title: mod.name,
 }))

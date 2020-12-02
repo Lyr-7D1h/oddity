@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import requester from 'Helpers/requester'
-import notificationHandler from 'Helpers/notificationHandler'
 import { Table, Tag, Button } from 'antd'
 
 import { Link, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { disableModule, enableModule } from 'Actions/initActions'
+import errorHandler from 'Helpers/errorHandler'
 
 export default ({ modules: modulesProp }) => {
   const [modules, setModules] = useState([])
@@ -35,9 +35,7 @@ export default ({ modules: modulesProp }) => {
           dispatch(disableModule(selectedModule))
         }
       })
-      .catch((err) => {
-        notificationHandler.error('Could not enable Module', err.message)
-      })
+      .catch((err) => errorHandler(err, { title: 'Could not enable module' }))
   }
 
   const location = useLocation()

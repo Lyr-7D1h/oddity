@@ -13,6 +13,7 @@ import Title from 'antd/lib/typography/Title'
 import saveWrapper from 'Helpers/saveWrapper'
 import { useDispatch } from 'react-redux'
 import { updateModuleRoute } from 'Actions/initActions'
+import modules from '../../../../module_loader_imports/modules'
 
 const Page = ({
   setHasChanges,
@@ -99,17 +100,19 @@ const Page = ({
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            label={
-              <>
-                Route&nbsp;
-                <QuestionDot message="The url path to the module. If empty this will become your your home module" />
-              </>
-            }
-            name="route"
-          >
-            <Input prefix="/" />
-          </Form.Item>
+          {mod && modules[mod.name] && (
+            <Form.Item
+              label={
+                <>
+                  Route&nbsp;
+                  <QuestionDot message="The url path to the module. If empty this will become your your home module" />
+                </>
+              }
+              name="route"
+            >
+              <Input prefix="/" />
+            </Form.Item>
+          )}
         </Form>
       </Centered>
     </>

@@ -10,6 +10,7 @@ module.exports = {
         enabled: true,
         version: "0.0.1",
         route: "",
+        order: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
