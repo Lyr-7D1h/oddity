@@ -7,11 +7,10 @@
     "test": "test"
   },
   "scripts": {
-    "test": "tap test/**/*.test.js",
+    "test": "tap src/test/**/*.test.js",
     "build": "tsc -p tsconfig.json",
-    "rebuild": "yarn build && node dist/src/server.js",
     "start": "yarn start:dev",
-    "start:dev": "NODE_ENV=development nodemon -e ts,.d.ts,.js -w ../modules -w ./src --exec yarn rebuild",
+    "start:dev": "NODE_ENV=development tsnd --ignore-watch /module_loader_imports/ src/server.ts",
     "start:prod": "NODE_ENV=production node dist/src/server.js"
   },
   "keywords": [],
@@ -58,6 +57,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "nodemon": "^2.0.4",
     "sequelize-cli": "^5.5.1",
-    "tap": "^12.5.3"
+    "tap": "^12.5.3",
+    "ts-node-dev": "^1.0.0"
   }
 }

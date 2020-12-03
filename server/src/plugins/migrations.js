@@ -1,5 +1,5 @@
 const fp = require('fastify-plugin')
-const moduleLoaderImports = require('../../../module_loader_imports')
+const moduleLoaderImports = require('../../module_loader_imports')
 const fs = require('fs')
 const path = require('path')
 const util = require('util')
