@@ -115,4 +115,5 @@ async function fastifyStatic(fastify, opts, next) {
 
 module.exports = fp(fastifyStatic, {
   name: 'resources',
+  dependencies: ['permission_decorator'],
 })

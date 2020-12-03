@@ -1,15 +1,19 @@
 'use strict'
 
-const path = require('path')
-const fastifyAutoload = require('fastify-autoload')
-const fp = require('fastify-plugin')
-const session = require('fastify-session')
-const SequelizeStore = require('connect-session-sequelize')(session.Store)
-const { routeDirs, pluginDirs } = require('../../module_loader_imports')
+import { FastifyPluginCallback } from 'fastify'
+import fastifyAuth from 'fastify-auth'
+import fastifyAutoload from 'fastify-autoload'
+import fastifyCookie from 'fastify-cookie'
+import fastifyCors from 'fastify-cors'
+import fastifyMultipart from 'fastify-multipart'
+import fastifyOAS from 'fastify-oas'
+import fastifySensible from 'fastify-sensible'
+import path from 'path'
+import { pluginDirs, routeDirs } from '../../module_loader_imports'
 
-module.exports = async (fastify, opts) => {
+const app: FastifyPluginCallback = (fastify, opts, done) => {
   fastify
-    .register(require('fastify-oas'), {
+    .register(fastifyOAS, {
       routePrefix: '/documentation',
       exposeRoute: true,
       swagger: {
@@ -36,12 +40,12 @@ module.exports = async (fastify, opts) => {
       },
     })
 
-    .register(require('fastify-sensible'))
+    .register(fastifySensible)
 
-    .register(require('fastify-cookie'))
+    .register(fastifyCookie)
 
     // Used for resources
-    .register(require('fastify-multipart'), {
+    .register(fastifyMultipart, {
       limits: {
         fieldNameSize: 100, // Max field name size in bytes
         fieldSize: 1000000, // Max field value (1MB)
@@ -52,42 +56,17 @@ module.exports = async (fastify, opts) => {
       },
     })
 
-    .register(require('fastify-cors'), {
+    .register(fastifyCors, {
       origin: 'http://localhost:3000',
     })
 
-    .register(require('fastify-auth'))
+    .register(fastifyAuth)
 
     // Autoload Plugins
     .register(fastifyAutoload, {
       dir: path.join(__dirname, '../plugins'),
       options: Object.assign({}, opts),
     })
-
-    // Session Storage to Postgres
-    .register(
-      fp(
-        (instance, opts, done) => {
-          opts.store = new SequelizeStore({
-            db: instance.db,
-            modelKey: 'session',
-          })
-          session(instance, opts, done)
-          opts.store.sync()
-        },
-        {
-          dependencies: ['sequelize'],
-        }
-      ),
-      {
-        secret: fastify.config.SESSION_SECRET,
-        cookie: {
-          httpOnly: !(fastify.config.NODE_ENV === 'development'), // set httpOnly and secure off when in dev
-          secure: !(fastify.config.NODE_ENV === 'development'),
-          expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // session is valid for 14 days
-        },
-      }
-    )
 
     // Autoload Routes
     .register(fastifyAutoload, {
@@ -122,4 +101,8 @@ module.exports = async (fastify, opts) => {
   fastify.ready(() => {
     fastify.oas()
   })
+
+  done()
 }
+
+export default app

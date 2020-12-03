@@ -20,7 +20,7 @@ const getModels = (instance) => {
           if (modelPath.slice(-3) !== '.js') {
             instance.log.error(`Models: ${modelPath} is not a javascript file`)
           }
-          const model = instance.db.import(modelPath)
+          const model = require(modelPath)(instance.db, instance.Sequelize)
           syncModelsPromises.push(model.sync())
           models[model.name] = model
         })
