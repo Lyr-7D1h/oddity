@@ -1,81 +1,5 @@
 const fp = require('fastify-plugin')
 
-const PERMISSIONS = {
-  PUBLIC: 0x0,
-  NONE: 0x1, // Default for users
-  ADMIN: 0x2, // Used to identify someone with access to everything
-  MANAGE_ROLES: 0x4,
-  MANAGE_MODULES: 0x8,
-}
-
-const PERMISSIONS_DESCRIPTIONS = {
-  PUBLIC: {
-    description: 'Public',
-    details: 'No permission someone who is not logged in.',
-  },
-  NONE: {
-    description: 'None',
-    details: 'Default permission for logged in user.',
-  },
-  ADMIN: {
-    description: 'Administrator',
-    details: 'Users with this permission have every permission.',
-  },
-  MANAGE_ROLES: {
-    description: 'Manage Roles',
-    details: 'Users with this permission can create, remove and edit roles.',
-  },
-  MANAGE_MODULES: {
-    description: 'Manage Modules',
-    details: 'Users with this permission can manage modules.',
-  },
-}
-
-// Add Permission to schema summary of route
-const addPermissionToDocumentation = (routeOptions, permission) => {
-  const permissionStrings = Object.keys(PERMISSIONS).filter(
-    (key) => PERMISSIONS[key] & permission
-  )
-  if (permissionStrings.length === 0) {
-    return
-  }
-
-  let permissionMessage = `[${permissionStrings.join(' | ')}]`
-
-  routeOptions.schema = routeOptions.schema ? routeOptions.schema : {}
-
-  routeOptions.schema.summary = routeOptions.schema.summary
-    ? routeOptions.schema.summary + ' ' + permissionMessage
-    : permissionMessage
-
-  permissionMessage = `You need one of these permissions:\n${permissionStrings.join(
-    ', '
-  )}`
-  routeOptions.schema.description = routeOptions.schema.description
-    ? routeOptions.schema.descripton + `\n` + permissionMessage
-    : permissionMessage
-}
-
-const getPermission = (permissions) => {
-  if (Array.isArray(permissions)) {
-    let permission = 0
-    permissions.forEach((perm) => (permission += perm))
-    return permission
-  } else if (permissions !== null || permissions !== undefined) {
-    return permissions
-  } else {
-    return undefined
-  }
-}
-
-const getHighestPermission = () => {
-  let highest = 0
-  Object.keys(PERMISSIONS).forEach((key) => {
-    if (highest < PERMISSIONS[key]) highest = PERMISSIONS[key]
-  })
-  return highest
-}
-
 // TODO: optimize tree like structure & write some tests
 class PermissionRoute {
   constructor() {
@@ -138,37 +62,55 @@ class PermissionRoute {
 
 module.exports = fp(
   async (instance) => {
+    const PERMISSIONS = instance.PERMISSIONS
+    const PERMISSIONS_DESCRIPTIONS = instance.PERMISSIONS_DESCRIPTIONS
+
     const permissionRoutes = new PermissionRoute()
 
-    /**
-     * Check permissions for each route
-     */
-    instance.addHook('onRoute', (opts) => {
-      const permission = getPermission(opts.permissions)
-      const methods = Array.isArray(opts.method) ? opts.method : [opts.method]
-
-      if (
-        (!opts.preHandler || opts.preHandler.length === 0) &&
-        permission > 0
-      ) {
-        instance.log.warn(
-          `Permission set but no preHandler for route: ${methods.join(', ')}: ${
-            opts.path
-          }`
-        )
+    // Add Permission to schema summary of route
+    const addPermissionToDocumentation = (routeOptions, permission) => {
+      const permissionStrings = Object.keys(PERMISSIONS).filter(
+        (key) => PERMISSIONS[key] & permission
+      )
+      if (permissionStrings.length === 0) {
+        return
       }
 
-      if (permission !== undefined) {
-        addPermissionToDocumentation(opts, permission)
-        methods.forEach((method) => {
-          permissionRoutes.addRoute(method, opts.path, permission)
-        })
+      let permissionMessage = `[${permissionStrings.join(' | ')}]`
+
+      routeOptions.schema = routeOptions.schema ? routeOptions.schema : {}
+
+      routeOptions.schema.summary = routeOptions.schema.summary
+        ? routeOptions.schema.summary + ' ' + permissionMessage
+        : permissionMessage
+
+      permissionMessage = `You need one of these permissions:\n${permissionStrings.join(
+        ', '
+      )}`
+      routeOptions.schema.description = routeOptions.schema.description
+        ? routeOptions.schema.descripton + `\n` + permissionMessage
+        : permissionMessage
+    }
+
+    const getPermission = (permissions) => {
+      if (Array.isArray(permissions)) {
+        let permission = 0
+        permissions.forEach((perm) => (permission += perm))
+        return permission
+      } else if (permissions !== null || permissions !== undefined) {
+        return permissions
       } else {
-        instance.log.warn(
-          `No permissions set for route: ${methods.join(', ')}: ${opts.path}`
-        )
+        return undefined
       }
-    })
+    }
+
+    const getHighestPermission = () => {
+      let highest = 0
+      Object.keys(PERMISSIONS).forEach((key) => {
+        if (highest < PERMISSIONS[key]) highest = PERMISSIONS[key]
+      })
+      return highest
+    }
 
     const authorizeRoute = (route, method, permission) => {
       // if root always true
@@ -221,13 +163,41 @@ module.exports = fp(
       }
     }
 
-    instance.decorate('PERMISSIONS', PERMISSIONS)
-    instance.decorate('PERMISSIONS_DESCRIPTIONS', PERMISSIONS_DESCRIPTIONS)
+    /**
+     * Check permissions for each route
+     */
+    instance.addHook('onRoute', (opts) => {
+      const permission = getPermission(opts.permissions)
+      const methods = Array.isArray(opts.method) ? opts.method : [opts.method]
+
+      if (
+        (!opts.preHandler || opts.preHandler.length === 0) &&
+        permission > 0
+      ) {
+        instance.log.warn(
+          `Permission set but no preHandler for route: ${methods.join(', ')}: ${
+            opts.path
+          }`
+        )
+      }
+
+      if (permission !== undefined) {
+        addPermissionToDocumentation(opts, permission)
+        methods.forEach((method) => {
+          permissionRoutes.addRoute(method, opts.path, permission)
+        })
+      } else {
+        instance.log.warn(
+          `No permissions set for route: ${methods.join(', ')}: ${opts.path}`
+        )
+      }
+    })
+
     instance.decorate('permissions', {
       calcPermission,
       authorizeRoute,
       addPermission,
     })
   },
-  { name: 'permission_handler' }
+  { name: 'permission_handler', dependencies: ['permission_decorator'] }
 )

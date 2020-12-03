@@ -23,7 +23,7 @@
     "connect-session-sequelize": "^6.1.1",
     "fastify": "^3.8.0",
     "fastify-auth": "^1.0.1",
-    "fastify-autoload": "^1.2.2",
+    "fastify-autoload": "^3.3.1",
     "fastify-cookie": "^4.1.0",
     "fastify-cors": "^2.2.0",
     "fastify-env": "^2.1.0",
