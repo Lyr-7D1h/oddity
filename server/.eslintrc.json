@@ -18,6 +18,7 @@
     "SharedArrayBuffer": "readonly"
   },
   "parserOptions": {
+    "impliedStrict": true,
     "ecmaVersion": 2018
   },
   "rules": {}

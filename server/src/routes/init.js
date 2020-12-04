@@ -3,20 +3,16 @@ module.exports = async (fastify) => {
     '/init',
     { permissions: fastify.PERMISSIONS.PUBLIC },
     (request, reply) => {
-      const initPromises = []
-      initPromises.push(
+      const initPromises = [
         fastify.models.config.findOne({
           where: { isActive: true },
           attributes: { exclude: ['createdAt', 'updatedAt'] },
-        })
-      )
-
-      initPromises.push(
+        }),
         fastify.models.module.findAll({
           where: { enabled: true },
           attributes: { exclude: ['createdAt', 'updatedAt'] },
-        })
-      )
+        }),
+      ]
 
       Promise.all(initPromises)
         .then(([config, modules]) => {

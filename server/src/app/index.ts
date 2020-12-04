@@ -8,6 +8,7 @@ import fastifyCors from 'fastify-cors'
 import fastifyMultipart from 'fastify-multipart'
 import fastifyOAS from 'fastify-oas'
 import fastifySensible from 'fastify-sensible'
+import fastifyStatic from 'fastify-static'
 import path from 'path'
 import { pluginDirs, routeDirs } from '../../module_loader_imports'
 
@@ -38,6 +39,10 @@ const app: FastifyPluginCallback = (fastify, opts, done) => {
         consumes: ['application/json'],
         produces: ['application/json'],
       },
+    })
+
+    .register(fastifyStatic, {
+      root: path.join(__dirname, '../../../client/build'),
     })
 
     .register(fastifySensible)

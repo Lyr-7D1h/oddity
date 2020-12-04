@@ -12,14 +12,16 @@ import SavePopup from 'Components/common/SavePopup'
 
 const App = ({ userNeedsSetup }) => {
   return (
-    <BrowserRouter>
-      <InitLoader>
-        <ModulesInitLoader>
-          {userNeedsSetup ? <FinishAccountPage /> : <Router />}
-          <SavePopup />
-        </ModulesInitLoader>
-      </InitLoader>
-    </BrowserRouter>
+    <React.StrictMode>
+      <BrowserRouter>
+        <InitLoader>
+          <ModulesInitLoader>
+            {userNeedsSetup ? <FinishAccountPage /> : <Router />}
+            <SavePopup />
+          </ModulesInitLoader>
+        </InitLoader>
+      </BrowserRouter>
+    </React.StrictMode>
   )
 }
 
