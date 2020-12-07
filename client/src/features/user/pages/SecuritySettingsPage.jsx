@@ -1,6 +1,6 @@
 import React from 'react'
-import SettingsPage from 'Components/user/pages/SettingsPage'
-import SecurityForm from 'Components/user/SecurityForm'
+import SettingsPage from 'features/user/pages/SettingsPage'
+import SecurityForm from 'features/user/SecurityForm'
 
 export default () => {
   return (

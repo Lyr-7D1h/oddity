@@ -2,10 +2,12 @@
   "name": "oddity-react",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
     "@ckeditor/ckeditor5-build-classic": "^18.0.0",
     "@ckeditor/ckeditor5-react": "^2.1.0",
+    "@reduxjs/toolkit": "^1.5.0",
     "@sentry/browser": "^5.21.4",
     "antd": "^4.7.2",
     "axios": "^0.19.2",
@@ -25,10 +27,11 @@
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "typescript": "^4.1.2"
   },
   "scripts": {
-    "start": "BROWSER=none react-app-rewired start",
+    "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "cd ../server && yarn start:prod & wait-on http://localhost:5000 && cypress run",
     "eject": "react-scripts eject"
@@ -51,16 +54,7 @@
   "devDependencies": {
     "@babel/preset-react": "^7.10.4",
     "@ckeditor/ckeditor5-alignment": "^18.0.0",
-    "@typescript-eslint/eslint-plugin": "^4.9.0",
-    "@typescript-eslint/parser": "^4.9.0",
     "cypress": "^3.8.3",
-    "eslint": "^7.12.1",
-    "eslint-config-standard": "^16.0.2",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.21.5",
-    "eslint-plugin-standard": "^4.0.1",
     "wait-on": "^4.0.2"
   }
 }

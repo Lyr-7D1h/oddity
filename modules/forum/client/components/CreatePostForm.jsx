@@ -5,7 +5,7 @@ import notificationHandler from "../../../../client/src/helpers/notificationHand
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import path from "path";
-import Editor from "Components/common/Editor";
+import Editor from "features/common/Editor";
 import { pushDraft } from "../redux/forumActions";
 
 export default connect((state) => ({ userId: state.user.id }), {

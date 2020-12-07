@@ -6,7 +6,7 @@
     "baseUrl": "./src",
     "alwaysStrict": true,
     "paths": {
-      "Components/*": ["./components/*"],
+      "Features/*": ["./features/*"],
       "Actions/*": ["./redux/actions/*"],
       "Helpers/*": ["./helpers/*"]
     }

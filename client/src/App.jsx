@@ -3,12 +3,12 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { connect } from 'react-redux'
 
-import InitLoader from './components/common/containers/InitLoader'
-import FinishAccountPage from './components/user/pages/FinishAccountPage'
+import InitLoader from './features/init/InitLoader'
+import FinishAccountPage from './features/user/pages/FinishAccountPage'
 
 import Router from './Router'
-import ModulesInitLoader from 'Components/common/containers/ModulesInitLoader'
-import SavePopup from 'Components/common/SavePopup'
+import ModulesInitLoader from 'features/common/containers/ModulesInitLoader'
+import SavePopup from 'features/common/SavePopup'
 
 const App = ({ userNeedsSetup }) => {
   return (
@@ -25,6 +25,7 @@ const App = ({ userNeedsSetup }) => {
   )
 }
 
+// TODO: might always rerender
 export default connect((state) => {
   return {
     userNeedsSetup:

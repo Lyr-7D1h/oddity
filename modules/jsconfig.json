@@ -7,7 +7,7 @@
     "baseUrl": "../client/src",
     "alwaysStrict": true,
     "paths": {
-      "Components/*": ["./components/*"],
+      "Features/*": ["./components/*"],
       "Actions/*": ["./redux/actions/*"],
       "Helpers/*": ["./helpers/*"]
     },

@@ -6,12 +6,12 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { Steps, Row, Col, Button, Card, Typography, Layout, Menu } from 'antd'
 import notificationHandler from '../../../helpers/notificationHandler'
 import { updateUser } from '../../../redux/actions/userActions'
-import ImageUpload from 'Components/common/ImageUpload'
+import ImageUpload from 'features/common/ImageUpload'
 import Title from 'antd/lib/typography/Title'
 import Paragraph from 'antd/lib/typography/Paragraph'
 import requester from 'Helpers/requester'
 import { rootReset } from 'Actions/rootActions'
-import ConnectThirdParty from 'Components/user/ConnectThirdParty'
+import ConnectThirdParty from 'features/user/ConnectThirdParty'
 
 const { Step } = Steps
 
