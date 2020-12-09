@@ -96,5 +96,5 @@ jobs:
         run: |
           docker buildx build --push \
             --tag "${{secrets.DOCKERHUB_USER}}/oddity:${GITHUB_SHA::8}" \
-            --tag "${{secrets.DOCKERHUB_USER}}/oddityservers/oddity:latest" \
+            --tag "${{secrets.DOCKERHUB_USER}}/oddity:latest" \
             --platform linux/amd64,linux/arm/v7 .
