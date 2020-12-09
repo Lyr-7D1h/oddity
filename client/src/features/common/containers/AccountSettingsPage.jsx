@@ -1,7 +1,7 @@
 import React from 'react'
-import SettingsPage from 'features/user/pages/SettingsPage'
+import SettingsPage from 'Features/user/pages/SettingsPage'
 import { connect } from 'react-redux'
-import UserInformationForm from 'features/user/UserInformationForm'
+import UserInformationForm from 'Features/user/UserInformationForm'
 
 export default connect((state) => ({ user: state.user }))(({ user }) => {
   return (

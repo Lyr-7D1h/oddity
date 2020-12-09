@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const rootSlice = createSlice({
   name: 'root',
+  initialState: null,
   reducers: {
     rootReset(state) {
       const importedKeys = importerRedux.reducers.map((reducer) => reducer[0])

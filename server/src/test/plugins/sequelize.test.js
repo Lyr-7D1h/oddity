@@ -1,70 +1,70 @@
-const t = require('tap')
-const test = t.test
+// const t = require('tap')
+// const test = t.test
 
-// clear all tables
-require('../db.helper').clear()
+// // clear all tables
+// require('../db.helper').clear()
 
-const build = require('../build.helper')
+// const build = require('../build.helper')
 
-test('fastify.db and fastify.Sequelize should exist', (t) => {
-  t.plan(3)
+// test('fastify.db and fastify.Sequelize should exist', (t) => {
+//   t.plan(3)
 
-  const app = build(t)
+//   const app = build(t)
 
-  app.ready((err) => {
-    t.error(err)
-    t.ok(app.db)
-    t.ok(app.Sequelize)
-  })
-})
+//   app.ready((err) => {
+//     t.error(err)
+//     t.ok(app.db)
+//     t.ok(app.Sequelize)
+//   })
+// })
 
-test('Sequelize should work fine with records', (t) => {
-  t.plan(3)
+// test('Sequelize should work fine with records', (t) => {
+//   t.plan(3)
 
-  const app = build(t)
+//   const app = build(t)
 
-  app.ready((err) => {
-    t.error(err)
-    t.ok(app.db)
+//   app.ready((err) => {
+//     t.error(err)
+//     t.ok(app.db)
 
-    const User = app.db.define('user', {
-      name: app.Sequelize.STRING,
-    })
+//     const User = app.db.define('user', {
+//       name: app.Sequelize.STRING,
+//     })
 
-    User.sync({ force: true })
-      .then(() => {
-        User.create({ name: 'Iron Man' })
-          .then((user) => {
-            t.ok(user)
-          })
-          .catch((err) => {
-            t.error(err)
-          })
-      })
-      .catch((err) => {
-        t.error(err)
-      })
-  })
-})
+//     User.sync({ force: true })
+//       .then(() => {
+//         User.create({ name: 'Iron Man' })
+//           .then((user) => {
+//             t.ok(user)
+//           })
+//           .catch((err) => {
+//             t.error(err)
+//           })
+//       })
+//       .catch((err) => {
+//         t.error(err)
+//       })
+//   })
+// })
 
-// Should close automatically
-test('Sequelize should close connection before Fastify closed', (t) => {
-  t.plan(2)
+// // Should close automatically
+// test('Sequelize should close connection before Fastify closed', (t) => {
+//   t.plan(2)
 
-  const app = build(t)
+//   const app = build(t)
 
-  app.ready((err) => {
-    t.error(err)
+//   app.ready((err) => {
+//     t.error(err)
 
-    app.close(() => {
-      app.db
-        .authenticate()
-        .then(() => {
-          t.error('connection not closed !')
-        })
-        .catch((err) => {
-          t.ok(err)
-        })
-    })
-  })
-})
+//     app.close(() => {
+//       app.db
+//         .authenticate()
+//         .then(() => {
+//           t.error('connection not closed !')
+//         })
+//         .catch((err) => {
+//           t.ok(err)
+//         })
+//     })
+//   })
+// })

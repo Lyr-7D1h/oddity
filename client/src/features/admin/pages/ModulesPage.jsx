@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import requester from 'Helpers/requester'
 import { Alert } from 'antd'
-import AdminPage from 'features/admin/containers/AdminPage'
-import ModulesTable from 'features/admin/components/ModulesTable'
+import AdminPage from 'Features/admin/containers/AdminPage'
+import ModulesTable from 'Features/admin/components/ModulesTable'
 import errorHandler from 'Helpers/errorHandler'
 
 export default () => {

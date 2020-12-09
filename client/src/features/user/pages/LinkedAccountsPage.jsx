@@ -1,6 +1,6 @@
 import React from 'react'
-import SettingsPage from 'features/user/pages/SettingsPage'
-import ConnectThirdParty from 'features/user/ConnectThirdParty'
+import SettingsPage from 'Features/user/pages/SettingsPage'
+import ConnectThirdParty from 'Features/user/ConnectThirdParty'
 
 export default () => {
   return (

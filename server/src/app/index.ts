@@ -41,10 +41,6 @@ const app: FastifyPluginCallback = (fastify, opts, done) => {
       },
     })
 
-    .register(fastifyStatic, {
-      root: path.join(__dirname, '../../../client/build'),
-    })
-
     .register(fastifySensible)
 
     .register(fastifyCookie)
@@ -83,6 +79,15 @@ const app: FastifyPluginCallback = (fastify, opts, done) => {
         opts
       ),
     })
+
+  if (fastify.config.NODE_ENV === 'production') {
+    fastify.setNotFoundHandler((_request, reply) => {
+      reply.sendFile('index.html')
+    })
+    fastify.register(fastifyStatic, {
+      root: path.join(__dirname, '../../../../client/build'),
+    })
+  }
 
   pluginDirs.forEach((dir) => {
     fastify.register(fastifyAutoload, {

@@ -32,7 +32,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "cd ../server && yarn start:prod & wait-on http://localhost:5000 && cypress run",
+    "test": "echo Cypress test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

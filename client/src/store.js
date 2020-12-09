@@ -4,11 +4,11 @@ import importerRedux from '../module_loader_imports/redux'
 
 import saveReducer from './redux/reducers/saveReducer'
 import userReducer from './redux/reducers/userReducer'
-// import rootReducer from './features/util/rootSlice'
+import rootReducer from './features/util/rootSlice'
 import initReducer from 'Features/init/initSlice'
 
 const reducers = {
-  // root: rootReducer,
+  root: rootReducer,
   user: userReducer,
   save: saveReducer,
   init: initReducer,

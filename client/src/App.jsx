@@ -7,8 +7,8 @@ import InitLoader from './features/init/InitLoader'
 import FinishAccountPage from './features/user/pages/FinishAccountPage'
 
 import Router from './Router'
-import ModulesInitLoader from 'features/common/containers/ModulesInitLoader'
-import SavePopup from 'features/common/SavePopup'
+import ModulesInitLoader from 'Features/common/containers/ModulesInitLoader'
+import SavePopup from 'Features/common/SavePopup'
 
 const App = ({ userNeedsSetup }) => {
   return (

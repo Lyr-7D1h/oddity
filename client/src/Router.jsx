@@ -15,11 +15,11 @@ import NotFoundPage from './features/common/pages/NotFoundPage'
 import NoHomePage from './features/common/pages/NoHomePage'
 import AccountPage from './features/common/containers/AccountSettingsPage'
 import ProfilePage from './features/user/pages/ProfilePage'
-import ModulesPage from 'features/admin/pages/ModulesPage'
-import ModuleSettingsPage from 'features/admin/pages/ModuleSettingsPage'
-import SecuritySettingsPage from 'features/user/pages/SecuritySettingsPage'
-import LinkedAccountsPage from 'features/user/pages/LinkedAccountsPage'
-import RolesSettingsPage from 'features/admin/pages/RolesSettingsPage'
+import ModulesPage from 'Features/admin/pages/ModulesPage'
+import ModuleSettingsPage from 'Features/admin/pages/ModuleSettingsPage'
+import SecuritySettingsPage from 'Features/user/pages/SecuritySettingsPage'
+import LinkedAccountsPage from 'Features/user/pages/LinkedAccountsPage'
+import RolesSettingsPage from 'Features/admin/pages/RolesSettingsPage'
 
 const defaultRoutes = [
   { path: '/login', component: LoginPage },

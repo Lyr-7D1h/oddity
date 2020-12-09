@@ -1,6 +1,6 @@
 import React from 'react'
 import Page from '../../common/containers/Page'
-import SubNav from 'features/common/SubNav'
+import SubNav from 'Features/common/SubNav'
 import Centered from '../../common/containers/Centered'
 import { Card } from 'antd'
 import ConditionalRedirect from '../../common/containers/ConditionalRedirect'
