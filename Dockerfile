@@ -12,14 +12,6 @@ WORKDIR /usr/src/app
 # Moves files to App Directory
 COPY . /usr/src/app
 
-# Build Server
-WORKDIR /usr/src/app/server
-# Install needed build dependencies
-RUN npm ci 
-RUN npm run build
-# Remove build dependencies
-RUN npm ci --production
-
 # Load modules
 WORKDIR /usr/src/app
 # TODO: needed in prod?
@@ -33,7 +25,14 @@ WORKDIR /usr/src/app/client
 RUN npm ci --production
 RUN npm run build
 
-# Start App
+# Build Server
 WORKDIR /usr/src/app/server
+# Install needed build dependencies
+RUN npm ci 
+RUN npm run build
+# Remove build dependencies
+RUN npm ci --production
+
+# Start App
 CMD npm run start:prod
 EXPOSE 5000
