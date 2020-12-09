@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom'
 import Title from 'antd/lib/typography/Title'
 import saveWrapper from 'Helpers/saveWrapper'
 import { useDispatch } from 'react-redux'
-import { updateModuleRoute } from 'Actions/initActions'
+import { updateModuleRoute } from 'Features/init/initSlice'
 import modules from '../../../../module_loader_imports/modules'
 
 const Page = ({

@@ -1,77 +1,83 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import requester from 'Helpers/requester'
 import importedModules from '../../../module_loader_imports/modules'
 
-const UPDATE_CONFIG = 'init:updateConfig'
-const UPDATE_MODULE_ROUTE = 'init:updateModule'
-const ENABLE_MODULE = 'init:enableModule'
-const DISABLE_MODULE = 'init:disableModule'
+export const fetchInit = createAsyncThunk('init/fetchInit', async () => {
+  const init = await requester.get('init')
+  init.modules = init.modules
+    .filter(
+      (mod) =>
+        importedModules[mod.name] && importedModules[mod.name].routes.length > 0
+    )
+    .map((mod) => {
+      let routes = importedModules[mod.name].routes
+      mod.routes = routes.map((route) => route.path)
 
-export const updateConfig = (config) => ({
-  type: UPDATE_CONFIG,
-  payload: config,
+      return mod
+    })
+  return init
 })
 
-export const updateModuleRoute = (id, route) => ({
-  type: UPDATE_MODULE_ROUTE,
-  payload: { id, route },
-})
-
-/// Add module if it does not already exist
-export const enableModule = (module) => ({
-  type: ENABLE_MODULE,
-  payload: module,
-})
-
-/// Remove module if it exists
-export const disableModule = (module) => ({
-  type: DISABLE_MODULE,
-  payload: module,
-})
-
-export default (state, { type, payload }) => {
-  const newState = Object.assign({}, state)
-  switch (type) {
-    case UPDATE_CONFIG:
-      return Object.assign({}, state, { config: payload })
-    case UPDATE_MODULE_ROUTE:
-      newState.modules = state.modules.map((mod) => {
-        if (mod.id === payload.id) {
-          mod.route = payload.route
+const initSlice = createSlice({
+  name: 'init',
+  initialState: { status: 'idle' },
+  reducers: {
+    updateConfig(state, payload) {
+      state.config = payload
+    },
+    updateModuleRoute: {
+      reducer(state, { payload }) {
+        state.modules = state.modules.map((mod) => {
+          if (mod.id === payload.id) {
+            mod.route = payload.route
+          }
+          return mod
+        })
+      },
+      prepare(id, route) {
+        return {
+          payload: { id, route },
         }
-        return mod
-      })
-      return newState
-    case ENABLE_MODULE:
-      // if already exists do nothing
-      if (newState.modules.some((mod) => mod.id === payload.id)) {
-        return newState
-      }
-      // If does not exist in imported module do nothing
-      if (!importedModules[payload.name]) {
-        return newState
-      }
-      newState.modules.push(payload)
-      return newState
-    case DISABLE_MODULE:
-      // filter out given module
-      const modules = newState.modules.filter((mod) => mod.id !== payload.id)
-      return Object.assign({}, state, { modules })
-    default:
-      if (window.init && Object.keys(window.init).length > 0) {
-        // only allow modules with client routes
-        let state = Object.assign({}, window.init)
-        state.modules = state.modules
-          .filter(
-            (mod) =>
-              importedModules[mod.name] &&
-              importedModules[mod.name].routes.length > 0
-          )
-          .map((mod) => {
-            mod.routes = importedModules[mod.name].routes
-            return mod
-          })
+      },
+    },
+    enableModule(state, action) {
+      const modName = action.payload.name
+      const modId = action.payload.id
+      if (state.modules.some((mod) => mod.id === modId)) {
         return state
-      } else {
-        return { noInit: true }
       }
-  }
-}
+      if (!importedModules[modName]) {
+        return state
+      }
+      state.modules.push(action.payload)
+    },
+    disableModule(state, action) {
+      const disableId = action.payload.id
+      state.modules = state.modules.filter((mod) => mod.id !== disableId)
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchInit.pending, (state) => {
+      state.status = 'loading'
+    })
+    builder.addCase(fetchInit.rejected, (state, action) => {
+      state.error = action.payload
+      state.status = 'failed'
+    })
+    builder.addCase(fetchInit.fulfilled, (state, action) => {
+      console.log(action)
+      state = action.payload
+      state.status = 'idle'
+      return state
+    })
+  },
+})
+
+export const {
+  disableModule,
+  enableModule,
+  updateModuleRoute,
+  updateConfig,
+} = initSlice.actions
+
+export default initSlice.reducer

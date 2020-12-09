@@ -11,7 +11,7 @@ import hasPermission from 'Helpers/hasPermission'
 
 import { connect } from 'react-redux'
 import { updateUser } from 'Actions/userActions'
-import { rootReset } from 'Actions/rootActions'
+import { rootReset } from '../util/rootSlice'
 
 const Nav = ({ modules, title, user, updateUser, location, rootReset }) => {
   const [loginError, setLoginError] = useState(false)

@@ -1,9 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Result } from 'antd'
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchInit } from './initSlice'
 
-const InitLoader = ({ init, children }) => {
-  if (init.noInit) {
+const InitLoader = ({ children }) => {
+  const dispatch = useDispatch()
+  const init = useSelector((state) => state.init)
+
+  useEffect(() => {
+    dispatch(fetchInit())
+  }, [dispatch])
+
+  if (init.status === 'failed') {
     return (
       <Result
         status="warning"
@@ -11,10 +19,12 @@ const InitLoader = ({ init, children }) => {
         subTitle="Something went wrong: please report this incident"
       />
     )
-  } else {
+  } else if (init.status === 'idle' && init.config) {
     document.title = init.config.title
     return children
+  } else {
+    return ''
   }
 }
 
-export default connect((state) => ({ init: state.init }))(InitLoader)
+export default InitLoader

@@ -8,16 +8,18 @@ import App from './App.jsx'
 
 import './styling/app.less'
 
-import { Initializer } from './redux/Initializer'
+import { Initializer } from './Initializer'
 
 Sentry.init({
   dsn: 'https://b562353dd385496784e194a06c282588@sentry.io/1886753',
 })
 
 ReactDOM.render(
-  <Initializer>
-    <App />
-  </Initializer>,
+  <React.StrictMode>
+    <Initializer>
+      <App />
+    </Initializer>
+  </React.StrictMode>,
   document.getElementById('root')
 )
 

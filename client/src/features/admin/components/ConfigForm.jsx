@@ -3,7 +3,7 @@ import { Input, Button } from 'antd'
 import { Form } from 'antd'
 
 import { connect } from 'react-redux'
-import { updateConfig } from 'Actions/initActions'
+import { updateConfig } from 'Features/init/initSlice'
 import requester from 'Helpers/requester'
 import notificationHandler from 'Helpers/notificationHandler'
 

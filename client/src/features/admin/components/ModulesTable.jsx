@@ -4,7 +4,7 @@ import { Table, Tag, Button } from 'antd'
 
 import { Link, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { disableModule, enableModule } from 'Actions/initActions'
+import { disableModule, enableModule } from 'Features/init/initSlice'
 import errorHandler from 'Helpers/errorHandler'
 
 export default ({ modules: modulesProp }) => {

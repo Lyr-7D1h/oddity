@@ -42,8 +42,8 @@ module.exports = override(
 
   // Add alias for components to easily fetch it
   addWebpackAlias({
-    Components: path.resolve(__dirname, 'src', 'components'),
     Helpers: path.resolve(__dirname, 'src', 'helpers'),
     Actions: path.resolve(__dirname, 'src', 'redux', 'actions'),
+    Features: path.resolve(__dirname, 'src/features'),
   })
 )

@@ -10,7 +10,7 @@ import ImageUpload from 'features/common/ImageUpload'
 import Title from 'antd/lib/typography/Title'
 import Paragraph from 'antd/lib/typography/Paragraph'
 import requester from 'Helpers/requester'
-import { rootReset } from 'Actions/rootActions'
+import { rootReset } from 'features/util/rootSlice'
 import ConnectThirdParty from 'features/user/ConnectThirdParty'
 
 const { Step } = Steps
