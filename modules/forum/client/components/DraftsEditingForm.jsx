@@ -1,5 +1,5 @@
 import { Button, Card, Form, Input, Select } from "antd";
-import Editor from "features/common/Editor";
+import Editor from "Features/common/Editor";
 import notificationHandler from "Helpers/notificationHandler";
 import requester from "Helpers/requester";
 import React, { useEffect, useState } from "react";
